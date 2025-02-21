@@ -2,4 +2,5 @@ android/** -linguist-detectable
 ios/** -linguist-detectable
 linux/** -linguist-detectable
 macos/** -linguist-detectable
+web/** -linguist-detectable
 windows/** -linguist-detectable
