@@ -1,0 +1,20 @@
+on:
+  pull_request:
+    branches: ['main']
+    types: [opened, synchronize]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup flutter
+        uses: flutter-actions/setup-flutter@v4
+        with:
+          channel: stable
+
+      - name: Validate Title of PR
+        run: echo ${{ github.event.pull_request.title }} | dart run commitlint_cli
