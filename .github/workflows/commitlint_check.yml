@@ -1,6 +1,10 @@
 name: Commitlint check
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - '**'
+
 jobs:
   commitlint_check:
     runs-on: ubuntu-latest
