@@ -1,8 +1,19 @@
 import 'dart:io';
 
 void main() async {
-  var result = await Process.run('dart', ['pub', 'get']);
-  print(result.stdout);
-  result = await Process.run('dart', ['run', 'husky', 'install']);
-  print(result.stdout);
+  var resultRestoreDeps = await Process.run('dart', ['pub', 'get']);
+  print(resultRestoreDeps.stdout);
+
+  var resultInstallHusky = await Process.run('dart', [
+    'run',
+    'husky',
+    'install',
+  ]);
+  print(resultInstallHusky.stdout);
+
+  var envFile = File('.env');
+  if (!await envFile.exists()) {
+    await envFile.create();
+    print('an empty ".env" file created');
+  }
 }
