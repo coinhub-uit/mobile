@@ -1,16 +1,9 @@
-# coinhub
+<h1 align=center>
+  COINHUB MOBILE
+</h1>
 
-A new Flutter project.
-
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+<div align=center>
+  <img alt="SonarQube Quality Bug" src="https://sonarcloud.io/api/project_badges/measure?project=coinhub-uit_mobile&metric=bugs"/>
+  <img alt="SonarQube Quality Code Smells" src="https://sonarcloud.io/api/project_badges/measure?project=coinhub-uit_mobile&metric=code_smells"/>
+  <img alt="SonarQube Quality Maintainability Rating" src="https://sonarcloud.io/api/project_badges/measure?project=coinhub-uit_mobile&metric=sqale_rating"/>
+</div>
