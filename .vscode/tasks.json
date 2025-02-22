@@ -1,0 +1,13 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "type": "shell",
+      "command": "dart",
+      "args": ["run", "${workspaceFolder}/bootstrap.dart"],
+      "problemMatcher": [],
+      "label": "coinhub: bootstrap",
+      "detail": "Bootstrap the project (install deps, install husky git hooks)"
+    }
+  ]
+}
