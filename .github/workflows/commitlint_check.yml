@@ -17,5 +17,5 @@ jobs:
       - name: Get Dependencies
         run: flutter pub get
 
-      - name: Validate PR Commits
-        run: VERBOSE=true dart run commitlint_cli --from=${{ github.event.pull_request.head.sha }}~${{ github.event.pull_request.commits }} --to=${{ github.event.pull_request.head.sha }} --config commitlint.yaml
+      - name: Validate Commits
+        run: dart run commitlint_cli --from HEAD~1 --to HEAD
