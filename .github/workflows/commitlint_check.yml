@@ -1,0 +1,18 @@
+name: Commitlint check
+
+on: [push, pull_request]
+jobs:
+  commitlint_check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: dart-lang/setup-dart@v1.3
+
+      - name: Get Dependencies
+        run: dart pub get
+
+      - name: Validate PR Commits
+        run: VERBOSE=true dart run commitlint_cli --from=${{ github.event.pull_request.head.sha }}~${{ github.event.pull_request.commits }} --to=${{ github.event.pull_request.head.sha }} --config lib/commitlint.yaml
