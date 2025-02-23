@@ -1,0 +1,25 @@
+name: Commit Check
+
+on:
+  push:
+    branches:
+      - '**'
+
+jobs:
+  commitlint_check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup flutter
+        uses: flutter-actions/setup-flutter@v4
+        with:
+          channel: stable
+
+      - name: Get Dependencies
+        run: flutter pub get
+
+      - name: Validate Commits
+        run: dart run commitlint_cli --from HEAD~1 --to HEAD
