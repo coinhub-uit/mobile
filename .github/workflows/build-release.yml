@@ -1,0 +1,111 @@
+name: Build and Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      release:
+        description: Release?
+        required: false
+        default: false
+        type: boolean
+  push:
+    branches:
+      - main
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  bump-version:
+    runs-on: ubuntu-latest
+    name: Bump version
+    if: ${{ inputs.release }}
+    outputs:
+      NEW_VERSION: ${{ steps.cz.outputs.version }}
+      RELEASE_NOTE: ${{ steps.git-cliff.outputs.content }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Create bump and changelog
+        id: cz
+        uses: commitizen-tools/commitizen-action@master
+
+      - name: Generate a changelog
+        uses: orhun/git-cliff-action@v4
+        id: git-cliff
+        with:
+          config: cliff.toml
+          args: -vv --latest --strip header
+
+      - name: Push back to repo
+        run: git push origin main --tags
+
+  build-apk:
+    runs-on: ubuntu-latest
+    name: Build APK
+    if: always()
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: cedvdb/action-flutter-build-android@v1
+        with:
+          keystore-base64: ${{ secrets.ANDROID_RELEASE_KEY }}
+          keystore-password: ${{ secrets.ANDROID_RELEASE_KEY_PASSWORD }}
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: apk
+          path: build/app/outputs/flutter-apk/*.apk
+
+  build-ipa:
+    runs-on: macos-latest
+    name: Build IPA
+    if: always()
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: cedvdb/action-flutter-build-ios@v1
+        with:
+          build-cmd: flutter build ipa --release --flavor dev --export-options-plist=ios/GithubActionsExportOptions.plist
+          certificate-base64: ${{ secrets.IOS_BUILD_CERTIFICATE_BASE64 }}
+          certificate-password: ${{ secrets.IOS_BUILD_CERTIFICATE_PASSWORD }}
+          provisioning-profile-base64: ${{ secrets.IOS_MOBILE_PROVISIONING_PROFILE_BASE64 }}
+          keychain-password: ${{ secrets.IOS_GITHUB_KEYCHAIN_PASSWORD }}
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ipa
+          path: build/ios/ipa/*.ipa
+
+  release:
+    runs-on: ubuntu-latest
+    name: Release
+    needs:
+      - build-apk
+      - build-ipa
+      - bump-version
+    if: needs.bump-version.result == 'success' || needs.bump-version.result == 'skipped'
+    permissions:
+      contents: write # to be able to publish a GitHub release
+      issues: write # to be able to comment on released issues
+      pull-requests: write # to be able to comment on released pull requests
+      id-token: write # to enable use of OIDC for npm provenance
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ needs.bump-version.outputs.NEW_VERSION }}
+          files: |
+            build/app/outputs/flutter-apk/*.apk
+            build/ios/ipa/*.ipa
+          body: ${{ needs.bump-version.outputs.RELEASE_NOTE }}
