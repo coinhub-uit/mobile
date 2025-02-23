@@ -4,7 +4,7 @@
     {
       "type": "shell",
       "command": "dart",
-      "args": ["run", "${workspaceFolder}/bootstrap.dart"],
+      "args": ["run", "${workspaceFolder}/scripts/bootstrap.dart"],
       "problemMatcher": [],
       "label": "CoinHub: Bootstrap",
       "detail": "Bootstrap the project (install deps, install husky git hooks)"
