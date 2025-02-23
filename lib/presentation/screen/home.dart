@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:coinhub/core/services/auth.dart';
+import "package:flutter/material.dart";
+import "package:coinhub/core/services/auth.dart";
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -16,7 +16,7 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     AuthService.authStateChanges.listen((data) {
       setState(() {
-        placeholderText = 'User is signed in: ${data.session?.user.email}';
+        placeholderText = "User is signed in: ${data.session?.user.email}";
       });
     });
   }
@@ -35,10 +35,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 try {
                   await AuthService.signInWithGoogle();
                 } catch (e) {
-                  debugPrint('Sign in failed: $e');
+                  debugPrint("Sign in failed: $e");
                 }
               },
-              child: Text('Sign in with google'),
+              child: Text("Sign in with google"),
             ),
           ],
         ),

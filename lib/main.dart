@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
-import 'package:coinhub/presentation/screen/home.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:coinhub/core/util/env.dart';
+import "package:flutter/material.dart";
+import "package:coinhub/presentation/screen/home.dart";
+import "package:supabase_flutter/supabase_flutter.dart";
+import "package:coinhub/core/util/env.dart";
 
 void main() async {
   debugPrint("env");

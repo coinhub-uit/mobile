@@ -1,6 +1,6 @@
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:coinhub/core/util/env.dart';
+import "package:google_sign_in/google_sign_in.dart";
+import "package:supabase_flutter/supabase_flutter.dart";
+import "package:coinhub/core/util/env.dart";
 
 class AuthService {
   static final supabaseClient = Supabase.instance.client;
@@ -20,10 +20,10 @@ class AuthService {
     final idToken = googleAuth?.idToken;
 
     if (accessToken == null) {
-      throw 'No Access Token found.';
+      throw "No Access Token found.";
     }
     if (idToken == null) {
-      throw 'No ID Token found.';
+      throw "No ID Token found.";
     }
 
     await supabaseClient.auth.signInWithIdToken(
