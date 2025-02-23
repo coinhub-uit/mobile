@@ -12,8 +12,9 @@ void main() async {
   print(resultInstallHusky.stdout);
 
   var envFile = File('.env');
+  var envFileExample = File('.env.example')
   if (!await envFile.exists()) {
-    await envFile.create();
+    await envFileExample.copy('.env')
     print('an empty ".env" file created');
   }
 }
