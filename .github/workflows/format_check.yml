@@ -6,7 +6,7 @@ on:
       - '**'
 
 jobs:
-  commitlint_check:
+  dart_format_check:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
