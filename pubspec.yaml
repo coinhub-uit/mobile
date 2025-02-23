@@ -93,4 +93,4 @@ flutter:
   # see https://flutter.dev/to/font-from-package
 
 lint_staged:
-  'lib/**.dart': dart format --fix && dart fix --apply
+  'lib/**.dart': dart format write && dart fix --apply
