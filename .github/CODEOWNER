@@ -1,0 +1,12 @@
+* @coinhub-uit/team-manager
+
+.github/workflows/ @coinhub-uit/team-devops
+
+android/ @coinhub-uit/team-mobile
+ios/ @coinhub-uit/team-mobile
+lib/ @coinhub-uit/team-mobile
+pubspec.yaml @coinhub-uit/team-mobile
+
+.metadata
+package-lock.json
+pubspec.lock
