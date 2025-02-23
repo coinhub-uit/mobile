@@ -16,6 +16,14 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: false
 
+env:
+  DART_DEFINE_ARGS: >
+    --dart-define SUPABASE_URL=${{ secrets.SUPABASE_URL }}
+    --dart-define SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }}
+    --dart-define OAUTH_WEB_CLIENT_ID=${{ secrets.OAUTH_WEB_CLIENT_ID }}
+    --dart-define OAUTH_IOS_CLIENT_ID=${{ secrets.OAUTH_IOS_CLIENT_ID }}
+    --dart-define AI_API_KEY=${{ secrets.AI_API_KEY }}
+
 jobs:
   bump-version:
     runs-on: ubuntu-latest
@@ -54,6 +62,7 @@ jobs:
         with:
           keystore-base64: ${{ secrets.ANDROID_RELEASE_KEY }}
           keystore-password: ${{ secrets.ANDROID_RELEASE_KEY_PASSWORD }}
+          build-cmd: flutter build apk --release {{ env.DART_DEFINE_ARGS }}
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
@@ -70,7 +79,7 @@ jobs:
 
       - uses: cedvdb/action-flutter-build-ios@v1
         with:
-          build-cmd: flutter build ipa --release --flavor dev --export-options-plist=ios/GithubActionsExportOptions.plist
+          build-cmd: flutter build ipa --release ${{ env.DART_DEFINE_ARGS }}
           certificate-base64: ${{ secrets.IOS_BUILD_CERTIFICATE_BASE64 }}
           certificate-password: ${{ secrets.IOS_BUILD_CERTIFICATE_PASSWORD }}
           provisioning-profile-base64: ${{ secrets.IOS_MOBILE_PROVISIONING_PROFILE_BASE64 }}
