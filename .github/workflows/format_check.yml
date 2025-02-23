@@ -1,4 +1,4 @@
-name: Commit Check
+name: Dart Format Check
 
 on:
   push:
@@ -18,8 +18,5 @@ jobs:
         with:
           channel: stable
 
-      - name: Get Dependencies
-        run: flutter pub get
-
-      - name: Validate Commits
-        run: dart run commitlint_cli --from HEAD~1 --to HEAD
+      - name: Format Check
+        run: dart format --set-exit-if-changed lib/**.dart
