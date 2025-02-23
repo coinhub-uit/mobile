@@ -1,4 +1,3 @@
-import 'package:coinhub/core/util/env.dart';
 import 'package:flutter/material.dart';
 import 'package:coinhub/core/services/auth.dart';
 
@@ -29,7 +28,6 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(Env.oauthWebClientId),
             Text(placeholderText, style: TextStyle(fontSize: 20)),
             SizedBox(height: 20),
             ElevatedButton(
