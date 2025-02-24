@@ -1,12 +1,13 @@
 import "package:flutter/material.dart";
 import "package:coinhub/presentation/screen/home.dart";
 import "package:supabase_flutter/supabase_flutter.dart";
-import "package:coinhub/core/util/env.dart";
 
 void main() async {
-  debugPrint("env");
-  debugPrint("db");
-  await Supabase.initialize(url: Env.supabaseUrl, anonKey: Env.supabaseAnonKey);
+  await Supabase.initialize(
+    url: "https://yopvlrbdzgkmbfilgrqf.supabase.co",
+    anonKey:
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlvcHZscmJkemdrbWJmaWxncnFmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDAyMDg2MjEsImV4cCI6MjA1NTc4NDYyMX0.V4dAeIA_ck-8-P12GMJu8YD9WK_pXPf_qgEEFD97Xgk",
+  );
   runApp(MyApp());
 }
 
