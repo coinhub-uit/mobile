@@ -18,11 +18,6 @@ concurrency:
 
 env:
   DART_DEFINE_ARGS: >
-    --dart-define SUPABASE_URL=${{ secrets.SUPABASE_URL }}
-    --dart-define SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }}
-    --dart-define OAUTH_WEB_CLIENT_ID=${{ secrets.OAUTH_WEB_CLIENT_ID }}
-    --dart-define OAUTH_IOS_CLIENT_ID=${{ secrets.OAUTH_IOS_CLIENT_ID }}
-    --dart-define AI_API_KEY=${{ secrets.AI_API_KEY }}
 
 jobs:
   bump-version:
@@ -55,6 +50,8 @@ jobs:
     runs-on: ubuntu-latest
     name: Build APK
     if: always()
+    needs:
+      - bump-version
     steps:
       - uses: actions/checkout@v4
 
@@ -74,12 +71,14 @@ jobs:
     runs-on: macos-latest
     name: Build IPA
     if: always()
+    needs:
+      - bump-version
     steps:
       - uses: actions/checkout@v4
 
       - uses: cedvdb/action-flutter-build-ios@v1
         with:
-          build-cmd: flutter build ipa --release ${{ env.DART_DEFINE_ARGS }}
+          build-cmd: flutter build ipa --release ${{ env.DART_DEFINE_ARGS }} --no-codesign
           certificate-base64: ${{ secrets.IOS_BUILD_CERTIFICATE_BASE64 }}
           certificate-password: ${{ secrets.IOS_BUILD_CERTIFICATE_PASSWORD }}
           provisioning-profile-base64: ${{ secrets.IOS_MOBILE_PROVISIONING_PROFILE_BASE64 }}
