@@ -78,7 +78,7 @@ jobs:
 
       - uses: cedvdb/action-flutter-build-ios@v1
         with:
-          build-cmd: flutter build ipa --release ${{ env.DART_DEFINE_ARGS }} --no-codesign
+          build-cmd: flutter build ipa --release --export-options-plist ios/Runner/Info.plist ${{ env.DART_DEFINE_ARGS }}
           certificate-base64: ${{ secrets.IOS_BUILD_CERTIFICATE_BASE64 }}
           certificate-password: ${{ secrets.IOS_BUILD_CERTIFICATE_PASSWORD }}
           provisioning-profile-base64: ${{ secrets.IOS_MOBILE_PROVISIONING_PROFILE_BASE64 }}
