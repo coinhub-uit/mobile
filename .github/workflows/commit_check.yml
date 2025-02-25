@@ -4,22 +4,38 @@ on:
   push:
     branches:
       - '**'
+  pull_request:
+    branches:
+      - main
+      - dev
+    types:
+      - opened
+      - synchronize
 
 jobs:
   commitlint_check:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Setup flutter
         uses: flutter-actions/setup-flutter@v4
         with:
           channel: stable
+          version: 3.7.0
+          cache: true
+          cache-sdk: true
+          cache-key: ${{ hashFiles('pubspec.yaml') }}
 
       - name: Get Dependencies
         run: flutter pub get
 
       - name: Validate Commits
+        if: ${{ github.event_name == 'push' }}
         run: dart run commitlint_cli --from HEAD~1 --to HEAD
+
+      - name: Validate Title of PR
+        if: ${{ github.event_name == 'pull_request' }}
+        env:
+          TITLE: ${{ github.event.pull_request.title }}
+        run: echo "$TITLE" | dart run commitlint_cli
