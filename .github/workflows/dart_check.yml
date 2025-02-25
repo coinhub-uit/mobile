@@ -21,6 +21,9 @@ jobs:
           cache-sdk: true
           cache-key: ${{ hashFiles('pubspec.yaml') }}
 
+      - name: Get Dependencies
+        run: flutter pub get
+
       - name: Analyze
         run: dart analyze lib/
 
