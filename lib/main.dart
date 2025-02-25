@@ -1,5 +1,6 @@
+import "package:coinhub/presentation/screen/auth/login_screen.dart";
 import "package:flutter/material.dart";
-import "package:coinhub/presentation/screen/home.dart";
+// import "package:coinhub/presentation/screen/home.dart";
 import "package:supabase_flutter/supabase_flutter.dart";
 
 void main() async {
@@ -18,6 +19,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(debugShowCheckedModeBanner: false, home: HomeScreen());
+    return MaterialApp(debugShowCheckedModeBanner: false, home: LoginScreen());
   }
 }
