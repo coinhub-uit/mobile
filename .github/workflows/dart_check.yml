@@ -1,0 +1,28 @@
+name: Dart Check
+
+on:
+  push:
+    branches:
+      - '**'
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    name: Check
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup flutter
+        uses: flutter-actions/setup-flutter@v4
+        with:
+          channel: stable
+          version: 3.29.0
+          cache: true
+          cache-sdk: true
+          cache-key: ${{ hashFiles('pubspec.yaml') }}
+
+      - name: Analyze
+        run: dart analyze lib/
+
+      - name: Format Check
+        run: dart format --set-exit-if-changed lib/**.dart
