@@ -54,7 +54,7 @@ jobs:
   build-apk:
     runs-on: ubuntu-latest
     name: Build APK
-    if: needs.bump-version.result == 'success' || needs.bump-version.result == 'skipped'
+    if: success() || needs.bump-version.result == 'skipped'
     needs:
       - bump-version
     steps:
@@ -75,7 +75,7 @@ jobs:
   build-ipa:
     runs-on: macos-latest
     name: Build IPA
-    if: needs.bump-version.result == 'success' || needs.bump-version.result == 'skipped'
+    if: success() || needs.bump-version.result == 'skipped'
     needs:
       - bump-version
     steps:
@@ -102,7 +102,7 @@ jobs:
       - build-apk
       - build-ipa
       - bump-version
-    if: needs.bump-version.result == 'success' || needs.bump-version.result == 'skipped'
+    if: needs.bump-version.result == 'success'
     permissions:
       contents: write # to be able to publish a GitHub release
       issues: write # to be able to comment on released issues
