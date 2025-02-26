@@ -38,11 +38,30 @@ jobs:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Create bump and changelog
+      - uses: dart-lang/setup-dart@v1
+        with:
+          sdk: 3.7.0
+
+      - name: Get new version
         id: cz
         uses: commitizen-tools/commitizen-action@master
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
+          push: false
+          commit: false
+
+      - name: Install version assist
+        run: dart pub global activate version_assist
+
+      - name: Update version and commit
+        run: version_assist set --version ${{ steps.cz.outputs.version }} --auto-commit
+
+      - uses: fregante/setup-git-user@v2
+
+      - name: Push back to repo
+        run: |
+          git add pubspec.yaml
+          git push origin main --tags
 
       - name: Generate a changelog
         uses: orhun/git-cliff-action@v4
