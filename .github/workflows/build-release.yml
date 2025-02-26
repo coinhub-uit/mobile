@@ -54,7 +54,9 @@ jobs:
         run: dart pub global activate version_assist
 
       - name: Update version and commit
-        run: version_assist set --version ${{ steps.cz.outputs.version }} --auto-commit
+        run: |
+          version_assist set --version ${{ steps.cz.outputs.version }}
+          version_assist commit
 
       - uses: fregante/setup-git-user@v2
 
