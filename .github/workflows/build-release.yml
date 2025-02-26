@@ -32,6 +32,8 @@ jobs:
     outputs:
       NEW_VERSION: ${{ steps.cz.outputs.version }}
       RELEASE_NOTE: ${{ steps.git-cliff.outputs.content }}
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
         with:
