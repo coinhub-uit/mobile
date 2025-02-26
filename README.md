@@ -12,5 +12,5 @@
 ## DEV
 
 ```sh
-dart run ./bootstrap.dart
+dart run ./scripts/bootstrap.dart
 ```
