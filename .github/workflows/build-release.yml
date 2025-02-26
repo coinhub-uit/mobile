@@ -136,6 +136,8 @@ jobs:
         uses: actions/checkout@v4
 
       - uses: actions/download-artifact@v4
+        with:
+          merge-multiple: true
 
       - name: Release
         env:
@@ -148,4 +150,4 @@ jobs:
             build/ios/ipa/*.ipa
           body: ${{ needs.bump-version.outputs.RELEASE_NOTE }}
           make_latest: ${{ ! inputs.prerelease && github.ref != 'main' }}
-          prerelease: ${{ github.ref != 'main' || ! inputs.prerelease }}
+          prerelease: ${{ github.ref != 'main' || inputs.prerelease }}
