@@ -16,6 +16,13 @@ on:
   push:
     branches:
       - main
+    paths:
+      - lib/**
+      - assets/**
+      - pubspec.yaml
+      - pubspec.lock
+      - android/**
+      - ios/**
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
