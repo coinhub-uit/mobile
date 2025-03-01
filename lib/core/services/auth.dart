@@ -30,6 +30,31 @@ class AuthService {
     );
   }
 
+  static Future<void> signInWithEmailandPassword(
+    String email,
+    String password,
+  ) async {
+    await supabaseClient.auth.signInWithPassword(
+      email: email,
+      password: password,
+    );
+  }
+
+  static Future<void> signOut() async {
+    await supabaseClient.auth.signOut();
+  }
+
+  static Future<void> signUpWithEmailandPassword(
+    String email,
+    String password,
+  ) async {
+    await supabaseClient.auth.signUp(email: email, password: password);
+  }
+
+  static Future<void> forgotPassword(String email) async {
+    //TODO: Implement forgot password
+  }
+
   static Stream<AuthState> get authStateChanges =>
       supabaseClient.auth.onAuthStateChange;
 }
