@@ -5,7 +5,7 @@ import "package:coinhub/core/constants/auth.dart";
 class AuthService {
   static final supabaseClient = Supabase.instance.client;
 
-  static Future<void> signInWithGoogle() async {
+  static Future<User?> signInWithGoogle() async {
     final GoogleSignIn googleSignIn = GoogleSignIn(
       clientId: iosClientId,
       serverClientId: webClientId,
@@ -23,11 +23,12 @@ class AuthService {
       throw "No ID Token found.";
     }
 
-    await supabaseClient.auth.signInWithIdToken(
+    final respond = await supabaseClient.auth.signInWithIdToken(
       provider: OAuthProvider.google,
       idToken: idToken,
       accessToken: accessToken,
     );
+    return respond.user;
   }
 
   static Future<void> signInWithEmailandPassword(
@@ -57,4 +58,11 @@ class AuthService {
 
   static Stream<AuthState> get authStateChanges =>
       supabaseClient.auth.onAuthStateChange;
+
+  static bool isUserLoggedIn() {
+    final session = supabaseClient.auth.currentSession;
+    return session != null;
+  }
+
+  static User? get currentUser => supabaseClient.auth.currentUser;
 }

@@ -1,21 +1,33 @@
-import "package:coinhub/presentation/screen/auth/login_screen.dart";
+import "package:coinhub/core/bloc/auth/auth_logic.dart";
+import "package:coinhub/core/constants/theme.dart";
+import "package:coinhub/presentation/routes/router.dart";
 import "package:flutter/material.dart";
-// import "package:coinhub/presentation/screen/home.dart";
 import "package:supabase_flutter/supabase_flutter.dart";
 import "package:coinhub/core/constants/supabase.dart";
+import "package:flutter_bloc/flutter_bloc.dart";
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   await Supabase.initialize(url: supabaseUrl, anonKey: supabaseAnonKey);
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 final supabase = Supabase.instance.client;
+final goRouter = RouteRouter().router;
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(debugShowCheckedModeBanner: false, home: LoginScreen());
+    return MultiBlocProvider(
+      providers: [BlocProvider(create: (context) => AuthBloc())],
+      child: MaterialApp.router(
+        theme: catppuccinTheme(isDark: false),
+        darkTheme: catppuccinTheme(isDark: true),
+        debugShowCheckedModeBanner: false,
+        routerConfig: goRouter,
+      ),
+    );
   }
 }

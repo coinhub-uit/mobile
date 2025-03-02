@@ -4,22 +4,50 @@ import "package:coinhub/core/services/auth.dart";
 import "package:coinhub/core/util/email_validator.dart";
 import "package:flutter_bloc/flutter_bloc.dart";
 
-class authBloc extends Bloc<LoginEvent, LoginState> {
-  authBloc() : super(LoginStateInitial("", "")) {
-    on<LoginEventLogin>((event, emit) {
-      final username = event.username;
+class AuthBloc extends Bloc<LoginEvent, LoginState> {
+  AuthBloc() : super(LoginStateInitial("", "")) {
+    on<LoginEventLogin>((event, emit) async {
+      final email = event.email;
       final password = event.password;
-      if (username.isEmpty || password.isEmpty) {
+
+      if (email.isEmpty || password.isEmpty) {
         emit(LoginStateError("Please fill in all fields."));
-      } else if (password.trim().length < 6) {
+        return;
+      }
+
+      if (password.trim().length < 6) {
         emit(LoginStateError("Password must be at least 6 characters long."));
-      } else if (!username.trim().isValidEmail()) {
+        return;
+      }
+
+      if (!email.trim().isValidEmail()) {
         emit(LoginStateError("Please enter a valid email."));
-      } else {
-        emit(LoginStateLoading());
-        AuthService.signInWithEmailandPassword(username, password)
-            .then((value) => emit(LoginStateSuccess("Success")))
-            .catchError((error) => emit(LoginStateError(error.toString())));
+        return;
+      }
+
+      emit(LoginStateLoading());
+
+      try {
+        await AuthService.signInWithEmailandPassword(email, password);
+        emit(LoginStateSuccess("Success"));
+      } catch (error) {
+        emit(LoginStateError(error.toString()));
+      }
+    });
+
+    on<LoginEventGoogle>((event, emit) async {
+      emit(LoginStateLoading());
+
+      try {
+        final user = await AuthService.signInWithGoogle();
+
+        if (user != null) {
+          if (!emit.isDone) emit(LoginStateSuccess("Success"));
+        } else {
+          if (!emit.isDone) emit(LoginStateError("Google sign-in failed."));
+        }
+      } catch (e) {
+        if (!emit.isDone) emit(LoginStateError("An error occurred: $e"));
       }
     });
 
