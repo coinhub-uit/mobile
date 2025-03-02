@@ -1,11 +1,11 @@
 class Routes {
   static const String home = "/";
 
-  static _Auth auth = _Auth();
-  static _Account account = _Account();
+  static Auth auth = Auth();
+  static Account account = Account();
 }
 
-class _Auth {
+class Auth {
   final String root = "/auth";
   String get login => "$root/login";
   String get signUp => "$root/signUp";
@@ -13,6 +13,6 @@ class _Auth {
   String get verify => "$root/verify";
 }
 
-class _Account {
+class Account {
   //TODO: Implement account routes
 }

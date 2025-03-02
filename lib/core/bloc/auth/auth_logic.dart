@@ -69,7 +69,7 @@ class AuthBloc extends Bloc<LoginEvent, LoginState> {
     });
     on<ResetPasswordEvent>((event, emit) {
       final password = event.password;
-      final token = event.token;
+      // final token = event.token;
       if (password.trim().length < 6) {
         emit(LoginStateError("Password must be at least 6 characters long."));
       } else {

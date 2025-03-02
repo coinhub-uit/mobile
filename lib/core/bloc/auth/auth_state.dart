@@ -16,7 +16,7 @@ class LoginStateError extends LoginState {
 }
 
 class LoginStateSuccess extends LoginState {
-  final String JWT;
+  final String jwt;
 
-  LoginStateSuccess(this.JWT);
+  LoginStateSuccess(this.jwt);
 }
