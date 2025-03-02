@@ -82,7 +82,7 @@ packages:
     source: hosted
     version: "2.1.2"
   catppuccin_flutter:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: catppuccin_flutter
       sha256: af76e96f39ebf228d943b46f64e50c683d2580b4ef4088f28214e35ff26a2543
