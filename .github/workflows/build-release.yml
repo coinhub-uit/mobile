@@ -173,7 +173,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ipa
-          path: build/ios/iphoneos/coinhub.ipa
+          path: build/ios/archive/Runner.xcarchive/Products/Applications/*.ipa
 
   release:
     runs-on: ubuntu-latest
@@ -204,7 +204,7 @@ jobs:
           tag_name: ${{ needs.bump-version.outputs.NEW_VERSION }}
           files: |
             build/app/outputs/flutter-apk/*
-            build/ios/iphoneos/*
+            build/ios/archive/Runner.xcarchive/Products/Applications/*.ipa
           body: ${{ needs.bump-version.outputs.RELEASE_NOTE }}
           make_latest: ${{ ! inputs.prerelease && github.ref != 'main' }}
           prerelease: ${{ github.ref != 'main' || inputs.prerelease }}
