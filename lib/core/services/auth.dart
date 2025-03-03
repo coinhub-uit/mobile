@@ -7,8 +7,8 @@ class AuthService {
 
   static Future<User?> signInWithGoogle() async {
     final GoogleSignIn googleSignIn = GoogleSignIn(
-      clientId: Env.oauthIosClientId,
-      serverClientId: Env.oauthWebClientId,
+      clientId: Env.oauthGoogleIosClientId,
+      serverClientId: Env.oauthGoogleWebClientId,
     );
     final googleUser = await googleSignIn.signIn();
     final googleAuth = await googleUser?.authentication;
