@@ -163,11 +163,10 @@ jobs:
         run: flutter build ipa --release --no-codesign ${{ env.DART_DEFINE_ARGS }}
 
       - name: Pack to unsign ipa
-        working-directory: build/ios/iphoneos
+        working-directory: build/ios/archive/Runner.xcarchive/Products/Applications
         shell: bash
         run: |
-          mkdir Payload
-          mv Runner.app/ Payload
+          mv Runner.app Payload
           zip -qq -r -9 coinhub.ipa Payload
 
       - name: Upload Artifact
