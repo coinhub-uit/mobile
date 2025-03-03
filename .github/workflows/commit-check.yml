@@ -12,6 +12,10 @@ on:
       - opened
       - synchronize
 
+env:
+  FLUTTER_VERSION: 3.29.0
+  FLUTTER_CHANNEL: stable
+
 jobs:
   commitlint_check:
     runs-on: ubuntu-latest
@@ -21,13 +25,11 @@ jobs:
           fetch-depth: ${{ github.event_name == 'push' && 2 || 1 }}
 
       - name: Setup flutter
-        uses: flutter-actions/setup-flutter@v4
+        uses: subosito/flutter-action@v2
         with:
-          channel: stable
-          version: 3.29.0
+          channel: ${{ env.FLUTTER_CHANNEL }}
           cache: true
-          cache-sdk: true
-          cache-key: ${{ hashFiles('pubspec.yaml') }}
+          flutter-version-file: pubspec.yaml
 
       - name: Get Dependencies
         run: flutter pub get

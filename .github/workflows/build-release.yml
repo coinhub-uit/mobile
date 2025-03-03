@@ -29,12 +29,14 @@ concurrency:
   cancel-in-progress: false
 
 env:
+  FLUTTER_VERSION: 3.29.0
+  FLUTTER_CHANNEL: stable
   DART_DEFINE_ARGS: >
-    API_SERVER_URL=${{ secrets.API_SERVER_URL }}
-    SUPABASE_URL=${{ secrets.SUPABASE_URL }}
-    SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }}
-    OAUTH_GOOGLE_WEB_CLIENT_ID=${{ secrets.OAUTH_GOOGLE_WEB_CLIENT_ID }}
-    OAUTH_GOOGLE_IOS_CLIENT_ID=${{ secrets.OAUTH_GOOGLE_IOS_CLIENT_ID }}
+    API_SERVER_URL='${{ secrets.API_SERVER_URL }}'
+    SUPABASE_URL='${{ secrets.SUPABASE_URL }}'
+    SUPABASE_ANON_KEY='${{ secrets.SUPABASE_ANON_KEY }}'
+    OAUTH_GOOGLE_WEB_CLIENT_ID='${{ secrets.OAUTH_GOOGLE_WEB_CLIENT_ID }}'
+    OAUTH_GOOGLE_IOS_CLIENT_ID='${{ secrets.OAUTH_GOOGLE_IOS_CLIENT_ID }}'
 
 jobs:
   bump-version:
@@ -92,6 +94,14 @@ jobs:
     if: success() || needs.bump-version.result == 'skipped'
     needs:
       - bump-version
+    strategy:
+      fail-fast: true
+      matrix:
+        target:
+          - arm
+          - arm64
+          - x86
+          - x64
     steps:
       - uses: actions/checkout@v4
 
@@ -99,13 +109,17 @@ jobs:
         with:
           keystore-base64: ${{ secrets.ANDROID_RELEASE_KEY }}
           keystore-password: ${{ secrets.ANDROID_RELEASE_KEY_PASSWORD }}
-          build-cmd: flutter build apk --release ${{ env.DART_DEFINE_ARGS }}
+          build-cmd: flutter build apk --release --target-platform 'android-${{ matrix.target }}' ${{ env.DART_DEFINE_ARGS }}
+
+      - name: Rename apk file
+        working-directory: build/app/outputs/flutter-apk/
+        run: mv 'app-release.apk' 'coinhub-${{ matrix.target }}.apk'
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: apk
-          path: build/app/outputs/flutter-apk/*.apk
+          name: apk-${{ matrix.target }}
+          path: build/app/outputs/flutter-apk/*
 
   build-ipa:
     runs-on: macos-latest
@@ -116,19 +130,29 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: cedvdb/action-flutter-build-ios@v1
+      - name: Setup flutter
+        uses: subosito/flutter-action@v2
         with:
-          build-cmd: flutter build ipa --release --export-options-plist ios/Runner/Info.plist ${{ env.DART_DEFINE_ARGS }}
-          certificate-base64: ${{ secrets.IOS_BUILD_CERTIFICATE_BASE64 }}
-          certificate-password: ${{ secrets.IOS_BUILD_CERTIFICATE_PASSWORD }}
-          provisioning-profile-base64: ${{ secrets.IOS_MOBILE_PROVISIONING_PROFILE_BASE64 }}
-          keychain-password: ${{ secrets.IOS_GITHUB_KEYCHAIN_PASSWORD }}
+          channel: ${{ env.FLUTTER_CHANNEL }}
+          cache: true
+          flutter-version-file: pubspec.yaml
+
+      - name: Build unsign
+        run: flutter build ipa --release --export-options-plist ios/Runner/Info.plist ${{ env.DART_DEFINE_ARGS }}
+
+      - name: Pack to unsign ipa
+        working-directory: build/ios/iphoneos
+        shell: bash
+        run: |
+          mkdir Payload
+          mv Runner.app/ Payload
+          zip -qq -r -9 coinhub.ipa Payload
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: ipa
-          path: build/ios/ipa/*.ipa
+          path: build/ios/iphoneos/coinhub.ipa
 
   release:
     runs-on: ubuntu-latest
@@ -158,8 +182,8 @@ jobs:
         with:
           tag_name: ${{ needs.bump-version.outputs.NEW_VERSION }}
           files: |
-            build/app/outputs/flutter-apk/*.apk
-            build/ios/ipa/*.ipa
+            build/app/outputs/flutter-apk/*
+            build/ios/iphoneos/*
           body: ${{ needs.bump-version.outputs.RELEASE_NOTE }}
           make_latest: ${{ ! inputs.prerelease && github.ref != 'main' }}
           prerelease: ${{ github.ref != 'main' || inputs.prerelease }}
