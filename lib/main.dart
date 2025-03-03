@@ -3,12 +3,12 @@ import "package:coinhub/core/constants/theme.dart";
 import "package:coinhub/presentation/routes/router.dart";
 import "package:flutter/material.dart";
 import "package:supabase_flutter/supabase_flutter.dart";
-import "package:coinhub/core/constants/supabase.dart";
 import "package:flutter_bloc/flutter_bloc.dart";
+import "package:coinhub/core/util/env.dart";
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Supabase.initialize(url: supabaseUrl, anonKey: supabaseAnonKey);
+  await Supabase.initialize(url: Env.supabaseUrl, anonKey: Env.supabaseAnonKey);
   runApp(const MyApp());
 }
 

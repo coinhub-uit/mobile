@@ -1,3 +1,0 @@
-final supabaseUrl = "https://yopvlrbdzgkmbfilgrqf.supabase.co";
-final supabaseAnonKey =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlvcHZscmJkemdrbWJmaWxncnFmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDAyMDg2MjEsImV4cCI6MjA1NTc4NDYyMX0.V4dAeIA_ck-8-P12GMJu8YD9WK_pXPf_qgEEFD97Xgk";

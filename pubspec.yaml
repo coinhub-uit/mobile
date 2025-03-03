@@ -42,7 +42,6 @@ dependencies:
   go_router: ^14.8.1
   catppuccin_flutter: ^1.0.0
 
-
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -56,7 +55,6 @@ dev_dependencies:
   husky: ^0.1.7
   lint_staged: ^0.5.1
   commitlint_cli: ^0.8.1
-  catppuccin_flutter: ^1.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

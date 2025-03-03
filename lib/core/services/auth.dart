@@ -1,14 +1,14 @@
 import "package:google_sign_in/google_sign_in.dart";
 import "package:supabase_flutter/supabase_flutter.dart";
-import "package:coinhub/core/constants/auth.dart";
+import "package:coinhub/core/util/env.dart";
 
 class AuthService {
   static final supabaseClient = Supabase.instance.client;
 
   static Future<User?> signInWithGoogle() async {
     final GoogleSignIn googleSignIn = GoogleSignIn(
-      clientId: iosClientId,
-      serverClientId: webClientId,
+      clientId: Env.oauthIosClientId,
+      serverClientId: Env.oauthWebClientId,
     );
     final googleUser = await googleSignIn.signIn();
     final googleAuth = await googleUser?.authentication;

@@ -6,7 +6,7 @@ ThemeData catppuccinTheme({bool isDark = false}) {
 
   Color primaryColor = themeFlavor.mauve;
   Color secondaryColor = themeFlavor.yellow;
-  Color buttonTextColor = themeFlavor.crust; // Dark color for button text
+  Color buttonTextColor = themeFlavor.crust;
 
   return ThemeData(
     useMaterial3: true,
@@ -25,10 +25,10 @@ ThemeData catppuccinTheme({bool isDark = false}) {
       brightness: isDark ? Brightness.dark : Brightness.light,
       error: themeFlavor.surface2,
       onError: themeFlavor.red,
-      onPrimary: buttonTextColor, // Dark text color on primary buttons
+      onPrimary: buttonTextColor,
       onSecondary: secondaryColor,
       onSurface: themeFlavor.text,
-      primary: primaryColor, // Mauve for primary buttons
+      primary: primaryColor,
       secondary: themeFlavor.mantle,
       surface: themeFlavor.base,
     ),
@@ -39,25 +39,23 @@ ThemeData catppuccinTheme({bool isDark = false}) {
     // Add explicit button themes
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
-        backgroundColor: primaryColor, // Mauve background
-        foregroundColor: buttonTextColor, // Dark text
+        backgroundColor: primaryColor,
+        foregroundColor: buttonTextColor,
       ),
     ),
     textButtonTheme: TextButtonThemeData(
-      style: TextButton.styleFrom(
-        foregroundColor: primaryColor, // Mauve text for text buttons
-      ),
+      style: TextButton.styleFrom(foregroundColor: primaryColor),
     ),
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: OutlinedButton.styleFrom(
-        foregroundColor: primaryColor, // Mauve text for outlined buttons
-        side: BorderSide(color: primaryColor), // Mauve border
+        foregroundColor: primaryColor,
+        side: BorderSide(color: primaryColor),
       ),
     ),
     floatingActionButtonTheme: FloatingActionButtonThemeData(
       elevation: 1,
-      backgroundColor: primaryColor, // Mauve FABs
-      foregroundColor: buttonTextColor, // Dark icon/text color for FABs
+      backgroundColor: primaryColor,
+      foregroundColor: buttonTextColor,
     ),
   );
 }

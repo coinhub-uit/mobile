@@ -12,9 +12,9 @@ void main() async {
   print(resultInstallHusky.stdout);
 
   var envFile = File('.env');
-  var envFileExample = File('.env.example')
+  var envFileExample = File('.env.example');
   if (!await envFile.exists()) {
-    await envFileExample.copy('.env')
+    await envFileExample.copy('.env');
     print('a ".env" file created which is based on ".env.example"');
   }
 }
