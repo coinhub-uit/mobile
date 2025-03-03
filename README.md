@@ -29,7 +29,7 @@
 [![IOS](https://img.shields.io/badge/ios-universal-f38ba8?style=for-the-badge&logo=apple&logoColor=cdd6f4)](../../releases/latest/download/coinhub.ipa)
 
 > [!NOTE]
-> The IPA is usign. You need to sign it before installing. Or you can install with Trollstore, Jailbreak, etc...
+> The IPA is unsigned. You need to sign it before installing. Or you can install with Trollstore, Jailbreak, etc...
 
 ---
 
