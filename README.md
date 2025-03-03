@@ -28,6 +28,9 @@
 [![Android](https://img.shields.io/badge/android-universal-cba6f7?style=for-the-badge&logo=android&logoColor=a6e3a1)](../../releases/latest/download/coinhub.apk)
 [![IOS](https://img.shields.io/badge/ios-universal-f38ba8?style=for-the-badge&logo=apple&logoColor=cdd6f4)](../../releases/latest/download/coinhub.ipa)
 
+> [!NOTE]
+> The IPA is usign. You need to sign it before installing. Or you can install with Trollstore, Jailbreak, etc...
+
 ---
 
 ## DEV
