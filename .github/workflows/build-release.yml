@@ -9,7 +9,7 @@ on:
         default: false
         type: boolean
       prerelease:
-        description: Make it pre-release? This will also not set latest if true. But if triggered other in main branch, this is always true
+        description: Make it pre-release / ! latest?
         required: false
         default: true
         type: boolean
@@ -29,6 +29,7 @@ concurrency:
   cancel-in-progress: false
 
 env:
+  FLUTTER_VERSION: 3.29.x
   FLUTTER_CHANNEL: stable
   DART_DEFINE_ARGS: >
     --dart-define API_SERVER_URL=${{ secrets.API_SERVER_URL }}
@@ -94,21 +95,40 @@ jobs:
     needs:
       - bump-version
     strategy:
-      fail-fast: true
+      fail-fast: false
       matrix:
         target:
           - arm
           - arm64
-          - x86
+          # - x86 # Cannot build for x86 anymore...
           - x64
     steps:
       - uses: actions/checkout@v4
 
-      - uses: cedvdb/action-flutter-build-android@v1
+      - name: Setup flutter
+        uses: subosito/flutter-action@v2
         with:
-          keystore-base64: ${{ secrets.ANDROID_RELEASE_KEY }}
-          keystore-password: ${{ secrets.ANDROID_RELEASE_KEY_PASSWORD }}
-          build-cmd: flutter build apk --release --target-platform 'android-${{ matrix.target }}' ${{ env.DART_DEFINE_ARGS }}
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: ${{ env.FLUTTER_CHANNEL }}
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Setup keystore
+        shell: bash
+        run: |
+          echo '${{ secrets.ANDROID_RELEASE_KEY }}' | base64 --decode > app/keystore.jks
+          {
+            echo 'storeFile=keystore.jks'
+            echo 'keyAlias=upload'
+            echo 'storePassword=${{ secrets.ANDROID_RELEASE_KEY_PASSWORD }}'
+            echo 'keyPassword=${{ secrets.ANDROID_RELEASE_KEY_PASSWORD }}'
+          } > key.properties
+        working-directory: android
+
+      - name: Build apk
+        run: flutter build apk --release --target-platform 'android-${{ matrix.target }}' ${{ env.DART_DEFINE_ARGS }}
 
       - name: Rename apk file
         working-directory: build/app/outputs/flutter-apk/
@@ -132,12 +152,15 @@ jobs:
       - name: Setup flutter
         uses: subosito/flutter-action@v2
         with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
           channel: ${{ env.FLUTTER_CHANNEL }}
           cache: true
-          flutter-version-file: pubspec.yaml
+
+      - name: Install dependencies
+        run: flutter pub get
 
       - name: Build unsign
-        run: flutter build ipa --release --export-options-plist ios/Runner/Info.plist ${{ env.DART_DEFINE_ARGS }}
+        run: flutter build ipa --release --no-codesign ${{ env.DART_DEFINE_ARGS }}
 
       - name: Pack to unsign ipa
         working-directory: build/ios/iphoneos

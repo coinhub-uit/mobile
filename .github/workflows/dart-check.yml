@@ -8,6 +8,7 @@ on:
       - '**.dart'
 
 env:
+  FLUTTER_VERSION: 3.29.x
   FLUTTER_CHANNEL: stable
 
 jobs:
@@ -20,9 +21,9 @@ jobs:
       - name: Setup flutter
         uses: subosito/flutter-action@v2
         with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
           channel: ${{ env.FLUTTER_CHANNEL }}
           cache: true
-          flutter-version-file: pubspec.yaml
 
       - name: Get Dependencies
         run: flutter pub get
