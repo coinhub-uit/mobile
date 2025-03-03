@@ -1,0 +1,107 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      release:
+        description: Release to Github?
+        required: false
+        default: false
+        type: boolean
+      prerelease:
+        description: Make it pre-release / ! latest?
+        required: false
+        default: true
+        type: boolean
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  bump-version:
+    runs-on: ubuntu-latest
+    name: Bump version
+    if: ${{ inputs.release }}
+    outputs:
+      NEW_VERSION: ${{ steps.cz.outputs.version }}
+      RELEASE_NOTE: ${{ steps.git-cliff.outputs.content }}
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: dart-lang/setup-dart@v1
+        with:
+          sdk: 3.7.0
+
+      - name: Get new version
+        id: cz
+        uses: commitizen-tools/commitizen-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          push: false
+          commit: false
+
+      - name: Install version assist
+        run: dart pub global activate version_assist
+
+      - name: Update version and commit
+        run: |
+          version_assist set --version ${{ steps.cz.outputs.version }}
+          version_assist commit
+
+      - uses: fregante/setup-git-user@v2
+
+      - name: Push back to repo
+        run: |
+          git add pubspec.yaml
+          git push origin main --tags
+
+      - name: Generate a changelog
+        uses: orhun/git-cliff-action@v4
+        id: git-cliff
+        with:
+          config: cliff.toml
+          args: -vv --latest --strip header
+
+  build:
+    name: Build APKs and IPA
+    uses: ./.github/workflows/build.yml
+    secrets: inherit
+
+  release:
+    runs-on: ubuntu-latest
+    name: Release
+    needs:
+      - bump-version
+      - build
+    if: needs.bump-version.result == 'success'
+    permissions:
+      contents: write # to be able to publish a GitHub release
+      issues: write # to be able to comment on released issues
+      pull-requests: write # to be able to comment on released pull requests
+      id-token: write # to enable use of OIDC for npm provenance
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          merge-multiple: true
+
+      - name: Release
+        env:
+          cool: true
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ needs.bump-version.outputs.NEW_VERSION }}
+          files: |
+            build/app/outputs/flutter-apk/*
+            build/ios/archive/Runner.xcarchive/Products/Applications/*.ipa
+          body: ${{ needs.bump-version.outputs.RELEASE_NOTE }}
+          make_latest: ${{ ! inputs.prerelease && github.ref != 'main' }}
+          prerelease: ${{ github.ref != 'main' || inputs.prerelease }}

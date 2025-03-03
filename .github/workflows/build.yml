@@ -1,4 +1,4 @@
-name: Build and Release
+name: Build
 
 on:
   workflow_dispatch:
@@ -24,10 +24,6 @@ on:
       - android/**
       - ios/**
 
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: false
-
 env:
   FLUTTER_VERSION: 3.29.x
   FLUTTER_CHANNEL: stable
@@ -39,61 +35,9 @@ env:
     --dart-define OAUTH_GOOGLE_IOS_CLIENT_ID=${{ secrets.OAUTH_GOOGLE_IOS_CLIENT_ID }}
 
 jobs:
-  bump-version:
-    runs-on: ubuntu-latest
-    name: Bump version
-    if: ${{ inputs.release }}
-    outputs:
-      NEW_VERSION: ${{ steps.cz.outputs.version }}
-      RELEASE_NOTE: ${{ steps.git-cliff.outputs.content }}
-    permissions:
-      contents: write
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-      - uses: dart-lang/setup-dart@v1
-        with:
-          sdk: 3.7.0
-
-      - name: Get new version
-        id: cz
-        uses: commitizen-tools/commitizen-action@master
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          push: false
-          commit: false
-
-      - name: Install version assist
-        run: dart pub global activate version_assist
-
-      - name: Update version and commit
-        run: |
-          version_assist set --version ${{ steps.cz.outputs.version }}
-          version_assist commit
-
-      - uses: fregante/setup-git-user@v2
-
-      - name: Push back to repo
-        run: |
-          git add pubspec.yaml
-          git push origin main --tags
-
-      - name: Generate a changelog
-        uses: orhun/git-cliff-action@v4
-        id: git-cliff
-        with:
-          config: cliff.toml
-          args: -vv --latest --strip header
-
   build-apk:
     runs-on: ubuntu-latest
-    name: Build APK
-    if: success() || needs.bump-version.result == 'skipped'
-    needs:
-      - bump-version
+    name: Build APK (${{ matrix.target }})
     strategy:
       fail-fast: false
       matrix:
@@ -143,9 +87,6 @@ jobs:
   build-ipa:
     runs-on: macos-latest
     name: Build IPA
-    if: success() || needs.bump-version.result == 'skipped'
-    needs:
-      - bump-version
     steps:
       - uses: actions/checkout@v4
 
@@ -166,7 +107,8 @@ jobs:
         working-directory: build/ios/archive/Runner.xcarchive/Products/Applications
         shell: bash
         run: |
-          mv Runner.app Payload
+          mkdir Payload
+          mv Runner.app Payload/
           zip -qq -r -9 coinhub.ipa Payload
 
       - name: Upload Artifact
@@ -174,37 +116,3 @@ jobs:
         with:
           name: ipa
           path: build/ios/archive/Runner.xcarchive/Products/Applications/*.ipa
-
-  release:
-    runs-on: ubuntu-latest
-    name: Release
-    needs:
-      - build-apk
-      - build-ipa
-      - bump-version
-    if: needs.bump-version.result == 'success'
-    permissions:
-      contents: write # to be able to publish a GitHub release
-      issues: write # to be able to comment on released issues
-      pull-requests: write # to be able to comment on released pull requests
-      id-token: write # to enable use of OIDC for npm provenance
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - uses: actions/download-artifact@v4
-        with:
-          merge-multiple: true
-
-      - name: Release
-        env:
-          cool: true
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: ${{ needs.bump-version.outputs.NEW_VERSION }}
-          files: |
-            build/app/outputs/flutter-apk/*
-            build/ios/archive/Runner.xcarchive/Products/Applications/*.ipa
-          body: ${{ needs.bump-version.outputs.RELEASE_NOTE }}
-          make_latest: ${{ ! inputs.prerelease && github.ref != 'main' }}
-          prerelease: ${{ github.ref != 'main' || inputs.prerelease }}
