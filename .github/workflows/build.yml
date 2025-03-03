@@ -2,17 +2,6 @@ name: Build
 
 on:
   workflow_dispatch:
-    inputs:
-      release:
-        description: Release to Github?
-        required: false
-        default: false
-        type: boolean
-      prerelease:
-        description: Make it pre-release / ! latest?
-        required: false
-        default: true
-        type: boolean
   push:
     branches:
       - main
