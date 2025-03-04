@@ -20,6 +20,7 @@ ThemeData catppuccinTheme({bool isDark = false}) {
       ),
       backgroundColor: themeFlavor.crust,
       foregroundColor: themeFlavor.mantle,
+      iconTheme: IconThemeData(color: themeFlavor.text),
     ),
     colorScheme: ColorScheme(
       brightness: isDark ? Brightness.dark : Brightness.light,

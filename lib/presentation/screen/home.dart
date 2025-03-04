@@ -25,11 +25,16 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        titleSpacing: 20,
+        titleSpacing: 25,
         backgroundColor: Colors.transparent,
         elevation: 0,
         automaticallyImplyLeading: false,
-        actions: [Icon(Icons.notifications), SizedBox(width: 20)],
+        actions: [
+          Icon(Icons.notifications),
+          SizedBox(width: 5),
+          Icon(Icons.settings),
+          SizedBox(width: 30),
+        ],
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -59,20 +64,37 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Text(placeholderText, style: TextStyle(fontSize: 20)),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () async {
-                try {
-                  await AuthService.signInWithGoogle();
-                } catch (e) {
-                  debugPrint("Sign in failed: $e");
-                }
-              },
-              child: Text("Sign in with google"),
+            SizedBox(height: 22),
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 30),
+              constraints: BoxConstraints.expand(height: 50),
+              child: Text('Balance:', style: TextStyle(fontSize: 40)),
             ),
+            Container(
+              constraints: BoxConstraints.expand(height: 100),
+              padding: EdgeInsets.symmetric(horizontal: 30),
+              child: Transform.translate(
+                offset: Offset(0, -10),
+                child: Text(
+                  '21.987.000đ',
+                  style: TextStyle(fontSize: 60, fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
+            // Text(placeholderText, style: TextStyle(fontSize: 20)),
+            // SizedBox(height: 20),
+            // ElevatedButton(
+            //   onPressed: () async {
+            //     try {
+            //       await AuthService.signInWithGoogle();
+            //     } catch (e) {
+            //       debugPrint("Sign in failed: $e");
+            //     }
+            //   },
+            //   child: Text("Sign in with google"),
+            // ),
           ],
         ),
       ),
