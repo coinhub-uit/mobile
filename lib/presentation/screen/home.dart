@@ -24,6 +24,39 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        titleSpacing: 20,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        automaticallyImplyLeading: false,
+        actions: [Icon(Icons.notifications), SizedBox(width: 20)],
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: [
+                CircleAvatar(
+                  radius: 27,
+                  backgroundImage: NetworkImage(
+                    //imgUrl
+                    "https://avatars.githubusercontent.com/u/47231161?v=4",
+                  ),
+                ),
+                SizedBox(width: 10),
+                Text(
+                  "Hello ,",
+                  style: TextStyle(fontSize: 25, fontWeight: FontWeight.normal),
+                ),
+                SizedBox(width: 10),
+                Text(
+                  "User",
+                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
