@@ -70,7 +70,7 @@ jobs:
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: apk-${{ matrix.target }}
+          name: coinhub-apk-${{ matrix.target }}
           path: build/app/outputs/flutter-apk/*
 
   build-ipa:
@@ -103,5 +103,5 @@ jobs:
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ipa
+          name: coihub-ipa
           path: build/ios/archive/Runner.xcarchive/Products/Applications/*.ipa
