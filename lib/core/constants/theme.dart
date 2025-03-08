@@ -11,6 +11,12 @@ ThemeData catppuccinTheme({bool isDark = false}) {
   return ThemeData(
     useMaterial3: true,
     brightness: isDark ? Brightness.dark : Brightness.light,
+    bottomNavigationBarTheme: BottomNavigationBarThemeData(
+      selectedItemColor: secondaryColor,
+      unselectedItemColor: themeFlavor.text,
+      elevation: 0,
+      showUnselectedLabels: true,
+    ),
     appBarTheme: AppBarTheme(
       elevation: 0,
       titleTextStyle: TextStyle(

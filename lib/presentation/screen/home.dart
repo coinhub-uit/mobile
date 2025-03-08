@@ -3,6 +3,7 @@ import "package:coinhub/core/services/auth.dart";
 import "package:font_awesome_flutter/font_awesome_flutter.dart";
 import "package:coinhub/presentation/components/purple_card.dart";
 import "package:coinhub/presentation/components/yellow_card.dart";
+import "package:coinhub/presentation/components/header_container.dart";
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -72,22 +73,7 @@ class _HomeScreenState extends State<HomeScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(height: 32),
-              Container(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      'Balance:',
-                      style: Theme.of(context).textTheme.titleSmall,
-                    ),
-                    Text(
-                      '21.987.000đ',
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
-                  ],
-                ),
-              ),
+              HeaderContainer(topLabel: "Balance:", bottomLabel: "21.987.000đ"),
               SizedBox(height: 2),
               YellowCard(label: '+5.5%'),
               SizedBox(height: 32),
@@ -130,6 +116,23 @@ class _HomeScreenState extends State<HomeScreen> {
             ],
           ),
         ),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: 0,
+        items: [
+          BottomNavigationBarItem(
+            icon: Icon(FontAwesomeIcons.home),
+            label: "Home",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(FontAwesomeIcons.wallet),
+            label: "Savings",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(FontAwesomeIcons.portrait),
+            label: "Profile",
+          ),
+        ],
       ),
     );
   }
