@@ -3,7 +3,7 @@ import "package:flutter/material.dart";
 class HeaderContainer extends StatelessWidget {
   final String topLabel;
   final String bottomLabel;
-  HeaderContainer({
+  const HeaderContainer({
     super.key,
     required this.topLabel,
     required this.bottomLabel,

@@ -18,6 +18,7 @@ ThemeData catppuccinTheme({bool isDark = false}) {
       showUnselectedLabels: true,
     ),
     appBarTheme: AppBarTheme(
+      surfaceTintColor: Colors.transparent,
       elevation: 0,
       titleTextStyle: TextStyle(
         color: themeFlavor.text,
@@ -45,13 +46,19 @@ ThemeData catppuccinTheme({bool isDark = false}) {
       surface: themeFlavor.base,
     ),
     textTheme: TextTheme(
-      titleLarge: TextStyle(fontSize: 60, fontWeight: FontWeight.bold),
+      titleLarge: TextStyle(
+        fontSize: 60,
+        fontWeight: FontWeight.bold,
+      ), // balance label
       titleSmall: TextStyle(
         fontSize: 36,
         height: 1.0,
         fontWeight: FontWeight.w400,
-      ),
-      displayMedium: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+      ), // balance number
+      displayMedium: TextStyle(
+        fontSize: 28,
+        fontWeight: FontWeight.bold,
+      ), // yellow card
     ).apply(
       bodyColor: themeFlavor.text,
       //displayColor: primaryColor,

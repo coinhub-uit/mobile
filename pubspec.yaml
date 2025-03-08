@@ -43,6 +43,7 @@ dependencies:
   catppuccin_flutter: ^1.0.0
   pinput: ^5.0.1
   font_awesome_flutter: ^10.8.0
+  intl: ^0.20.2
 
 dev_dependencies:
   flutter_test:
