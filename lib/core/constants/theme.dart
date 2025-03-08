@@ -15,12 +15,17 @@ ThemeData catppuccinTheme({bool isDark = false}) {
       elevation: 0,
       titleTextStyle: TextStyle(
         color: themeFlavor.text,
-        fontSize: 20,
+        fontSize: 24,
+        fontWeight: FontWeight.normal,
+      ),
+      toolbarTextStyle: TextStyle(
+        color: themeFlavor.text,
         fontWeight: FontWeight.bold,
+        fontSize: 26,
       ),
       backgroundColor: themeFlavor.crust,
       foregroundColor: themeFlavor.mantle,
-      iconTheme: IconThemeData(color: themeFlavor.text),
+      iconTheme: IconThemeData(color: themeFlavor.text, size: 36),
     ),
     colorScheme: ColorScheme(
       brightness: isDark ? Brightness.dark : Brightness.light,
@@ -33,7 +38,10 @@ ThemeData catppuccinTheme({bool isDark = false}) {
       secondary: themeFlavor.mantle,
       surface: themeFlavor.base,
     ),
-    textTheme: const TextTheme().apply(
+    textTheme: TextTheme(
+      titleLarge: TextStyle(fontSize: 60, fontWeight: FontWeight.bold),
+      titleSmall: TextStyle(fontSize: 36, height: 0.5),
+    ).apply(
       bodyColor: themeFlavor.text,
       displayColor: primaryColor,
     ),

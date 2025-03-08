@@ -30,10 +30,9 @@ class _HomeScreenState extends State<HomeScreen> {
         elevation: 0,
         automaticallyImplyLeading: false,
         actions: [
-          Icon(Icons.notifications),
-          SizedBox(width: 5),
-          Icon(Icons.settings),
-          SizedBox(width: 30),
+          IconButton(icon: Icon(Icons.notifications), onPressed: () {}),
+          IconButton(icon: Icon(Icons.settings), onPressed: () {}),
+          SizedBox(width: 20),
         ],
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -49,13 +48,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 SizedBox(width: 10),
                 Text(
-                  "Hello ,",
-                  style: TextStyle(fontSize: 25, fontWeight: FontWeight.normal),
+                  "Hello,",
+                  style: Theme.of(context).appBarTheme.titleTextStyle,
                 ),
                 SizedBox(width: 10),
                 Text(
                   "User",
-                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+                  style: Theme.of(context).appBarTheme.toolbarTextStyle,
                 ),
               ],
             ),
@@ -65,24 +64,34 @@ class _HomeScreenState extends State<HomeScreen> {
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
+          
           children: [
-            SizedBox(height: 22),
+            SizedBox(height: 48),
             Container(
-              padding: EdgeInsets.symmetric(horizontal: 30),
-              constraints: BoxConstraints.expand(height: 50),
-              child: Text('Balance:', style: TextStyle(fontSize: 40)),
-            ),
-            Container(
-              constraints: BoxConstraints.expand(height: 100),
-              padding: EdgeInsets.symmetric(horizontal: 30),
-              child: Transform.translate(
-                offset: Offset(0, -10),
-                child: Text(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Balance:',
+                    style: Theme.of(context).textTheme.titleSmall,
+                  ),
+                  Text(
                   '21.987.000đ',
-                  style: TextStyle(fontSize: 60, fontWeight: FontWeight.bold),
+                    style: Theme.of(context).textTheme.titleLarge,
                 ),
-              ),
+                ],
+              )
+              
             ),
+            // Container(
+            //   constraints: BoxConstraints.expand(height: 100),
+            //   padding: EdgeInsets.symmetric(horizontal: 30),
+            //   child: Transform.translate(
+            //     offset: Offset(0, -10),
+            //     child:
+            //   ),
+            // ),
             // Text(placeholderText, style: TextStyle(fontSize: 20)),
             // SizedBox(height: 20),
             // ElevatedButton(
