@@ -54,7 +54,7 @@ class _CreatePinScreenState extends State<CreatePinScreen> {
         color: Theme.of(context).colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: Theme.of(context).colorScheme.primary.withOpacity(0.5),
+          color: Theme.of(context).colorScheme.primary.withAlpha(128),
         ),
       ),
     );
