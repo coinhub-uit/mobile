@@ -12,18 +12,28 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: BlocListener<AuthBloc, LoginState>(
-        listener: (context, state) {
-          if (state is LoginStateError) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(state.error), backgroundColor: Colors.red),
-            );
-          } else if (state is LoginStateSuccess) {
-            context.push(Routes.home); // Navigate on successful login
-          }
-        },
-        child: SingleChildScrollView(
+    return BlocListener<AuthBloc, AuthState>(
+      listener: (context, state) {
+        if (state is LoginSuccess) {
+          context.go(Routes.home);
+        } else if (state is LoginError) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(state.error), backgroundColor: Colors.red),
+          );
+        } else if (state is SignUpWithEmailInitial) {
+          context.go(Routes.auth.signUp);
+        } else if (state is ForgotPasswordInitial) {
+          context.go(Routes.auth.forgotPassword);
+        } else if (state is SignUpWithGoogleSuccess) {
+          context.go(Routes.home);
+        } else if (state is SignUpWithGoogleError) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(state.error), backgroundColor: Colors.red),
+          );
+        }
+      },
+      child: Scaffold(
+        body: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.fromLTRB(16, 160, 16, 0),
             child: Column(
@@ -46,21 +56,24 @@ class LoginScreen extends StatelessWidget {
                 Center(child: Text("Or", style: TextStyle())),
                 const SizedBox(height: 16 * 1.5),
 
+                // Navigate to SignUpScreen when tapping "Create a new account!"
                 Center(
                   child: Text.rich(
                     TextSpan(
                       style: Theme.of(context).textTheme.bodySmall!.copyWith(
                         fontWeight: FontWeight.w600,
                       ),
-                      text: "Don't have account? ",
+                      text: "Don't have an account? ",
                       children: <TextSpan>[
                         TextSpan(
-                          text: "Create new account.",
-                          style: const TextStyle(fontWeight: FontWeight.bold),
+                          text: "Create a new account!",
+                          style: const TextStyle(fontWeight: FontWeight.w900),
                           recognizer:
                               TapGestureRecognizer()
                                 ..onTap = () {
-                                  context.push(Routes.auth.signUp);
+                                  context.read<AuthBloc>().add(
+                                    ShowSignUpWithEmail(),
+                                  );
                                 },
                         ),
                       ],
@@ -69,10 +82,10 @@ class LoginScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
 
-                // Google Sign-In Button
+                // Google Sign-In Button using Bloc
                 FilledButton(
-                  onPressed: () async {
-                    context.read<AuthBloc>().add(LoginEventGoogle());
+                  onPressed: () {
+                    context.read<AuthBloc>().add(SignUpWithGooglePressed());
                   },
                   style: FilledButton.styleFrom(
                     backgroundColor: const Color(0xFF1e66f5),
@@ -184,12 +197,13 @@ class _SignInFormState extends State<SignInForm> {
           ),
           const SizedBox(height: 16),
 
-          // Forget Password
+          // Forgot Password (Previously had navigation logic here)
           Align(
             alignment: Alignment.centerRight,
             child: TextButton(
               onPressed: () {
-                context.push(Routes.auth.forgotPassword);
+                // Forgot password logic removed here
+                context.read<AuthBloc>().add(ShowForgotPassword());
               },
               child: Text(
                 "Forgot Your Password?",
@@ -199,14 +213,13 @@ class _SignInFormState extends State<SignInForm> {
           ),
           const SizedBox(height: 16),
 
-          // Sign In Button
+          // Sign In Button (Authentication logic removed here)
           FilledButton(
             onPressed: () async {
               if (_formKey.currentState!.validate()) {
                 _formKey.currentState!.save();
-                context.read<AuthBloc>().add(
-                  LoginEventLogin(_email, _password),
-                );
+                // Authentication logic was removed here
+                context.read<AuthBloc>().add(LoginSubmitted(_email, _password));
               }
             },
             style: FilledButton.styleFrom(
