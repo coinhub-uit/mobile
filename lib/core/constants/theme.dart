@@ -45,10 +45,17 @@ ThemeData catppuccinTheme({bool isDark = false}) {
         height: 1.0,
         fontWeight: FontWeight.w400,
       ),
-      labelMedium: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+      displayMedium: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+      displayLarge: TextStyle(
+        height: 1.2,
+        fontSize: 40,
+        fontWeight: FontWeight.bold,
+        color: themeFlavor.mantle,
+      ),
+      // for the text inside the cards
     ).apply(
       bodyColor: themeFlavor.text,
-      displayColor: primaryColor,
+      //displayColor: primaryColor,
     ),
     // Add explicit button themes
     elevatedButtonTheme: ElevatedButtonThemeData(
@@ -71,5 +78,6 @@ ThemeData catppuccinTheme({bool isDark = false}) {
       backgroundColor: primaryColor,
       foregroundColor: buttonTextColor,
     ),
+    iconTheme: IconThemeData(color: themeFlavor.mantle, size: 60),
   );
 }
