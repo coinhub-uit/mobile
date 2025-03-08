@@ -2,6 +2,7 @@ import "package:coinhub/presentation/screen/account/create_pin_screen.dart";
 import "package:coinhub/presentation/screen/auth/forgot_password_screen.dart";
 import "package:coinhub/presentation/screen/auth/login_screen.dart";
 import "package:coinhub/presentation/screen/auth/sign_up_screen.dart";
+import "package:coinhub/presentation/screen/auth/verify_screen.dart";
 import "package:coinhub/presentation/screen/home.dart";
 import "package:coinhub/presentation/screen/setting/pin_screen.dart";
 import "package:flutter/material.dart";
@@ -42,9 +43,10 @@ class RouteRouter {
       ),
       GoRoute(
         name: "verify",
-        path: Routes.auth.verify,
+        path: "${Routes.auth.verify}/:email",
         pageBuilder: (context, state) {
-          return MaterialPage(child: HomeScreen());
+          final email = state.pathParameters["email"] ?? "";
+          return MaterialPage(child: VerifyScreen(email: email));
         },
       ),
       GoRoute(

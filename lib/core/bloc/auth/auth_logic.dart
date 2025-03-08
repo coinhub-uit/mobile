@@ -98,39 +98,35 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     });
 
     on<SignUpWithEmailSubmitted>((event, emit) async {
-      if (state is SignUpWithEmailInitial) {
-        final current = state as SignUpWithEmailInitial;
-        final email = current.email.trim();
-        final password = current.password.trim();
-        final name = current.name.trim();
+      final email = event.email.trim();
+      final password = event.password.trim();
 
-        if (email.isEmpty || password.isEmpty || name.isEmpty) {
-          emit(SignUpWithEmailError("Please fill in all fields."));
-          return;
-        }
+      final name = "test";
 
-        if (password.length < 6) {
-          emit(
-            SignUpWithEmailError(
-              "Password must be at least 6 characters long.",
-            ),
-          );
-          return;
-        }
+      if (email.isEmpty || password.isEmpty || name.isEmpty) {
+        emit(SignUpWithEmailError("Please fill in all fields."));
+        return;
+      }
 
-        if (!email.isValidEmail()) {
-          emit(SignUpWithEmailError("Please enter a valid email."));
-          return;
-        }
+      if (password.length < 6) {
+        emit(
+          SignUpWithEmailError("Password must be at least 6 characters long."),
+        );
+        return;
+      }
 
-        emit(SignUpWithEmailLoading());
+      if (!email.isValidEmail()) {
+        emit(SignUpWithEmailError("Please enter a valid email."));
+        return;
+      }
 
-        try {
-          await AuthService.signUpWithEmailandPassword(email, password);
-          emit(SignUpWithEmailSuccess("Sign-up successful."));
-        } catch (error) {
-          emit(SignUpWithEmailError(error.toString()));
-        }
+      emit(SignUpWithEmailLoading());
+
+      try {
+        await AuthService.signUpWithEmailandPassword(email, password);
+        emit(SignUpWithEmailSuccess("Sign-up successful."));
+      } catch (error) {
+        emit(SignUpWithEmailError(error.toString()));
       }
     });
 
@@ -150,8 +146,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     on<ForgotPasswordSubmitted>((event, emit) async {
       if (state is ForgotPasswordInitial) {
-        final current = state as ForgotPasswordInitial;
-        final email = current.email.trim();
+        final email = event.email.trim();
 
         if (!email.isValidEmail()) {
           emit(ForgotPasswordError("Please enter a valid email."));
@@ -160,12 +155,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
         emit(ForgotPasswordLoading());
 
-        try {
-          // await AuthService.sendPasswordResetEmail(email);
-          emit(ForgotPasswordSuccess("Password reset email sent."));
-        } catch (error) {
-          emit(ForgotPasswordError(error.toString()));
-        }
+        // try {
+        // await AuthService.sendPasswordResetEmail(email);
+        emit(ForgotPasswordSuccess("Password reset email sent."));
+        // } catch (error) {
+        //   emit(ForgotPasswordError(error.toString()));
+        // }
       }
     });
 

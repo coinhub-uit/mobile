@@ -84,7 +84,8 @@ class SignUpWithGooglePressed extends AuthEvent {
 
 /// Action event to submit the forgot password request.
 class ForgotPasswordSubmitted extends AuthEvent {
-  const ForgotPasswordSubmitted();
+  final String email;
+  const ForgotPasswordSubmitted(this.email);
 }
 
 class LogoutEvent extends AuthEvent {
