@@ -54,11 +54,15 @@ ThemeData catppuccinTheme({bool isDark = false}) {
         fontSize: 36,
         height: 1.0,
         fontWeight: FontWeight.w400,
-      ), // balance number
-      displayMedium: TextStyle(
-        fontSize: 28,
+      ),
+      displayMedium: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+      displayLarge: TextStyle(
+        height: 1.2,
+        fontSize: 40,
         fontWeight: FontWeight.bold,
-      ), // yellow card
+        color: themeFlavor.mantle,
+      ),
+      // for the text inside the cards
     ).apply(
       bodyColor: themeFlavor.text,
       //displayColor: primaryColor,
