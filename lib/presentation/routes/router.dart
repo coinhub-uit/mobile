@@ -66,7 +66,20 @@ class RouteRouter {
           return CreatePinScreen();
         },
       ),
-      
+      GoRoute(
+        name: "pin",
+        path: Routes.transaction.pin,
+        builder: (context, state) {
+          return PinEntryScreen();
+        },
+      ),
+      GoRoute(
+        name: "newPin",
+        path: Routes.account.pin,
+        builder: (context, state) {
+          return CreatePinScreen();
+        },
+      ),
     ],
   );
 }
