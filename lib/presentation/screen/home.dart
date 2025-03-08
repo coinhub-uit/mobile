@@ -7,8 +7,11 @@ import "package:coinhub/presentation/components/yellow_card.dart";
 import "package:coinhub/presentation/components/header_container.dart";
 import "package:coinhub/presentation/components/home_app_bar.dart";
 import "package:coinhub/presentation/components/fixed_deposit_card.dart";
+<<<<<<< HEAD
 =======
 >>>>>>> d1fd755 (feat(homeScreen): add cards)
+=======
+>>>>>>> 298da96 (feat(savingsScreen): finish savings screen)
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -47,6 +50,7 @@ class _HomeScreenState extends State<HomeScreen> {
       body: _screens[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
 <<<<<<< HEAD
+<<<<<<< HEAD
         currentIndex: _selectedIndex,
         onTap: (index) {
           _onItemTapped(index);
@@ -56,6 +60,12 @@ class _HomeScreenState extends State<HomeScreen> {
         onTap: (index) {
           _onItemTapped(index);
 >>>>>>> a36aa39 (feat(homeScreen): add navigation to savings and profile screens)
+=======
+        currentIndex: _selectedIndex,
+        onTap: (index) {
+          _onItemTapped(index);
+          
+>>>>>>> 298da96 (feat(savingsScreen): finish savings screen)
         },
         items: [
           BottomNavigationBarItem(
@@ -78,11 +88,13 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
+// home screen content
 class HomeScreenContent extends StatelessWidget {
   const HomeScreenContent({super.key});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+<<<<<<< HEAD
       appBar: AppBar(
         titleSpacing: 24,
         backgroundColor: Colors.transparent,
@@ -105,6 +117,8 @@ class HomeScreenContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+=======
+>>>>>>> 298da96 (feat(savingsScreen): finish savings screen)
       appBar: HomeAppBar(
         userName: 'User',
         imgUrl: 'https://avatars.githubusercontent.com/u/47231161?v=4',
@@ -124,10 +138,14 @@ class HomeScreenContent extends StatelessWidget {
               SizedBox(height: 32),
               Padding(
 <<<<<<< HEAD
+<<<<<<< HEAD
                 padding: const EdgeInsets.symmetric(horizontal: 2),
 =======
                 padding: const EdgeInsets.symmetric(horizontal: 8),
 >>>>>>> a36aa39 (feat(homeScreen): add navigation to savings and profile screens)
+=======
+                padding: const EdgeInsets.symmetric(horizontal: 2),
+>>>>>>> 298da96 (feat(savingsScreen): finish savings screen)
                 child: PurpleCard(
                   icon: FontAwesomeIcons.piggyBank,
                   label: "Add new\nSaving plan",
@@ -245,12 +263,12 @@ class SavingsScreen extends StatelessWidget {
               ),
               SizedBox(height: 12),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 2),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     SizedBox(
-                      width: MediaQuery.of(context).size.width / 2 - 40,
+                      width: MediaQuery.of(context).size.width / 2 - 32,
                       height: 180,
                       child: PurpleCard(
                         icon: FontAwesomeIcons.arrowDown,
@@ -262,7 +280,7 @@ class SavingsScreen extends StatelessWidget {
                     ),
                     SizedBox(width: 12),
                     SizedBox(
-                      width: MediaQuery.of(context).size.width / 2 - 40,
+                      width: MediaQuery.of(context).size.width / 2 - 32,
                       height: 180,
                       child: PurpleCard(
                         icon: FontAwesomeIcons.arrowUpFromBracket,
@@ -286,47 +304,15 @@ class SavingsScreen extends StatelessWidget {
   }
 }
 
+// savings screen
 class SavingsScreen extends StatelessWidget {
   const SavingsScreen({super.key});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        titleSpacing: 24,
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        automaticallyImplyLeading: false,
-        actions: [
-          IconButton(icon: Icon(Icons.notifications), onPressed: () {}),
-          IconButton(icon: Icon(Icons.settings), onPressed: () {}),
-          SizedBox(width: 20),
-        ],
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              children: [
-                CircleAvatar(
-                  radius: 27,
-                  backgroundImage: NetworkImage(
-                    //imgUrl
-                    "https://avatars.githubusercontent.com/u/47231161?v=4",
-                  ),
-                ),
-                SizedBox(width: 10),
-                Text(
-                  "Hello,",
-                  style: Theme.of(context).appBarTheme.titleTextStyle,
-                ),
-                SizedBox(width: 10),
-                Text(
-                  "User",
-                  style: Theme.of(context).appBarTheme.toolbarTextStyle,
-                ),
-              ],
-            ),
-          ],
-        ),
+      appBar: HomeAppBar(
+        userName: "User",
+        imgUrl: "https://avatars.githubusercontent.com/u/47231161?v=4",
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -337,7 +323,24 @@ class SavingsScreen extends StatelessWidget {
             SizedBox(height: 32),
             HeaderContainer(topLabel: "Savings:", bottomLabel: "21.987.000đ"),
             SizedBox(height: 2),
-            YellowCard(label: '+123.000đ'),
+            YellowCard(label: "+123.000đ"),
+            SizedBox(height: 24),
+            Expanded(
+              child: ListView.builder(
+                itemCount: 5,
+                itemBuilder: (context, index) {
+                  return FixedDepositCard(
+                    index: index + 1,
+                    moneyInit: 1234000,
+                    profit: 30000,
+                    profitPercentage: 5.5,
+                    startDate: "1/1/2025",
+                    endDate: "1/6/2025",
+                  );
+                },
+              ),
+            )
+            
           ],
         ),
       ),

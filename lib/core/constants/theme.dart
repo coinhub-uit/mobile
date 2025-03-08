@@ -56,13 +56,6 @@ ThemeData catppuccinTheme({bool isDark = false}) {
         fontWeight: FontWeight.w400,
       ),
       displayMedium: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
-      displayLarge: TextStyle(
-        height: 1.2,
-        fontSize: 40,
-        fontWeight: FontWeight.bold,
-        color: themeFlavor.mantle,
-      ),
-      // for the text inside the cards
     ).apply(
       bodyColor: themeFlavor.text,
       //displayColor: primaryColor,
