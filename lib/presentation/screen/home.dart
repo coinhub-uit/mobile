@@ -46,10 +46,16 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       body: _screens[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
+<<<<<<< HEAD
         currentIndex: _selectedIndex,
         onTap: (index) {
           _onItemTapped(index);
           
+=======
+        currentIndex: 0,
+        onTap: (index) {
+          _onItemTapped(index);
+>>>>>>> a36aa39 (feat(homeScreen): add navigation to savings and profile screens)
         },
         items: [
           BottomNavigationBarItem(
@@ -64,6 +70,29 @@ class _HomeScreenState extends State<HomeScreen> {
             icon: Icon(FontAwesomeIcons.portrait),
             label: "Profile",
           ),
+<<<<<<< HEAD
+=======
+        ],
+      ),
+    );
+  }
+}
+
+class HomeScreenContent extends StatelessWidget {
+  const HomeScreenContent({super.key});
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        titleSpacing: 24,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        automaticallyImplyLeading: false,
+        actions: [
+          IconButton(icon: Icon(Icons.notifications), onPressed: () {}),
+          IconButton(icon: Icon(Icons.settings), onPressed: () {}),
+          SizedBox(width: 20),
+>>>>>>> a36aa39 (feat(homeScreen): add navigation to savings and profile screens)
         ],
       ),
     );
@@ -94,7 +123,11 @@ class HomeScreenContent extends StatelessWidget {
               YellowCard(label: '+5.5%'),
               SizedBox(height: 32),
               Padding(
+<<<<<<< HEAD
                 padding: const EdgeInsets.symmetric(horizontal: 2),
+=======
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+>>>>>>> a36aa39 (feat(homeScreen): add navigation to savings and profile screens)
                 child: PurpleCard(
                   icon: FontAwesomeIcons.piggyBank,
                   label: "Add new\nSaving plan",
@@ -102,6 +135,7 @@ class HomeScreenContent extends StatelessWidget {
                   arrowSize: 64,
                   labelSize: 36,
                 ),
+<<<<<<< HEAD
               ),
               SizedBox(height: 12),
               Padding(
@@ -206,46 +240,116 @@ class SavingsScreen extends StatelessWidget {
                 iconSize: 56,
                 arrowSize: 64,
                 labelSize: 36,
+=======
+>>>>>>> a36aa39 (feat(homeScreen): add navigation to savings and profile screens)
               ),
               SizedBox(height: 12),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width / 2 - 30,
-                    height: 180,
-                    child: PurpleCard(
-                      icon: FontAwesomeIcons.arrowDown,
-                      label: "Deposit",
-                      iconSize: 48,
-                      arrowSize: 56,
-                      labelSize: 24,
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width / 2 - 40,
+                      height: 180,
+                      child: PurpleCard(
+                        icon: FontAwesomeIcons.arrowDown,
+                        label: "Deposit",
+                        iconSize: 48,
+                        arrowSize: 56,
+                        labelSize: 24,
+                      ),
                     ),
-                  ),
-                  SizedBox(width: 12),
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width / 2 - 30,
-                    height: 180,
-                    child: PurpleCard(
-                      icon: FontAwesomeIcons.arrowUpFromBracket,
-                      label: "Withdraw",
-                      iconSize: 48,
-                      arrowSize: 56,
-                      labelSize: 24,
+                    SizedBox(width: 12),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width / 2 - 40,
+                      height: 180,
+                      child: PurpleCard(
+                        icon: FontAwesomeIcons.arrowUpFromBracket,
+                        label: "Withdraw",
+                        iconSize: 48,
+                        arrowSize: 56,
+                        labelSize: 24,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ],
           ),
 >>>>>>> d1fd755 (feat(homeScreen): add cards)
         ),
       ),
+<<<<<<< HEAD
+=======
+    );
+  }
+}
+
+class SavingsScreen extends StatelessWidget {
+  const SavingsScreen({super.key});
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        titleSpacing: 24,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        automaticallyImplyLeading: false,
+        actions: [
+          IconButton(icon: Icon(Icons.notifications), onPressed: () {}),
+          IconButton(icon: Icon(Icons.settings), onPressed: () {}),
+          SizedBox(width: 20),
+        ],
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: [
+                CircleAvatar(
+                  radius: 27,
+                  backgroundImage: NetworkImage(
+                    //imgUrl
+                    "https://avatars.githubusercontent.com/u/47231161?v=4",
+                  ),
+                ),
+                SizedBox(width: 10),
+                Text(
+                  "Hello,",
+                  style: Theme.of(context).appBarTheme.titleTextStyle,
+                ),
+                SizedBox(width: 10),
+                Text(
+                  "User",
+                  style: Theme.of(context).appBarTheme.toolbarTextStyle,
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(height: 32),
+            HeaderContainer(topLabel: "Savings:", bottomLabel: "21.987.000đ"),
+            SizedBox(height: 2),
+            YellowCard(label: '+123.000đ'),
+          ],
+        ),
+      ),
+>>>>>>> a36aa39 (feat(homeScreen): add navigation to savings and profile screens)
     );
   }
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> a36aa39 (feat(homeScreen): add navigation to savings and profile screens)
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
   @override
@@ -256,10 +360,13 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 }
+<<<<<<< HEAD
 =======
 
 
 >>>>>>> d1fd755 (feat(homeScreen): add cards)
+=======
+>>>>>>> a36aa39 (feat(homeScreen): add navigation to savings and profile screens)
 // Container(
 //   constraints: BoxConstraints.expand(height: 100),
 //   padding: EdgeInsets.symmetric(horizontal: 30),
