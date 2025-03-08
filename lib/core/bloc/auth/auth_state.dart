@@ -1,22 +1,85 @@
-abstract class LoginState {}
+// Base state class
+abstract class AuthState {}
 
-class LoginStateInitial extends LoginState {
+// --- Login States ---
+class LoginInitial extends AuthState {
   final String username;
   final String password;
 
-  LoginStateInitial(this.username, this.password);
+  LoginInitial(this.username, this.password);
 }
 
-class LoginStateLoading extends LoginState {}
+class LoginLoading extends AuthState {}
 
-class LoginStateError extends LoginState {
+class LoginError extends AuthState {
   final String error;
 
-  LoginStateError(this.error);
+  LoginError(this.error);
 }
 
-class LoginStateSuccess extends LoginState {
+class LoginSuccess extends AuthState {
   final String jwt;
 
-  LoginStateSuccess(this.jwt);
+  LoginSuccess(this.jwt);
+}
+
+// --- Sign-Up with Email States ---
+class SignUpWithEmailInitial extends AuthState {
+  final String email;
+  final String password;
+  final String name;
+
+  SignUpWithEmailInitial(this.email, this.password, this.name);
+}
+
+class SignUpWithEmailLoading extends AuthState {}
+
+class SignUpWithEmailError extends AuthState {
+  final String error;
+
+  SignUpWithEmailError(this.error);
+}
+
+class SignUpWithEmailSuccess extends AuthState {
+  final String jwt;
+
+  SignUpWithEmailSuccess(this.jwt);
+}
+
+// --- Sign-Up with Google States ---
+class SignUpWithGoogleInitial extends AuthState {}
+
+class SignUpWithGoogleLoading extends AuthState {}
+
+class SignUpWithGoogleError extends AuthState {
+  final String error;
+
+  SignUpWithGoogleError(this.error);
+}
+
+class SignUpWithGoogleSuccess extends AuthState {
+  final String jwt;
+
+  SignUpWithGoogleSuccess(this.jwt);
+}
+
+// --- Forgot Password States ---
+class ForgotPasswordInitial extends AuthState {
+  final String email;
+
+  ForgotPasswordInitial(this.email);
+}
+
+class ForgotPasswordLoading extends AuthState {}
+
+class ForgotPasswordError extends AuthState {
+  final String error;
+
+  ForgotPasswordError(this.error);
+}
+
+class ForgotPasswordSuccess extends AuthState {
+  final String message;
+
+  ForgotPasswordSuccess(this.message);
 }

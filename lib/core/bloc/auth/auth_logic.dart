@@ -4,86 +4,178 @@ import "package:coinhub/core/services/auth.dart";
 import "package:coinhub/core/util/email_validator.dart";
 import "package:flutter_bloc/flutter_bloc.dart";
 
-class AuthBloc extends Bloc<LoginEvent, LoginState> {
-  AuthBloc() : super(LoginStateInitial("", "")) {
-    on<LoginEventLogin>((event, emit) async {
-      final email = event.email;
-      final password = event.password;
+class AuthBloc extends Bloc<AuthEvent, AuthState> {
+  AuthBloc() : super(LoginInitial("", "")) {
+    // Navigation Events
+    on<ShowLogin>((event, emit) {
+      emit(LoginInitial("", ""));
+    });
 
-      if (email.isEmpty || password.isEmpty) {
-        emit(LoginStateError("Please fill in all fields."));
-        return;
-      }
+    on<ShowSignUpWithEmail>((event, emit) {
+      emit(SignUpWithEmailInitial("", "", ""));
+    });
 
-      if (password.trim().length < 6) {
-        emit(LoginStateError("Password must be at least 6 characters long."));
-        return;
-      }
+    on<ShowForgotPassword>((event, emit) {
+      emit(ForgotPasswordInitial(""));
+    });
 
-      if (!email.trim().isValidEmail()) {
-        emit(LoginStateError("Please enter a valid email."));
-        return;
-      }
-
-      emit(LoginStateLoading());
-
-      try {
-        await AuthService.signInWithEmailandPassword(email, password);
-        emit(LoginStateSuccess("Success"));
-      } catch (error) {
-        emit(LoginStateError(error.toString()));
+    // Form Update Events
+    on<LoginUsernameChanged>((event, emit) {
+      if (state is LoginInitial) {
+        final current = state as LoginInitial;
+        emit(LoginInitial(event.username, current.password));
       }
     });
 
-    on<LoginEventGoogle>((event, emit) async {
-      emit(LoginStateLoading());
+    on<LoginPasswordChanged>((event, emit) {
+      if (state is LoginInitial) {
+        final current = state as LoginInitial;
+        emit(LoginInitial(current.username, event.password));
+      }
+    });
 
+    on<SignUpEmailChanged>((event, emit) {
+      if (state is SignUpWithEmailInitial) {
+        final current = state as SignUpWithEmailInitial;
+        emit(
+          SignUpWithEmailInitial(event.email, current.password, current.name),
+        );
+      }
+    });
+
+    on<SignUpPasswordChanged>((event, emit) {
+      if (state is SignUpWithEmailInitial) {
+        final current = state as SignUpWithEmailInitial;
+        emit(
+          SignUpWithEmailInitial(current.email, event.password, current.name),
+        );
+      }
+    });
+
+    on<SignUpNameChanged>((event, emit) {
+      if (state is SignUpWithEmailInitial) {
+        final current = state as SignUpWithEmailInitial;
+        emit(
+          SignUpWithEmailInitial(current.email, current.password, event.name),
+        );
+      }
+    });
+
+    on<ForgotPasswordEmailChanged>((event, emit) {
+      if (state is ForgotPasswordInitial) {
+        emit(ForgotPasswordInitial(event.email));
+      }
+    });
+
+    // Action Events
+    on<LoginSubmitted>((event, emit) async {
+      final username = event.email.trim();
+      final password = event.password.trim();
+
+      if (username.isEmpty || password.isEmpty) {
+        emit(LoginError("Please fill in all fields."));
+        return;
+      }
+
+      if (password.length < 6) {
+        emit(LoginError("Password must be at least 6 characters long."));
+        return;
+      }
+
+      if (!username.isValidEmail()) {
+        emit(LoginError("Please enter a valid email."));
+        return;
+      }
+
+      emit(LoginLoading());
+
+      try {
+        await AuthService.signInWithEmailandPassword(username, password);
+        emit(LoginSuccess("Login successful."));
+      } catch (error) {
+        emit(LoginError("Incorrect Email and/or Password."));
+      }
+    });
+
+    on<SignUpWithEmailSubmitted>((event, emit) async {
+      if (state is SignUpWithEmailInitial) {
+        final current = state as SignUpWithEmailInitial;
+        final email = current.email.trim();
+        final password = current.password.trim();
+        final name = current.name.trim();
+
+        if (email.isEmpty || password.isEmpty || name.isEmpty) {
+          emit(SignUpWithEmailError("Please fill in all fields."));
+          return;
+        }
+
+        if (password.length < 6) {
+          emit(
+            SignUpWithEmailError(
+              "Password must be at least 6 characters long.",
+            ),
+          );
+          return;
+        }
+
+        if (!email.isValidEmail()) {
+          emit(SignUpWithEmailError("Please enter a valid email."));
+          return;
+        }
+
+        emit(SignUpWithEmailLoading());
+
+        try {
+          await AuthService.signUpWithEmailandPassword(email, password);
+          emit(SignUpWithEmailSuccess("Sign-up successful."));
+        } catch (error) {
+          emit(SignUpWithEmailError(error.toString()));
+        }
+      }
+    });
+
+    on<SignUpWithGooglePressed>((event, emit) async {
+      emit(SignUpWithGoogleLoading());
       try {
         final user = await AuthService.signInWithGoogle();
-
         if (user != null) {
-          if (!emit.isDone) emit(LoginStateSuccess("Success"));
+          emit(SignUpWithGoogleSuccess("Google sign-in successful."));
         } else {
-          if (!emit.isDone) emit(LoginStateError("Google sign-in failed."));
+          emit(SignUpWithGoogleError("Google sign-in failed."));
         }
       } catch (e) {
-        if (!emit.isDone) emit(LoginStateError("An error occurred: $e"));
+        emit(SignUpWithGoogleError("An error occurred: $e"));
       }
     });
 
-    on<LoginEventLogout>((event, emit) {
-      emit(LoginStateLoading());
-      AuthService.signOut()
-          .then((value) => emit(LoginStateInitial("", "")))
-          .catchError((error) => emit(LoginStateError(error.toString())));
+    on<ForgotPasswordSubmitted>((event, emit) async {
+      if (state is ForgotPasswordInitial) {
+        final current = state as ForgotPasswordInitial;
+        final email = current.email.trim();
+
+        if (!email.isValidEmail()) {
+          emit(ForgotPasswordError("Please enter a valid email."));
+          return;
+        }
+
+        emit(ForgotPasswordLoading());
+
+        try {
+          // await AuthService.sendPasswordResetEmail(email);
+          emit(ForgotPasswordSuccess("Password reset email sent."));
+        } catch (error) {
+          emit(ForgotPasswordError(error.toString()));
+        }
+      }
     });
 
-    on<ForgotPasswordEvent>((event, emit) {
-      final email = event.email;
-      if (!email.trim().isValidEmail()) {
-        emit(LoginStateError("Please enter a valid email."));
-      } else {
-        emit(LoginStateLoading());
-        // TODO: Implement forgot password
-      }
-    });
-    on<ResetPasswordEvent>((event, emit) {
-      final password = event.password;
-      // final token = event.token;
-      if (password.trim().length < 6) {
-        emit(LoginStateError("Password must be at least 6 characters long."));
-      } else {
-        emit(LoginStateLoading());
-        // TODO: Implement reset password
-      }
-    });
-    on<OTPEvent>((event, emit) {
-      final otp = event.otp;
-      if (otp.trim().length != 6) {
-        emit(LoginStateError("OTP must be at least 6 characters long."));
-      } else {
-        emit(LoginStateLoading());
-        // Call the authentication service here
+    on<LogoutEvent>((event, emit) async {
+      emit(LoginLoading());
+      try {
+        await AuthService.signOut();
+        emit(LoginInitial("", ""));
+      } catch (error) {
+        emit(LoginError(error.toString()));
       }
     });
   }
