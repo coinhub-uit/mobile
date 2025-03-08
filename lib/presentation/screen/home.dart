@@ -25,7 +25,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        titleSpacing: 25,
+        titleSpacing: 24,
         backgroundColor: Colors.transparent,
         elevation: 0,
         automaticallyImplyLeading: false,
@@ -64,9 +64,9 @@ class _HomeScreenState extends State<HomeScreen> {
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
-          
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(height: 48),
+            SizedBox(height: 32),
             Container(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -77,36 +77,52 @@ class _HomeScreenState extends State<HomeScreen> {
                     style: Theme.of(context).textTheme.titleSmall,
                   ),
                   Text(
-                  '21.987.000đ',
+                    '21.987.000đ',
                     style: Theme.of(context).textTheme.titleLarge,
                 ),
                 ],
               )
+            ),
+            SizedBox(height: 10),
+            Card(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(18),
+              ),
+              color: Theme.of(context).colorScheme.onSecondary,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
+                child: Text(
+                  "+5.5%",
+                  style: Theme.of(context).textTheme.labelMedium,
+                ),
+              ),
               
             ),
-            // Container(
-            //   constraints: BoxConstraints.expand(height: 100),
-            //   padding: EdgeInsets.symmetric(horizontal: 30),
-            //   child: Transform.translate(
-            //     offset: Offset(0, -10),
-            //     child:
-            //   ),
-            // ),
-            // Text(placeholderText, style: TextStyle(fontSize: 20)),
-            // SizedBox(height: 20),
-            // ElevatedButton(
-            //   onPressed: () async {
-            //     try {
-            //       await AuthService.signInWithGoogle();
-            //     } catch (e) {
-            //       debugPrint("Sign in failed: $e");
-            //     }
-            //   },
-            //   child: Text("Sign in with google"),
-            // ),
           ],
         ),
       ),
     );
   }
 }
+
+
+// Container(
+//   constraints: BoxConstraints.expand(height: 100),
+//   padding: EdgeInsets.symmetric(horizontal: 30),
+//   child: Transform.translate(
+//     offset: Offset(0, -10),
+//     child:
+//   ),
+// ),
+// Text(placeholderText, style: TextStyle(fontSize: 20)),
+// SizedBox(height: 20),
+// ElevatedButton(
+//   onPressed: () async {
+//     try {
+//       await AuthService.signInWithGoogle();
+//     } catch (e) {
+//       debugPrint("Sign in failed: $e");
+//     }
+//   },
+//   child: Text("Sign in with google"),
+// ),

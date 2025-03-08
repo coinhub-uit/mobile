@@ -40,7 +40,12 @@ ThemeData catppuccinTheme({bool isDark = false}) {
     ),
     textTheme: TextTheme(
       titleLarge: TextStyle(fontSize: 60, fontWeight: FontWeight.bold),
-      titleSmall: TextStyle(fontSize: 36, height: 0.5),
+      titleSmall: TextStyle(
+        fontSize: 36,
+        height: 1.0,
+        fontWeight: FontWeight.w400,
+      ),
+      labelMedium: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
     ).apply(
       bodyColor: themeFlavor.text,
       displayColor: primaryColor,
