@@ -1,7 +1,9 @@
+import "package:coinhub/presentation/screen/account/create_pin_screen.dart";
 import "package:coinhub/presentation/screen/auth/forgot_password_screen.dart";
 import "package:coinhub/presentation/screen/auth/login_screen.dart";
 import "package:coinhub/presentation/screen/auth/sign_up_screen.dart";
 import "package:coinhub/presentation/screen/home.dart";
+import "package:coinhub/presentation/screen/setting/pin_screen.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
 import "package:coinhub/presentation/routes/routes.dart";
@@ -43,6 +45,20 @@ class RouteRouter {
         path: Routes.auth.verify,
         pageBuilder: (context, state) {
           return MaterialPage(child: HomeScreen());
+        },
+      ),
+      GoRoute(
+        name: "pin",
+        path: Routes.transaction.pin,
+        builder: (context, state) {
+          return PinEntryScreen();
+        },
+      ),
+      GoRoute(
+        name: "newPin",
+        path: Routes.account.pin,
+        builder: (context, state) {
+          return CreatePinScreen();
         },
       ),
     ],

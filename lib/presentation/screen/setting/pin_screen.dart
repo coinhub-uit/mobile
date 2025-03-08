@@ -1,7 +1,7 @@
-import "package:flutter/widgets.dart";
+import "package:flutter/material.dart";
 
-class PinScreen extends StatelessWidget {
-  const PinScreen({super.key});
+class PinEntryScreen extends StatelessWidget {
+  const PinEntryScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

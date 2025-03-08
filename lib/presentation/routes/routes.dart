@@ -3,6 +3,7 @@ class Routes {
 
   static Auth auth = Auth();
   static Account account = Account();
+  static Transaction transaction = Transaction();
 }
 
 class Auth {
@@ -14,5 +15,12 @@ class Auth {
 }
 
 class Account {
+  final String root = "/account";
+  String get pin => "$root/pin";
   //TODO: Implement account routes
+}
+
+class Transaction {
+  final String root = "/transaction";
+  String get pin => "$root/pin";
 }
