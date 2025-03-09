@@ -25,16 +25,31 @@
 
 ## DOWNLOAD
 
-[![Android](https://img.shields.io/badge/android-universal-cba6f7?style=for-the-badge&logo=android&logoColor=a6e3a1)](../../releases/latest/download/coinhub.apk)
-[![IOS](https://img.shields.io/badge/ios-universal-f38ba8?style=for-the-badge&logo=apple&logoColor=cdd6f4)](../../releases/latest/download/coinhub.ipa)
+[![Android ARM64](https://img.shields.io/badge/android-arm64-cba6f7?style=for-the-badge&logo=android&logoColor=a6e3a1)](../../releases/latest/download/coinhub-arm64.apk)
+[![Android ARM](https://img.shields.io/badge/android-arm-f38ba8?style=for-the-badge&logo=android&logoColor=a6e3a1)](../../releases/latest/download/coinhub-arm.apk)
+[![Android X64](https://img.shields.io/badge/android-x64-fab387?style=for-the-badge&logo=android&logoColor=a6e3a1)](../../releases/latest/download/coinhub-x64.apk)
+
+[![IOS / IPADOS](https://img.shields.io/badge/ios%20%2F%20ipados-ipa-f9e2af?style=for-the-badge&logo=apple&logoColor=cdd6f4)](../../releases/latest/download/coinhub.ipa)
+[![Trollstore](https://img.shields.io/badge/ios%20%2F%20ipados-trollstore-89b4fa?style=for-the-badge&logoColor=cdd6f4)](apple-magnifier://install?url=https://github.com/coinhub/mobile/releases/latest/download/coinhub.ipa)
 
 > [!NOTE]
-> The IPA is unsigned. You need to sign it before installing. Or you can install with Trollstore, Jailbreak, etc...
+>
+> - The IPA is unsigned. You need to sign it before installing. Or you can install with Trollstore, Jailbreak, etc...
+> - With trollstore link, you have to enable trollstore "URL Scheme" in Trollstore's security
 
 ---
 
 ## DEV
 
-```sh
-dart run ./scripts/bootstrap.dart
-```
+- Bootstrapping
+
+  ```sh
+  dart run ./scripts/bootstrap.dart
+
+  # or
+  # just restore
+  ```
+
+- Dev:
+  - Vscode: Press <kbd>F5</kbd> to debug _(need dart and flutter extension)_
+  - CLI: `just` to run debug
