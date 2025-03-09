@@ -1,5 +1,6 @@
 import "dart:async";
 
+import "package:coinhub/presentation/components/welcome_text.dart";
 import "package:flutter/material.dart";
 import "package:pinput/pinput.dart";
 
@@ -187,34 +188,5 @@ class _VerifyScreenState extends State<VerifyScreen> {
         });
       }
     });
-  }
-}
-
-/// This screen was initially using Bloc for authentication state management.
-/// - BlocListener handled success and error states from the authentication flow.
-/// - Navigation logic was used to transition users based on verification success.
-/// - Removed navigation, Bloc, and authentication logic for a UI-only version.
-
-class WelcomeText extends StatelessWidget {
-  final String title, text;
-
-  const WelcomeText({super.key, required this.title, required this.text});
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          title,
-          style: Theme.of(context).textTheme.titleLarge!.copyWith(
-            fontWeight: FontWeight.w600,
-            fontSize: 24,
-          ),
-        ),
-        const SizedBox(height: 8),
-        Text(text, style: const TextStyle(color: Color(0xFF868686))),
-        const SizedBox(height: 24),
-      ],
-    );
   }
 }

@@ -2,6 +2,7 @@ import "package:coinhub/core/bloc/auth/auth_event.dart";
 import "package:coinhub/core/bloc/auth/auth_logic.dart";
 import "package:coinhub/core/bloc/auth/auth_state.dart";
 import "package:coinhub/core/util/email_validator.dart";
+import "package:coinhub/presentation/components/welcome_text.dart";
 import "package:coinhub/presentation/routes/routes.dart";
 import "package:flutter/material.dart";
 import "package:flutter_bloc/flutter_bloc.dart";
@@ -26,7 +27,7 @@ class ForgotPasswordScreen extends StatelessWidget {
                   ? (context.read<AuthBloc>().state as ForgotPasswordInitial)
                       .email
                   : "";
-          context.go(Routes.auth.verify, extra: {"email": email});
+          context.go(Routes.Auth.verify, extra: {"email": email});
         } else if (state is ForgotPasswordError) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(state.error), backgroundColor: Colors.red),
@@ -66,7 +67,7 @@ class ForgotPasswordScreen extends StatelessWidget {
                 Center(
                   child: TextButton(
                     onPressed: () {
-                      context.go(Routes.auth.login);
+                      context.go(Routes.Auth.login);
                     }, // Navigation logic removed
                     child: const Text(
                       "Back to Login",
@@ -79,30 +80,6 @@ class ForgotPasswordScreen extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-}
-
-class WelcomeText extends StatelessWidget {
-  final String title, text;
-
-  const WelcomeText({super.key, required this.title, required this.text});
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          title,
-          style: Theme.of(context).textTheme.titleLarge!.copyWith(
-            fontWeight: FontWeight.w600,
-            fontSize: 24,
-          ),
-        ),
-        const SizedBox(height: 16 / 2),
-        Text(text, style: const TextStyle(color: Color(0xFF868686))),
-        const SizedBox(height: 24),
-      ],
     );
   }
 }

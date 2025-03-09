@@ -11,7 +11,7 @@ import "package:coinhub/presentation/routes/routes.dart";
 
 class RouteRouter {
   GoRouter router = GoRouter(
-    initialLocation: Routes.auth.login,
+    initialLocation: Routes.Auth.login,
     routes: [
       GoRoute(
         name: "home",
@@ -22,28 +22,28 @@ class RouteRouter {
       ),
       GoRoute(
         name: "login",
-        path: Routes.auth.login,
+        path: Routes.Auth.login,
         pageBuilder: (context, state) {
           return MaterialPage(child: LoginScreen());
         },
       ),
       GoRoute(
         name: "signUp",
-        path: Routes.auth.signUp,
+        path: Routes.Auth.signUp,
         pageBuilder: (context, state) {
           return MaterialPage(child: SignUpScreen());
         },
       ),
       GoRoute(
         name: "forgotPassword",
-        path: Routes.auth.forgotPassword,
+        path: Routes.Auth.forgotPassword,
         pageBuilder: (context, state) {
           return MaterialPage(child: ForgotPasswordScreen());
         },
       ),
       GoRoute(
         name: "verify",
-        path: Routes.auth.verify,
+        path: Routes.Auth.verify,
         pageBuilder: (context, state) {
           final String email =
               state.extra is Map ? (state.extra as Map)["email"] ?? "" : "";
@@ -54,14 +54,14 @@ class RouteRouter {
       ),
       GoRoute(
         name: "pin",
-        path: Routes.transaction.pin,
+        path: Routes.Transaction.pin,
         builder: (context, state) {
           return PinEntryScreen();
         },
       ),
       GoRoute(
         name: "newPin",
-        path: Routes.account.pin,
+        path: Routes.Account.pin,
         builder: (context, state) {
           return CreatePinScreen();
         },

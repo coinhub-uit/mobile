@@ -1,6 +1,7 @@
 import "package:coinhub/core/bloc/auth/auth_event.dart";
 import "package:coinhub/core/bloc/auth/auth_logic.dart";
 import "package:coinhub/core/bloc/auth/auth_state.dart";
+import "package:coinhub/presentation/components/welcome_text.dart";
 import "package:coinhub/presentation/routes/routes.dart";
 import "package:flutter/gestures.dart";
 import "package:flutter/material.dart";
@@ -21,9 +22,9 @@ class LoginScreen extends StatelessWidget {
             SnackBar(content: Text(state.error), backgroundColor: Colors.red),
           );
         } else if (state is SignUpWithEmailInitial) {
-          context.go(Routes.auth.signUp);
+          context.go(Routes.Auth.signUp);
         } else if (state is ForgotPasswordInitial) {
-          context.go(Routes.auth.forgotPassword);
+          context.go(Routes.Auth.forgotPassword);
         } else if (state is SignUpWithGoogleSuccess) {
           context.go(Routes.home);
         } else if (state is SignUpWithGoogleError) {
@@ -109,30 +110,6 @@ class LoginScreen extends StatelessWidget {
   }
 }
 
-class WelcomeText extends StatelessWidget {
-  final String title, text;
-
-  const WelcomeText({super.key, required this.title, required this.text});
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          title,
-          style: Theme.of(context).textTheme.titleLarge!.copyWith(
-            fontWeight: FontWeight.w600,
-            fontSize: 24,
-          ),
-        ),
-        const SizedBox(height: 16 / 2),
-        Text(text, style: TextStyle(color: Color(0xFF868686))),
-        const SizedBox(height: 24),
-      ],
-    );
-  }
-}
-
 class SignInForm extends StatefulWidget {
   const SignInForm({super.key});
 
@@ -213,12 +190,11 @@ class _SignInFormState extends State<SignInForm> {
           ),
           const SizedBox(height: 16),
 
-          // Sign In Button (Authentication logic removed here)
+          // Sign In Button
           FilledButton(
             onPressed: () async {
               if (_formKey.currentState!.validate()) {
                 _formKey.currentState!.save();
-                // Authentication logic was removed here
                 context.read<AuthBloc>().add(LoginSubmitted(_email, _password));
               }
             },

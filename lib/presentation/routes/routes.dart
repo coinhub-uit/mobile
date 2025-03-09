@@ -1,26 +1,31 @@
 class Routes {
   static const String home = "/";
 
-  static Auth auth = Auth();
-  static Account account = Account();
-  static Transaction transaction = Transaction();
+  static const Auth = _Auth();
+  static const Account = _Account();
+  static const Transaction = _Transaction();
 }
 
-class Auth {
+class _Auth {
   final String root = "/auth";
+  const _Auth();
+
   String get login => "$root/login";
   String get signUp => "$root/signUp";
   String get forgotPassword => "$root/forgotPassword";
   String get verify => "$root/verify";
 }
 
-class Account {
+class _Account {
   final String root = "/account";
+  const _Account();
+
   String get pin => "$root/pin";
-  //TODO: Implement account routes
 }
 
-class Transaction {
+class _Transaction {
   final String root = "/transaction";
+  const _Transaction();
+
   String get pin => "$root/pin";
 }

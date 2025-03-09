@@ -1,8 +1,8 @@
 import "package:coinhub/core/bloc/auth/auth_event.dart";
 import "package:coinhub/core/bloc/auth/auth_logic.dart";
 import "package:coinhub/core/bloc/auth/auth_state.dart";
+import "package:coinhub/presentation/components/welcome_text.dart";
 import "package:coinhub/presentation/routes/routes.dart";
-import "package:coinhub/presentation/screen/auth/login_screen.dart";
 import "package:flutter/gestures.dart";
 import "package:flutter/material.dart";
 import "package:flutter_bloc/flutter_bloc.dart";
@@ -22,7 +22,7 @@ class SignUpScreen extends StatelessWidget {
             SnackBar(content: Text(state.error), backgroundColor: Colors.red),
           );
         } else if (state is LoginInitial) {
-          context.go(Routes.auth.login);
+          context.go(Routes.Auth.login);
         }
       },
       child: Scaffold(
