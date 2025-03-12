@@ -13,8 +13,9 @@ class LoginLoading extends AuthState {}
 
 class LoginError extends AuthState {
   final String error;
+  final String email;
 
-  LoginError(this.error);
+  LoginError(this.error, this.email);
 }
 
 class LoginSuccess extends AuthState {
@@ -41,9 +42,9 @@ class SignUpWithEmailError extends AuthState {
 }
 
 class SignUpWithEmailSuccess extends AuthState {
-  final String jwt;
+  final String email;
 
-  SignUpWithEmailSuccess(this.jwt);
+  SignUpWithEmailSuccess(this.email);
 }
 
 // --- Sign-Up with Google States ---
@@ -82,4 +83,21 @@ class ForgotPasswordSuccess extends AuthState {
   final String message;
 
   ForgotPasswordSuccess(this.message);
+}
+
+// --- Check If Verified States ---
+class CheckingIfVerified extends AuthState {}
+
+class Verified extends AuthState {}
+
+class NotVerified extends AuthState {}
+
+class ResendingVerification extends AuthState {}
+
+class ResendVerificationSuccess extends AuthState {}
+
+class ResendVerificationError extends AuthState {
+  final String error;
+
+  ResendVerificationError(this.error);
 }

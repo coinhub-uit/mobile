@@ -88,6 +88,15 @@ class ForgotPasswordSubmitted extends AuthEvent {
   const ForgotPasswordSubmitted(this.email);
 }
 
+class CheckIfVerified extends AuthEvent {
+  const CheckIfVerified();
+}
+
+class ResendVerification extends AuthEvent {
+  final String email;
+  const ResendVerification(this.email);
+}
+
 class LogoutEvent extends AuthEvent {
   const LogoutEvent();
 }

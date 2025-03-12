@@ -24,6 +24,7 @@
 	<string>????</string>
 	<key>CFBundleURLTypes</key>
 	<array>
+		<!-- Google OAuth Scheme (Already Exists) -->
 		<dict>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
@@ -32,7 +33,18 @@
 				<string>com.googleusercontent.apps.823330898154-27ajrbc06rkkl0bscah9h67id4osktb3</string>
 			</array>
 		</dict>
+
+		<!-- Deep Linking Scheme -->
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>coinhub</string>  <!-- This is your deep link scheme -->
+			</array>
+		</dict>
 	</array>
+
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>
@@ -56,5 +68,6 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	
 </dict>
 </plist>

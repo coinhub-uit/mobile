@@ -31,14 +31,15 @@ class AuthService {
     return respond.user;
   }
 
-  static Future<void> signInWithEmailandPassword(
+  static Future<AuthResponse> signInWithEmailandPassword(
     String email,
     String password,
   ) async {
-    await supabaseClient.auth.signInWithPassword(
+    final response = await supabaseClient.auth.signInWithPassword(
       email: email,
       password: password,
     );
+    return response;
   }
 
   static Future<void> signOut() async {
@@ -62,6 +63,15 @@ class AuthService {
   static bool isUserLoggedIn() {
     final session = supabaseClient.auth.currentSession;
     return session != null;
+  }
+
+  static bool isUserVerified() {
+    final user = supabaseClient.auth.currentUser;
+    return user?.emailConfirmedAt != null;
+  }
+
+  static Future<void> resendVerificationCode(String email) async {
+    await supabaseClient.auth.resend(type: OtpType.signup, email: email);
   }
 
   static User? get currentUser => supabaseClient.auth.currentUser;

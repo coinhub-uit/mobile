@@ -3,6 +3,7 @@ import "package:coinhub/core/bloc/auth/auth_state.dart";
 import "package:coinhub/core/services/auth.dart";
 import "package:coinhub/core/util/email_validator.dart";
 import "package:flutter_bloc/flutter_bloc.dart";
+import "package:supabase_flutter/supabase_flutter.dart" as supabase;
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   AuthBloc() : super(LoginInitial("", "")) {
@@ -73,27 +74,50 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       final password = event.password.trim();
 
       if (username.isEmpty || password.isEmpty) {
-        emit(LoginError("Please fill in all fields."));
+        emit(LoginError("Please fill in all fields.", username));
         return;
       }
 
       if (password.length < 6) {
-        emit(LoginError("Password must be at least 6 characters long."));
+        emit(
+          LoginError("Password must be at least 6 characters long.", username),
+        );
         return;
       }
 
       if (!username.isValidEmail()) {
-        emit(LoginError("Please enter a valid email."));
+        emit(LoginError("Please enter a valid email.", username));
         return;
       }
 
       emit(LoginLoading());
 
       try {
-        await AuthService.signInWithEmailandPassword(username, password);
+        final response = await AuthService.signInWithEmailandPassword(
+          username,
+          password,
+        );
+        final user = response.user;
+
+        if (user?.emailConfirmedAt == null) {
+          emit(
+            LoginError("Please verify your email before logging in.", username),
+          );
+          return;
+        }
         emit(LoginSuccess("Login successful."));
       } catch (error) {
-        emit(LoginError("Incorrect Email and/or Password."));
+        if (error is supabase.AuthException &&
+            error.message.contains("Email not confirmed")) {
+          emit(
+            LoginError(
+              "Your email is not verified. Please check your inbox for the verification link.",
+              username,
+            ),
+          );
+        } else {
+          emit(LoginError(error.toString(), username));
+        }
       }
     });
 
@@ -124,7 +148,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
       try {
         await AuthService.signUpWithEmailandPassword(email, password);
-        emit(SignUpWithEmailSuccess("Sign-up successful."));
+        emit(SignUpWithEmailSuccess(email));
       } catch (error) {
         emit(SignUpWithEmailError(error.toString()));
       }
@@ -164,13 +188,32 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       }
     });
 
+    on<CheckIfVerified>((event, emit) async {
+      emit(CheckingIfVerified());
+      if (AuthService.isUserVerified()) {
+        emit(Verified());
+      } else {
+        emit(NotVerified());
+      }
+    });
+
+    on<ResendVerification>((event, emit) async {
+      emit(ResendingVerification());
+      try {
+        await AuthService.resendVerificationCode(event.email);
+        emit(ResendVerificationSuccess());
+      } catch (error) {
+        emit(ResendVerificationError(error.toString()));
+      }
+    });
+
     on<LogoutEvent>((event, emit) async {
       emit(LoginLoading());
       try {
         await AuthService.signOut();
         emit(LoginInitial("", ""));
       } catch (error) {
-        emit(LoginError(error.toString()));
+        emit(LoginError(error.toString(), ""));
       }
     });
   }

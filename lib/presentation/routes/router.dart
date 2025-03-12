@@ -45,11 +45,8 @@ class RouteRouter {
         name: "verify",
         path: Routes.Auth.verify,
         pageBuilder: (context, state) {
-          final String email =
-              state.extra is Map ? (state.extra as Map)["email"] ?? "" : "";
-          return MaterialPage(
-            child: VerifyScreen(email: email, type: VerificationType.email),
-          );
+          final email = state.extra as String;
+          return MaterialPage(child: VerifyScreen(userEmail: email));
         },
       ),
       GoRoute(

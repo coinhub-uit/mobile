@@ -21,6 +21,11 @@ class LoginScreen extends StatelessWidget {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(state.error), backgroundColor: Colors.red),
           );
+          if (state.error ==
+              "Your email is not verified. Please check your inbox for the verification link.") {
+            context.read<AuthBloc>().add(ResendVerification(state.email));
+            context.go(Routes.Auth.verify, extra: state.email);
+          }
         } else if (state is SignUpWithEmailInitial) {
           context.go(Routes.Auth.signUp);
         } else if (state is ForgotPasswordInitial) {
