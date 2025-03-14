@@ -28,4 +28,7 @@ class _Transaction {
   const _Transaction();
 
   String get pin => "$root/pin";
+  String get deposit => "$root/deposit";
 }
+
+

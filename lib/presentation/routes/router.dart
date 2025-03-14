@@ -5,6 +5,7 @@ import "package:coinhub/presentation/screen/auth/sign_up_screen.dart";
 import "package:coinhub/presentation/screen/auth/verify_screen.dart";
 import "package:coinhub/presentation/screen/home.dart";
 import "package:coinhub/presentation/screen/setting/pin_screen.dart";
+import "package:coinhub/presentation/screen/transaction/deposit_screen.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
 import "package:coinhub/presentation/routes/routes.dart";
@@ -63,6 +64,13 @@ class RouteRouter {
           return CreatePinScreen();
         },
       ),
+      GoRoute(
+        name: "deposit",
+        path: Routes.Transaction.deposit,
+        builder: (context, state) {
+          return DepositScreen();
+        },
+      )
     ],
   );
 }

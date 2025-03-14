@@ -6,6 +6,8 @@ import "package:coinhub/presentation/components/yellow_card.dart";
 import "package:coinhub/presentation/components/header_container.dart";
 import "package:coinhub/presentation/components/home_app_bar.dart";
 import "package:coinhub/presentation/components/fixed_deposit_card.dart";
+import "package:coinhub/presentation/routes/routes.dart";
+import "package:go_router/go_router.dart";
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -22,7 +24,8 @@ class _HomeScreenState extends State<HomeScreen> {
     SavingsScreen(),
     ProfileScreen(),
   ];
-  void _onItemTapped(int index) {
+  
+  void onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
@@ -45,8 +48,7 @@ class _HomeScreenState extends State<HomeScreen> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: (index) {
-          _onItemTapped(index);
-          
+          onItemTapped(index);
         },
         items: [
           BottomNavigationBarItem(
@@ -74,8 +76,8 @@ class HomeScreenContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: HomeAppBar(
-        userName: 'User',
-        imgUrl: 'https://avatars.githubusercontent.com/u/47231161?v=4',
+        userName: "User",
+        imgUrl: "https://avatars.githubusercontent.com/u/47231161?v=4",
       ),
       body: Center(
         child: Padding(
@@ -87,49 +89,58 @@ class HomeScreenContent extends StatelessWidget {
               SizedBox(height: 32),
               HeaderContainer(topLabel: "Balance:", bottomLabel: "21.987.000đ"),
               SizedBox(height: 2),
-              YellowCard(label: '+5.5%'),
+              YellowCard(label: "+5.5%"),
               SizedBox(height: 32),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 2),
-                child: PurpleCard(
-                  icon: FontAwesomeIcons.piggyBank,
-                  label: "Add new\nSaving plan",
-                  iconSize: 56,
-                  arrowSize: 64,
-                  labelSize: 36,
-                ),
-              ),
-              SizedBox(height: 12),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 2),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width / 2 - 32,
-                      height: 180,
-                      child: PurpleCard(
-                        icon: FontAwesomeIcons.arrowDown,
-                        label: "Deposit",
-                        iconSize: 48,
-                        arrowSize: 56,
-                        labelSize: 24,
-                      ),
+              Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 2),
+                    child: PurpleCard(
+                      icon: FontAwesomeIcons.piggyBank,
+                      label: "Add new\nSaving plan",
+                      iconSize: 56,
+                      arrowSize: 64,
+                      labelSize: 36,
                     ),
-                    SizedBox(width: 12),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width / 2 - 32,
-                      height: 180,
-                      child: PurpleCard(
-                        icon: FontAwesomeIcons.arrowUpFromBracket,
-                        label: "Withdraw",
-                        iconSize: 48,
-                        arrowSize: 56,
-                        labelSize: 24,
-                      ),
+                  ),
+                  SizedBox(height: 12),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 2),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width / 2 - 32,
+                          height: 180,
+                          child: GestureDetector(
+                            onTap: () {
+                              context.push(Routes.Transaction.deposit);
+                            },
+                            child: PurpleCard(
+                              icon: FontAwesomeIcons.arrowDown,
+                              label: "Deposit",
+                              iconSize: 48,
+                              arrowSize: 56,
+                              labelSize: 24,
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: 12),
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width / 2 - 32,
+                          height: 180,
+                          child: PurpleCard(
+                            icon: FontAwesomeIcons.arrowUpFromBracket,
+                            label: "Withdraw",
+                            iconSize: 48,
+                            arrowSize: 56,
+                            labelSize: 24,
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ],
           ),
