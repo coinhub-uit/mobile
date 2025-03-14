@@ -15,8 +15,19 @@ class HeaderContainer extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(topLabel, style: Theme.of(context).textTheme.titleSmall),
-          Text(bottomLabel, style: Theme.of(context).textTheme.titleLarge),
+          Text(
+            topLabel,
+            style: Theme.of(context).textTheme.titleSmall,
+            maxLines: 1,
+          ),
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Text(
+              bottomLabel,
+              style: Theme.of(context).textTheme.titleLarge,
+              maxLines: 1,
+            ),
+          ),
         ],
       ),
     );

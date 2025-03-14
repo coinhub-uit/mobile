@@ -89,7 +89,30 @@ class HomeScreenContent extends StatelessWidget {
               SizedBox(height: 32),
               HeaderContainer(topLabel: "Balance:", bottomLabel: "21.987.000đ"),
               SizedBox(height: 2),
-              YellowCard(label: "+5.5%"),
+              Row(
+                children: [
+                  YellowCard(label: "+5.5%"),
+                  SizedBox(width: 15),
+                  Expanded(
+                    child: SizedBox(
+                      height: 60,
+                      child: PurpleCard(
+                        icon: Icons.money,
+                        label: "Transfer",
+                        iconSize: 16,
+                        labelSize: 16,
+                        arrowSize: 16,
+                        paddingTop: 6,
+                        paddingBottom: 6,
+                        paddingLeft: 16,
+                        paddingRight: 16,
+                        isTransferButton: true,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              
               SizedBox(height: 32),
               Column(
                 children: [
