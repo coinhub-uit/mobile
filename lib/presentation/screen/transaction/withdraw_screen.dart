@@ -1,6 +1,5 @@
 import "package:coinhub/presentation/components/transaction_card.dart";
 import "package:flutter/material.dart";
-import "package:coinhub/presentation/components/transaction_card.dart";
 
 class WithdrawScreen extends StatelessWidget {
   const WithdrawScreen({super.key});
