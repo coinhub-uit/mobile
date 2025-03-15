@@ -1,22 +1,8 @@
-import "package:coinhub/presentation/components/mini_source_card.dart";
 import "package:flutter/material.dart";
+import "package:coinhub/presentation/components/transaction_card.dart";
 
-class DepositScreen extends StatefulWidget {
+class DepositScreen extends StatelessWidget {
   const DepositScreen({super.key});
-  @override
-  State<DepositScreen> createState() => _DepositScreenState();
-}
-
-class _DepositScreenState extends State<DepositScreen> {
-  late int selectedIndex;
-
-  @override
-  void initState() {
-    selectedIndex = 0;
-    super.initState();
-  }
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,57 +21,7 @@ class _DepositScreenState extends State<DepositScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 16,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Deposit into:",
-                      style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    SizedBox(height: 16),
-                    SizedBox(
-                      height: 50,
-                      child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: 3,
-                        itemBuilder: (context, index) {
-                          return GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                selectedIndex = index;
-                              });
-                            },
-                            child: MiniSourceCard(
-                              icon: Icons.account_balance_wallet,
-                              moneyInit: 10000000,
-                              sourceId: "098573821",
-                              color:
-                                  selectedIndex == index
-                                      ? Theme.of(
-                                        context,
-                                      ).colorScheme.onSecondary.withOpacity(0.8)
-                                      : Theme.of(context).colorScheme.secondary,
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                    SizedBox(height: 16),
-                    TextField(decoration: InputDecoration(labelText: "Amount")),
-                    SizedBox(height: 16),
-                  ],
-                ),
-              ),
-            ),
+            TransactionCard(title: "Deposit into: "),
           ],
         ),
       ),

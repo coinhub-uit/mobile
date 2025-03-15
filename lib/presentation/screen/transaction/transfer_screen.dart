@@ -1,22 +1,10 @@
-import "package:coinhub/presentation/components/mini_source_card.dart";
+import "package:coinhub/presentation/components/transfer_card.dart";
 import "package:flutter/material.dart";
+import "package:coinhub/presentation/components/transaction_card.dart";
 
-class TransferScreen extends StatefulWidget {
+class TransferScreen extends StatelessWidget {
   const TransferScreen({super.key});
-  @override
-  State<TransferScreen> createState() => _TransferScreenState();
-}
 
-class _TransferScreenState extends State<TransferScreen> {
-  late int selectedIndex;
-  final TextEditingController amountController = TextEditingController();
-  final int limitLength = 160;
-
-  @override
-  void initState() {
-    selectedIndex = 0;
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,95 +24,9 @@ class _TransferScreenState extends State<TransferScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 16,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Get fund from:",
-                      style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    SizedBox(height: 16),
-                    SizedBox(
-                      height: 50,
-                      child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: 3,
-                        itemBuilder: (context, index) {
-                          return GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                selectedIndex = index;
-                              });
-                            },
-                            child: MiniSourceCard(
-                              icon: Icons.account_balance_wallet,
-                              moneyInit: 10000000,
-                              sourceId: "098573821",
-                              color:
-                                  selectedIndex == index
-                                      ? Theme.of(
-                                        context,
-                                      ).colorScheme.onSecondary.withOpacity(0.8)
-                                      : Theme.of(context).colorScheme.secondary,
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                    SizedBox(height: 16),
-                    TextField(decoration: InputDecoration(labelText: "Amount")),
-                    SizedBox(height: 16),
-                  ],
-                ),
-              ),
-            ),
+            TransactionCard(title: "Get fund from: "),
             SizedBox(height: 16),
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 16,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Transfer to:",
-                      style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    SizedBox(height: 16),
-                    TextField(
-                      decoration: InputDecoration(labelText: "Account Number"),
-                    ),
-                    SizedBox(height: 12),
-                    TextField(decoration: InputDecoration(labelText: "Amount")),
-                    SizedBox(height: 12),
-                    TextField(
-                      decoration: InputDecoration(
-                        labelText: "Description",
-                        counterText:
-                            "${amountController.text.length}/$limitLength",
-                      ),
-                      maxLength: limitLength,
-                      controller: amountController,
-                    ),
-                    SizedBox(height: 16),
-                  ],
-                ),
-              ),
-            ),
+            TransferCard(title: "Transfer to: "),
           ],
         ),
       ),
