@@ -96,17 +96,21 @@ class HomeScreenContent extends StatelessWidget {
                   Expanded(
                     child: SizedBox(
                       height: 60,
-                      child: PurpleCard(
-                        icon: Icons.money,
-                        label: "Transfer",
-                        iconSize: 16,
-                        labelSize: 16,
-                        arrowSize: 16,
-                        paddingTop: 6,
-                        paddingBottom: 6,
-                        paddingLeft: 16,
-                        paddingRight: 16,
-                        isTransferButton: true,
+                      child: GestureDetector(
+                        onTap:
+                            () => {context.push(Routes.Transaction.transfer)},
+                        child: PurpleCard(
+                          icon: Icons.money,
+                          label: "Transfer",
+                          iconSize: 16,
+                          labelSize: 16,
+                          arrowSize: 16,
+                          paddingTop: 6,
+                          paddingBottom: 6,
+                          paddingLeft: 16,
+                          paddingRight: 16,
+                          isTransferButton: true,
+                        ),
                       ),
                     ),
                   ),
@@ -118,12 +122,15 @@ class HomeScreenContent extends StatelessWidget {
                 children: [
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 2),
-                    child: PurpleCard(
-                      icon: FontAwesomeIcons.piggyBank,
-                      label: "Add new\nSaving plan",
-                      iconSize: 56,
-                      arrowSize: 64,
-                      labelSize: 36,
+                    child: GestureDetector(
+                      onTap: () {},
+                      child: PurpleCard(
+                        icon: FontAwesomeIcons.piggyBank,
+                        label: "Add new\nSaving plan",
+                        iconSize: 56,
+                        arrowSize: 64,
+                        labelSize: 36,
+                      ),
                     ),
                   ),
                   SizedBox(height: 12),

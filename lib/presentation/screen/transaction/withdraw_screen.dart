@@ -20,7 +20,13 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Withdraw"),
+        title: Text(
+          "Withdraw",
+          style: Theme.of(context).textTheme.titleSmall!.copyWith(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         backgroundColor: Colors.transparent,
       ),
       body: Padding(

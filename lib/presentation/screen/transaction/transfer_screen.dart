@@ -1,14 +1,16 @@
 import "package:coinhub/presentation/components/mini_source_card.dart";
 import "package:flutter/material.dart";
 
-class DepositScreen extends StatefulWidget {
-  const DepositScreen({super.key});
+class TransferScreen extends StatefulWidget {
+  const TransferScreen({super.key});
   @override
-  State<DepositScreen> createState() => _DepositScreenState();
+  State<TransferScreen> createState() => _TransferScreenState();
 }
 
-class _DepositScreenState extends State<DepositScreen> {
+class _TransferScreenState extends State<TransferScreen> {
   late int selectedIndex;
+  final TextEditingController amountController = TextEditingController();
+  final int limitLength = 160;
 
   @override
   void initState() {
@@ -16,13 +18,12 @@ class _DepositScreenState extends State<DepositScreen> {
     super.initState();
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "Deposit",
+          "Transfer",
           style: Theme.of(context).textTheme.titleSmall!.copyWith(
             fontSize: 24,
             fontWeight: FontWeight.bold,
@@ -45,9 +46,9 @@ class _DepositScreenState extends State<DepositScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Deposit into:",
+                      "Get fund from:",
                       style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                        fontSize: 18,
+                        fontSize: 20,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -86,6 +87,44 @@ class _DepositScreenState extends State<DepositScreen> {
                 ),
               ),
             ),
+            SizedBox(height: 16),
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 16,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Transfer to:",
+                      style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(height: 16),
+                    TextField(
+                      decoration: InputDecoration(labelText: "Account Number"),
+                    ),
+                    SizedBox(height: 12),
+                    TextField(decoration: InputDecoration(labelText: "Amount")),
+                    SizedBox(height: 12),
+                    TextField(
+                      decoration: InputDecoration(
+                        labelText: "Description",
+                        counterText:
+                            "${amountController.text.length}/$limitLength",
+                      ),
+                      maxLength: limitLength,
+                      controller: amountController,
+                    ),
+                    SizedBox(height: 16),
+                  ],
+                ),
+              ),
+            ),
           ],
         ),
       ),
@@ -99,7 +138,7 @@ class _DepositScreenState extends State<DepositScreen> {
               // Add onPressed
             },
             child: Text(
-              "Deposit",
+              "Transfer",
               style: Theme.of(
                 context,
               ).textTheme.displayMedium!.copyWith(color: Colors.white),
