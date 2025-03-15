@@ -12,7 +12,7 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
 
   @override
   void initState() {
-    selectedIndex = 0;
+    selectedIndex = 0; // index of the selected source
     super.initState();
   }
 
