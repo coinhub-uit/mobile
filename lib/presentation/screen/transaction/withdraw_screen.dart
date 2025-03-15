@@ -1,13 +1,13 @@
-import "package:coinhub/presentation/components/mini_source_card.dart";
 import "package:flutter/material.dart";
+import "package:coinhub/presentation/components/mini_source_card.dart";
 
-class DepositScreen extends StatefulWidget {
-  const DepositScreen({super.key});
+class WithdrawScreen extends StatefulWidget {
+  const WithdrawScreen({super.key});
   @override
-  State<DepositScreen> createState() => _DepositScreenState();
+  State<WithdrawScreen> createState() => _WithdrawScreenState();
 }
 
-class _DepositScreenState extends State<DepositScreen> {
+class _WithdrawScreenState extends State<WithdrawScreen> {
   late int selectedIndex;
 
   @override
@@ -16,12 +16,11 @@ class _DepositScreenState extends State<DepositScreen> {
     super.initState();
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Deposit"),
+        title: Text("Withdraw"),
         backgroundColor: Colors.transparent,
       ),
       body: Padding(
@@ -39,7 +38,7 @@ class _DepositScreenState extends State<DepositScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Deposit into:",
+                      "Withdraw from:",
                       style: Theme.of(context).textTheme.titleSmall!.copyWith(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -93,7 +92,7 @@ class _DepositScreenState extends State<DepositScreen> {
               // Add onPressed
             },
             child: Text(
-              "Deposit",
+              "Withdraw",
               style: Theme.of(
                 context,
               ).textTheme.displayMedium!.copyWith(color: Colors.white),

@@ -152,12 +152,17 @@ class HomeScreenContent extends StatelessWidget {
                         SizedBox(
                           width: MediaQuery.of(context).size.width / 2 - 32,
                           height: 180,
-                          child: PurpleCard(
-                            icon: FontAwesomeIcons.arrowUpFromBracket,
-                            label: "Withdraw",
-                            iconSize: 48,
-                            arrowSize: 56,
-                            labelSize: 24,
+                          child: GestureDetector(
+                            onTap: () {
+                              context.push(Routes.Transaction.withdraw);
+                            },
+                            child: PurpleCard(
+                              icon: FontAwesomeIcons.arrowUpFromBracket,
+                              label: "Withdraw",
+                              iconSize: 48,
+                              arrowSize: 56,
+                              labelSize: 24,
+                            ),
                           ),
                         ),
                       ],

@@ -6,6 +6,7 @@ import "package:coinhub/presentation/screen/auth/verify_screen.dart";
 import "package:coinhub/presentation/screen/home.dart";
 import "package:coinhub/presentation/screen/setting/pin_screen.dart";
 import "package:coinhub/presentation/screen/transaction/deposit_screen.dart";
+import "package:coinhub/presentation/screen/transaction/withdraw_screen.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
 import "package:coinhub/presentation/routes/routes.dart";
@@ -69,6 +70,13 @@ class RouteRouter {
         path: Routes.Transaction.deposit,
         builder: (context, state) {
           return DepositScreen();
+        },
+      ),
+      GoRoute(
+        name: "withdraw",
+        path: Routes.Transaction.withdraw,
+        builder: (context, state) {
+          return WithdrawScreen();
         },
       )
     ],

@@ -29,6 +29,7 @@ class _Transaction {
 
   String get pin => "$root/pin";
   String get deposit => "$root/deposit";
+  String get withdraw => "$root/withdraw";
 }
 
 
