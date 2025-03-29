@@ -1,0 +1,7 @@
+#!/usr/bin/env sh
+
+if [ "$(git diff 'HEAD@{1}..HEAD@{0}' -- 'package.json' | wc -l)" -gt 0 ]; then
+	flutter pub get
+fi
+
+# vim:fileformat=unix filetype=sh
