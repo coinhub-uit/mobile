@@ -28,6 +28,7 @@ class AuthService {
       idToken: idToken,
       accessToken: accessToken,
     );
+    print("${respond.session?.accessToken} token is here");
     return respond.user;
   }
 
@@ -39,6 +40,7 @@ class AuthService {
       email: email,
       password: password,
     );
+    print("${response.session?.accessToken} token is here");
     return response;
   }
 

@@ -23,7 +23,7 @@ class FixedDepositCard extends StatelessWidget {
   Widget build(BuildContext context) {
     String vndFormat(int amount) {
       // format money to VND
-      final formatter = new NumberFormat("#,###", "vi_VN");
+      final formatter = NumberFormat("#,###", "vi_VN");
       return "${formatter.format(amount)}đ";
     }
 
