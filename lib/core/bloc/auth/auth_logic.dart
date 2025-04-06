@@ -150,7 +150,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
       try {
         await AuthService.signUpWithEmailandPassword(email, password);
-        emit(SignUpWithEmailSuccess(email));
+        emit(SignUpWithEmailSuccess(email, password));
       } catch (error) {
         emit(SignUpWithEmailError(error.toString()));
       }
@@ -192,7 +192,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     on<CheckIfVerified>((event, emit) async {
       emit(CheckingIfVerified());
-      if (await AuthService.isUserVerified()) {
+      if (await AuthService.isUserVerified(event.email, event.password)) {
         emit(Verified());
       } else {
         emit(NotVerified());

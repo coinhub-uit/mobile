@@ -89,7 +89,9 @@ class ForgotPasswordSubmitted extends AuthEvent {
 }
 
 class CheckIfVerified extends AuthEvent {
-  const CheckIfVerified();
+  final String email;
+  final String password;
+  const CheckIfVerified(this.email, this.password);
 }
 
 class ResendVerification extends AuthEvent {

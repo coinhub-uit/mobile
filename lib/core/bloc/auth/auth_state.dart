@@ -43,8 +43,9 @@ class SignUpWithEmailError extends AuthState {
 
 class SignUpWithEmailSuccess extends AuthState {
   final String email;
+  final String password;
 
-  SignUpWithEmailSuccess(this.email);
+  SignUpWithEmailSuccess(this.email, this.password);
 }
 
 // --- Sign-Up with Google States ---
