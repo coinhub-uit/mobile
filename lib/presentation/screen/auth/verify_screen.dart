@@ -42,14 +42,30 @@ class _VerifyScreenState extends State<VerifyScreen> {
       body: BlocConsumer<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is ResendVerificationSuccess) _startResendTimer();
+          if (state is Verified) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text(
+                  "You have successfully verified your email. Returning to login scren...",
+                ),
+                backgroundColor: Colors.green,
+              ),
+            );
+            context.go(Routes.auth.login);
+          } else if (state is NotVerified) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text("Please verify your email first."),
+                backgroundColor: Colors.red,
+              ),
+            );
+          }
         },
         builder: (context, state) {
           if (state is CheckingIfVerified) {
             return const Center(child: CircularProgressIndicator());
           }
-          if (state is Verified) {
-            context.go(Routes.home);
-          }
+
           return _buildVerificationUI(state);
         },
       ),
@@ -109,6 +125,16 @@ class _VerifyScreenState extends State<VerifyScreen> {
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
               ),
+          const SizedBox(height: 24),
+          ElevatedButton(
+            onPressed: () {
+              context.read<AuthBloc>().add(CheckIfVerified());
+            },
+            child: const Text(
+              "Proceed to Login",
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ),
         ],
       ),
     );

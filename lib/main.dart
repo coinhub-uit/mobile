@@ -7,11 +7,12 @@ import "package:supabase_flutter/supabase_flutter.dart";
 import "package:flutter_bloc/flutter_bloc.dart";
 import "package:coinhub/core/util/env.dart";
 import "package:app_links/app_links.dart";
+import "package:http/http.dart" as http;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Supabase.initialize(url: Env.supabaseUrl, anonKey: Env.supabaseAnonKey);
-
+  testHttp(); // Test HTTP request to the API server
   runApp(const MyApp());
 }
 
@@ -96,5 +97,20 @@ class _MyAppState extends State<MyApp> {
         routerConfig: goRouter,
       ),
     );
+  }
+}
+
+void testHttp() async {
+  print("Requesting: ${Env.supabaseUrl}");
+  try {
+    final url = Uri.parse(Env.apiServerUrl); // get url
+    final response = await http.get(url); // get response
+    if (response.statusCode == 200) {
+      print("Response: ${response.body}"); // print response body
+    } else {
+      print("Error: ${response.statusCode}"); // print error status code
+    }
+  } catch (e) {
+    print("Error: $e"); // print error message
   }
 }
