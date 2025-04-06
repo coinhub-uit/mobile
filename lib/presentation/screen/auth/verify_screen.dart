@@ -9,7 +9,12 @@ import "package:go_router/go_router.dart";
 
 class VerifyScreen extends StatefulWidget {
   final String userEmail;
-  const VerifyScreen({super.key, required this.userEmail});
+  final String userPassword;
+  const VerifyScreen({
+    super.key,
+    required this.userEmail,
+    required this.userPassword,
+  });
 
   @override
   State<VerifyScreen> createState() => _VerifyScreenState();
@@ -21,7 +26,6 @@ class _VerifyScreenState extends State<VerifyScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<AuthBloc>().add(CheckIfVerified());
     _startResendTimer();
   }
 
@@ -40,7 +44,7 @@ class _VerifyScreenState extends State<VerifyScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: BlocConsumer<AuthBloc, AuthState>(
-        listener: (context, state) {
+        listener: (context, state) async {
           if (state is ResendVerificationSuccess) _startResendTimer();
           if (state is Verified) {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -51,6 +55,11 @@ class _VerifyScreenState extends State<VerifyScreen> {
                 backgroundColor: Colors.green,
               ),
             );
+            await Future.delayed(const Duration(seconds: 2));
+
+            if (!context.mounted) {
+              return; // check if the context is still mounted before navigating
+            }
             context.go(Routes.auth.login);
           } else if (state is NotVerified) {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -128,7 +137,9 @@ class _VerifyScreenState extends State<VerifyScreen> {
           const SizedBox(height: 24),
           ElevatedButton(
             onPressed: () {
-              context.read<AuthBloc>().add(CheckIfVerified());
+              context.read<AuthBloc>().add(
+                CheckIfVerified(widget.userEmail, widget.userPassword),
+              );
             },
             child: const Text(
               "Proceed to Login",

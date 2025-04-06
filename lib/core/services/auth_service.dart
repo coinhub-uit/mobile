@@ -95,17 +95,33 @@ class AuthService {
     return session != null;
   }
 
-  static Future<bool> isUserVerified() async {
+  static Future<bool> isUserVerified(String email, String password) async {
     try {
-      final userResponse = await supabaseClient.auth.getUser().timeout(
-        const Duration(seconds: 5),
+      final response = await supabaseClient.auth.signInWithPassword(
+        email: email,
+        password: password,
       );
-      print("User response: $userResponse");
-      final user = userResponse.user;
-      print("User: $user");
-      return user?.emailConfirmedAt != null;
+      final session = response.session;
+      if (session == null) {
+        print("failed to get session");
+        return false;
+      }
+      await LocalStorageService().write("JWT", session.accessToken);
+      print("${session.accessToken} token is here");
+
+      final user = response.user;
+      if (user == null) {
+        print("failed to get user");
+        return false;
+      }
+      if (user.emailConfirmedAt != null) {
+        return true;
+      } else {
+        print("email not verified");
+        return false;
+      }
     } catch (e) {
-      print("getUser() failed: $e");
+      print("Error checking user verification: $e");
       return false;
     }
   }
