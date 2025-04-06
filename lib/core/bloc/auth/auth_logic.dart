@@ -1,6 +1,6 @@
 import "package:coinhub/core/bloc/auth/auth_event.dart";
 import "package:coinhub/core/bloc/auth/auth_state.dart";
-import "package:coinhub/core/services/auth.dart";
+import "package:coinhub/core/services/authService.dart";
 import "package:coinhub/core/util/email_validator.dart";
 import "package:flutter_bloc/flutter_bloc.dart";
 import "package:supabase_flutter/supabase_flutter.dart" as supabase;

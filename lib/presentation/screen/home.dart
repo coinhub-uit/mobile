@@ -1,5 +1,5 @@
 import "package:flutter/material.dart";
-import "package:coinhub/core/services/auth.dart";
+import "package:coinhub/core/services/authService.dart";
 import "package:font_awesome_flutter/font_awesome_flutter.dart";
 import "package:coinhub/presentation/components/purple_card.dart";
 import "package:coinhub/presentation/components/yellow_card.dart";
