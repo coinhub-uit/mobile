@@ -122,6 +122,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     });
 
     on<SignUpWithEmailSubmitted>((event, emit) async {
+      await AuthService.signOut(); // sign out old user first
+
       final email = event.email.trim();
       final password = event.password.trim();
 
@@ -190,7 +192,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     on<CheckIfVerified>((event, emit) async {
       emit(CheckingIfVerified());
-      if (AuthService.isUserVerified()) {
+      if (await AuthService.isUserVerified()) {
         emit(Verified());
       } else {
         emit(NotVerified());

@@ -29,7 +29,7 @@ class AuthService {
       idToken: idToken,
       accessToken: accessToken,
     );
-    LocalStorageService().write("JWT",response.session!.accessToken);
+    LocalStorageService().write("JWT", response.session!.accessToken);
 
     print("${response.session?.accessToken} token is here");
     return response.user;
@@ -43,7 +43,7 @@ class AuthService {
       email: email,
       password: password,
     );
-    LocalStorageService().write("JWT",response.session!.accessToken);
+    LocalStorageService().write("JWT", response.session!.accessToken);
     print("${response.session?.accessToken} token is here");
     return response;
   }
@@ -56,8 +56,23 @@ class AuthService {
     String email,
     String password,
   ) async {
-    final response = await supabaseClient.auth.signUp(email: email, password: password);
-    LocalStorageService().write("JWT", response.session!.accessToken);
+    try {
+      await supabaseClient.auth.signUp(email: email, password: password);
+    } on AuthException catch (e) {
+      if (e.message == "User already registered") {
+        throw "User already registered";
+      } else if (e.message == "Email not verified") {
+        throw "Email not verified";
+      } else {
+        rethrow;
+      }
+    } catch (e) {
+      if (e is AuthException) {
+        throw e.message;
+      } else {
+        throw "An unknown error occurred";
+      }
+    }
   }
 
   static Future<void> forgotPassword(String email) async {
@@ -72,9 +87,19 @@ class AuthService {
     return session != null;
   }
 
-  static bool isUserVerified() {
-    final user = supabaseClient.auth.currentUser;
-    return user?.emailConfirmedAt != null;
+  static Future<bool> isUserVerified() async {
+    try {
+      final userResponse = await supabaseClient.auth.getUser().timeout(
+        const Duration(seconds: 5),
+      );
+      print("User response: $userResponse");
+      final user = userResponse.user;
+      print("User: $user");
+      return user?.emailConfirmedAt != null;
+    } catch (e) {
+      print("getUser() failed: $e");
+      return false;
+    }
   }
 
   static Future<void> resendVerificationCode(String email) async {
