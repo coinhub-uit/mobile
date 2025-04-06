@@ -22,11 +22,27 @@ class VerifyScreen extends StatefulWidget {
 
 class _VerifyScreenState extends State<VerifyScreen> {
   int _resendTimer = 0;
+  bool _initialCheckDone = false;
 
   @override
   void initState() {
     super.initState();
     _startResendTimer();
+    _startCheckTimer();
+  }
+
+  void _startCheckTimer() {
+    Timer.periodic(const Duration(seconds: 2), (timer) {
+      if (mounted) {
+        setState(
+          () => context.read<AuthBloc>().add(
+            CheckIfVerified(widget.userEmail, widget.userPassword),
+          ),
+        );
+      } else {
+        timer.cancel();
+      }
+    });
   }
 
   void _startResendTimer() {
@@ -45,12 +61,15 @@ class _VerifyScreenState extends State<VerifyScreen> {
     return Scaffold(
       body: BlocConsumer<AuthBloc, AuthState>(
         listener: (context, state) async {
+          if (!_initialCheckDone && state is! CheckingIfVerified) {
+            setState(() => _initialCheckDone = true);
+          }
           if (state is ResendVerificationSuccess) _startResendTimer();
           if (state is Verified) {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
                 content: Text(
-                  "You have successfully verified your email. Returning to login scren...",
+                  "You have successfully verified your email. Returning to login screen...",
                 ),
                 backgroundColor: Colors.green,
               ),
@@ -71,7 +90,7 @@ class _VerifyScreenState extends State<VerifyScreen> {
           }
         },
         builder: (context, state) {
-          if (state is CheckingIfVerified) {
+          if (state is CheckingIfVerified && !_initialCheckDone) {
             return const Center(child: CircularProgressIndicator());
           }
 
@@ -134,18 +153,6 @@ class _VerifyScreenState extends State<VerifyScreen> {
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
               ),
-          const SizedBox(height: 24),
-          ElevatedButton(
-            onPressed: () {
-              context.read<AuthBloc>().add(
-                CheckIfVerified(widget.userEmail, widget.userPassword),
-              );
-            },
-            child: const Text(
-              "Proceed to Login",
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-          ),
         ],
       ),
     );
