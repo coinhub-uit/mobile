@@ -1,4 +1,5 @@
 import "package:coinhub/core/bloc/auth/auth_logic.dart";
+import "package:coinhub/core/bloc/user/user_logic.dart";
 import "package:coinhub/core/constants/theme.dart";
 import "package:coinhub/presentation/routes/router.dart";
 import "package:flutter/material.dart";
@@ -23,7 +24,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
-      providers: [BlocProvider(create: (context) => AuthBloc())],
+      providers: [
+        BlocProvider(create: (context) => AuthBloc()),
+        BlocProvider(create: (context) => UserBloc()),
+      ],
       child: MaterialApp.router(
         theme: catppuccinTheme(isDark: false),
         darkTheme: catppuccinTheme(isDark: true),

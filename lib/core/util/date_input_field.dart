@@ -28,6 +28,25 @@ class _DateInputFieldState extends State<DateInputField> {
       context: context,
       firstDate: firstDate,
       lastDate: lastDate,
+      initialDate: selectedDate ?? now,
+      helpText: "Select your day of birth",
+      cancelText: "Cancel",
+      builder:
+          (context, child) => Theme(
+            data: Theme.of(context).copyWith(
+              primaryColor: Theme.of(context).colorScheme.primary,
+              colorScheme: Theme.of(context).colorScheme,
+              buttonTheme: const ButtonThemeData(
+                textTheme: ButtonTextTheme.primary,
+              ),
+              datePickerTheme: const DatePickerThemeData(),
+            ),
+
+            child: IconTheme(
+              data: const IconThemeData(size: 24),
+              child: child!,
+            ),
+          ),
     );
 
     if (date != null) {
