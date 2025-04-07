@@ -50,7 +50,15 @@ class RouteRouter {
         name: "signUpDetails",
         path: Routes.auth.signUpDetails,
         pageBuilder: (context, state) {
-          return MaterialPage(child: SignUpDetailsScreen());
+          final data = state.extra as Map<String, String>;
+          final email = data["email"] ?? "";
+          final password = data["password"] ?? "";
+          return MaterialPage(
+            child: SignUpDetailsScreen(
+              userEmail: email,
+              userPassword: password,
+            ),
+          );
         },
       ),
       GoRoute(

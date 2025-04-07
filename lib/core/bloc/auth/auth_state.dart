@@ -1,4 +1,5 @@
 // Base state class
+
 abstract class AuthState {}
 
 // --- Login States ---
