@@ -2,6 +2,7 @@ import "package:coinhub/presentation/screen/account/create_pin_screen.dart";
 import "package:coinhub/presentation/screen/auth/forgot_password_screen.dart";
 import "package:coinhub/presentation/screen/auth/login_screen.dart";
 import "package:coinhub/presentation/screen/auth/reset_password_screen.dart";
+import "package:coinhub/presentation/screen/auth/sign_up_details_screen.dart";
 import "package:coinhub/presentation/screen/auth/sign_up_screen.dart";
 import "package:coinhub/presentation/screen/auth/verify_screen.dart";
 import "package:coinhub/presentation/screen/home.dart";
@@ -43,6 +44,13 @@ class RouteRouter {
         path: Routes.auth.forgotPassword,
         pageBuilder: (context, state) {
           return MaterialPage(child: ForgotPasswordScreen());
+        },
+      ),
+      GoRoute(
+        name: "signUpDetails",
+        path: Routes.auth.signUpDetails,
+        pageBuilder: (context, state) {
+          return MaterialPage(child: SignUpDetailsScreen());
         },
       ),
       GoRoute(
