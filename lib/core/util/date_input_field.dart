@@ -11,7 +11,7 @@ class DateInputField extends StatefulWidget {
 
 class _DateInputFieldState extends State<DateInputField> {
   final _controller = TextEditingController();
-  DateTime? _selectedDate;
+  DateTime? selectedDate;
 
   @override
   void dispose() {
@@ -32,7 +32,7 @@ class _DateInputFieldState extends State<DateInputField> {
 
     if (date != null) {
       setState(() {
-        _selectedDate = date;
+        selectedDate = date;
         _controller.text = "${date.day}/${date.month}/${date.year}";
       });
       widget.onDateSelected(date);
