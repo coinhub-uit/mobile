@@ -49,32 +49,32 @@ class UserModel {
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
-      'id': id,
-      'fullName': fullName,
-      'birthDay': birthDay.millisecondsSinceEpoch,
-      'avatar': avatar,
-      'citizenId': citizenId,
-      'address': address,
-      'phoneNumber': phoneNumber,
-      'createdAt': createdAt.millisecondsSinceEpoch,
-      'deleteddAt': deleteddAt?.millisecondsSinceEpoch,
+      "id": id,
+      "fullName": fullName,
+      "birthDay": birthDay.millisecondsSinceEpoch,
+      "avatar": avatar,
+      "citizenId": citizenId,
+      "address": address,
+      "phoneNumber": phoneNumber,
+      "createdAt": createdAt.millisecondsSinceEpoch,
+      "deleteddAt": deleteddAt?.millisecondsSinceEpoch,
     };
   }
 
   factory UserModel.fromMap(Map<String, dynamic> map) {
     return UserModel(
-      id: map['id'] as String,
-      fullName: map['fullName'] as String,
-      birthDay: DateTime.fromMillisecondsSinceEpoch(map['birthDay'] as int),
-      avatar: map['avatar'] != null ? map['avatar'] as String : null,
-      citizenId: map['citizenId'] as String,
-      address: map['address'] != null ? map['address'] as String : null,
+      id: map["id"] as String,
+      fullName: map["fullName"] as String,
+      birthDay: DateTime.fromMillisecondsSinceEpoch(map["birthDay"] as int),
+      avatar: map["avatar"] != null ? map["avatar"] as String : null,
+      citizenId: map["citizenId"] as String,
+      address: map["address"] != null ? map["address"] as String : null,
       phoneNumber:
-          map['phoneNumber'] != null ? map['phoneNumber'] as String : null,
-      createdAt: DateTime.fromMillisecondsSinceEpoch(map['createdAt'] as int),
+          map["phoneNumber"] != null ? map["phoneNumber"] as String : null,
+      createdAt: DateTime.fromMillisecondsSinceEpoch(map["createdAt"] as int),
       deleteddAt:
-          map['deleteddAt'] != null
-              ? DateTime.fromMillisecondsSinceEpoch(map['deleteddAt'] as int)
+          map["deleteddAt"] != null
+              ? DateTime.fromMillisecondsSinceEpoch(map["deleteddAt"] as int)
               : null,
     );
   }
@@ -86,7 +86,7 @@ class UserModel {
 
   @override
   String toString() {
-    return 'UserModel(id: $id, fullName: $fullName, birthDay: $birthDay, avatar: $avatar, citizenId: $citizenId, address: $address, phoneNumber: $phoneNumber, createdAt: $createdAt, deleteddAt: $deleteddAt)';
+    return "UserModel(id: $id, fullName: $fullName, birthDay: $birthDay, avatar: $avatar, citizenId: $citizenId, address: $address, phoneNumber: $phoneNumber, createdAt: $createdAt, deleteddAt: $deleteddAt)";
   }
 
   @override
