@@ -1,20 +1,42 @@
 import "package:coinhub/core/bloc/auth/auth_event.dart";
 import "package:coinhub/core/bloc/auth/auth_logic.dart";
-import "package:coinhub/core/bloc/auth/auth_state.dart";
+import "package:coinhub/core/bloc/user/user_logic.dart";
 import "package:coinhub/core/util/date_input_field.dart";
 import "package:coinhub/models/user_model.dart";
 import "package:coinhub/presentation/components/welcome_text.dart";
+import "package:coinhub/presentation/routes/routes.dart";
 import "package:flutter/gestures.dart";
 import "package:flutter/material.dart";
 import "package:flutter_bloc/flutter_bloc.dart";
+import "package:go_router/go_router.dart";
 
 class SignUpDetailsScreen extends StatelessWidget {
-  const SignUpDetailsScreen({super.key});
+  final String userEmail;
+  final String userPassword;
+  const SignUpDetailsScreen({
+    super.key,
+    required this.userEmail,
+    required this.userPassword,
+  });
   @override
   Widget build(BuildContext context) {
-    return BlocListener<AuthBloc, AuthState>(
-      listener: (context, state) {
-        if (state is SignUpWithEmailInitial) {}
+    return BlocListener<UserBloc, UserState>(
+      listener: (context, state) async {
+        if (state is SignUpDetailsLoading) {}
+        print("👀 state is: $state"); // Add this
+
+        if (state is SignUpDetailsSuccess) {
+          if (context.mounted) {
+            context.go(Routes.Auth.login);
+
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text("Account created successfully"),
+                backgroundColor: Colors.green,
+              ),
+            );
+          }
+        }
       },
 
       child: Scaffold(
@@ -36,7 +58,7 @@ class SignUpDetailsScreen extends StatelessWidget {
                   title: "Sign Up Details",
                   text: "Please enter details\nfor your new account.",
                 ),
-                const SignUpDetailsForm(),
+                SignUpDetailsForm(email: userEmail, password: userPassword),
                 const SizedBox(height: 16),
                 Center(child: Text("Or", style: TextStyle())),
                 const SizedBox(height: 16 * 1.5),
@@ -72,7 +94,13 @@ class SignUpDetailsScreen extends StatelessWidget {
 }
 
 class SignUpDetailsForm extends StatefulWidget {
-  const SignUpDetailsForm({super.key});
+  final String email;
+  final String password;
+  const SignUpDetailsForm({
+    super.key,
+    required this.email,
+    required this.password,
+  });
 
   @override
   State<SignUpDetailsForm> createState() => _SignUpFormState();
@@ -80,17 +108,19 @@ class SignUpDetailsForm extends StatefulWidget {
 
 class _SignUpFormState extends State<SignUpDetailsForm> {
   final _formKey = GlobalKey<FormState>();
+  late String userEmail = widget.email;
+  late String userPassword = widget.password;
   late UserModel userModel;
-  DateTime? dob = DateTime.now();
 
   @override
   void initState() {
     super.initState();
     userModel = UserModel(
-      fullName: "",
+      fullname: "",
       phoneNumber: "",
       id: "",
-      birthDay: DateTime.now(),
+      avatar: "",
+      birthDate: DateTime.now().toUtc().toIso8601String(),
       citizenId: "",
       createdAt: DateTime.now(),
     );
@@ -102,10 +132,10 @@ class _SignUpFormState extends State<SignUpDetailsForm> {
       key: _formKey,
       child: Column(
         children: [
-          // fullName Field
+          // fullname Field
           TextFormField(
             onSaved: (value) {
-              userModel.fullName = value?.trim() ?? "";
+              userModel.fullname = value?.trim() ?? "";
             },
             textInputAction: TextInputAction.next,
             keyboardType: TextInputType.name,
@@ -115,6 +145,16 @@ class _SignUpFormState extends State<SignUpDetailsForm> {
               border: const UnderlineInputBorder(),
               prefixIcon: const Icon(Icons.person_outline),
             ),
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return "Please enter your full name";
+              }
+              if (RegExp(r"^[a-zA-Z\s]+$").hasMatch(value)) {
+                return null;
+              } else {
+                return "Please enter a valid name";
+              }
+            },
           ),
           const SizedBox(height: 16),
           // citizenId Field
@@ -130,13 +170,23 @@ class _SignUpFormState extends State<SignUpDetailsForm> {
               border: const UnderlineInputBorder(),
               prefixIcon: const Icon(Icons.badge_outlined),
             ),
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return "Please enter your citizen ID";
+              }
+              if (RegExp(r"^\d{12}$").hasMatch(value)) {
+                return null;
+              } else {
+                return "Please enter a valid citizen ID";
+              }
+            },
           ),
           const SizedBox(height: 16),
           // birthDay Field
           DateInputField(
             onDateSelected: (date) {
               if (date != null) {
-                userModel.birthDay = date;
+                userModel.birthDate = date.toUtc().toIso8601String();
               } else {
                 throw Exception("Date is null");
               }
@@ -171,6 +221,16 @@ class _SignUpFormState extends State<SignUpDetailsForm> {
               border: const UnderlineInputBorder(),
               prefixIcon: const Icon(Icons.phone),
             ),
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return "Please enter your phone number";
+              }
+              if (RegExp(r"^\d{10,15}$").hasMatch(value)) {
+                return null; // accept
+              } else {
+                return "Please enter a valid phone number";
+              }
+            },
           ),
           const SizedBox(height: 32),
 
@@ -193,6 +253,17 @@ class _SignUpFormState extends State<SignUpDetailsForm> {
                 // context.read<AuthBloc>().add(
                 //   SignUpWithEmailSubmitted(_email, _password),
                 // );
+                print(userModel.toJson());
+                context.read<UserBloc>().add(
+                  SignUpDetailsSubmitted(userModel, userEmail, userPassword),
+                );
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text("Please fill in all fields correctly"),
+                    backgroundColor: Colors.red,
+                  ),
+                );
               }
             },
             style: FilledButton.styleFrom(
@@ -201,7 +272,7 @@ class _SignUpFormState extends State<SignUpDetailsForm> {
                 borderRadius: BorderRadius.circular(8),
               ),
             ),
-            child: const Text("Create Account", style: TextStyle(fontSize: 16)),
+            child: const Text("Proceed", style: TextStyle(fontSize: 16)),
           ),
         ],
       ),

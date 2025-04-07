@@ -3,78 +3,92 @@ import "dart:convert";
 
 class UserModel {
   final String id; // supabase based
-  String fullName;
-  DateTime birthDay;
+  String fullname;
+  String birthDate;
   String? avatar;
   String citizenId;
   String? address;
   String? phoneNumber;
-  DateTime createdAt;
-  DateTime? deleteddAt;
+  DateTime? createdAt;
+  DateTime? deletedAt;
   UserModel({
     required this.id,
-    required this.fullName,
-    required this.birthDay,
+    required this.fullname,
+    required this.birthDate,
     this.avatar,
     required this.citizenId,
     this.address,
     this.phoneNumber,
-    required this.createdAt,
-    this.deleteddAt,
+    this.createdAt,
+    this.deletedAt,
   });
 
   UserModel copyWith({
     String? id,
-    String? fullName,
-    DateTime? birthDay,
+    String? fullname,
+    String? birthDate,
     String? avatar,
     String? citizenId,
     String? address,
     String? phoneNumber,
     DateTime? createdAt,
-    DateTime? deleteddAt,
+    DateTime? deletedAt,
   }) {
     return UserModel(
       id: id ?? this.id,
-      fullName: fullName ?? this.fullName,
-      birthDay: birthDay ?? this.birthDay,
+      fullname: fullname ?? this.fullname,
+      birthDate: birthDate ?? this.birthDate,
       avatar: avatar ?? this.avatar,
       citizenId: citizenId ?? this.citizenId,
       address: address ?? this.address,
       phoneNumber: phoneNumber ?? this.phoneNumber,
       createdAt: createdAt ?? this.createdAt,
-      deleteddAt: deleteddAt ?? this.deleteddAt,
+      deletedAt: deletedAt ?? this.deletedAt,
     );
   }
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       "id": id,
-      "fullName": fullName,
-      "birthDay": birthDay.millisecondsSinceEpoch,
+      "fullname": fullname,
+      "birthDate": birthDate,
       "avatar": avatar,
       "citizenId": citizenId,
       "address": address,
       "phoneNumber": phoneNumber,
-      "createdAt": createdAt.millisecondsSinceEpoch,
-      "deleteddAt": deleteddAt?.millisecondsSinceEpoch,
+      "createdAt": createdAt?.millisecondsSinceEpoch,
+      "deletedAt": deletedAt?.millisecondsSinceEpoch,
     };
   }
+
+  Map<String, dynamic> toMapForRequest() {
+    return <String, dynamic>{
+      "id": id,
+      "fullname": fullname,
+      "birthDate": birthDate,
+      "avatar": avatar,
+      "citizenId": citizenId,
+      "address": address,
+      "phoneNumber": phoneNumber,
+    };
+  }
+
+  String toJsonForRequest() => json.encode(toMapForRequest());
 
   factory UserModel.fromMap(Map<String, dynamic> map) {
     return UserModel(
       id: map["id"] as String,
-      fullName: map["fullName"] as String,
-      birthDay: DateTime.fromMillisecondsSinceEpoch(map["birthDay"] as int),
+      fullname: map["fullname"] as String,
+      birthDate: map["birthDate"] as String,
       avatar: map["avatar"] != null ? map["avatar"] as String : null,
       citizenId: map["citizenId"] as String,
       address: map["address"] != null ? map["address"] as String : null,
       phoneNumber:
           map["phoneNumber"] != null ? map["phoneNumber"] as String : null,
       createdAt: DateTime.fromMillisecondsSinceEpoch(map["createdAt"] as int),
-      deleteddAt:
-          map["deleteddAt"] != null
-              ? DateTime.fromMillisecondsSinceEpoch(map["deleteddAt"] as int)
+      deletedAt:
+          map["deletedAt"] != null
+              ? DateTime.fromMillisecondsSinceEpoch(map["deletedAt"] as int)
               : null,
     );
   }
@@ -86,7 +100,7 @@ class UserModel {
 
   @override
   String toString() {
-    return "UserModel(id: $id, fullName: $fullName, birthDay: $birthDay, avatar: $avatar, citizenId: $citizenId, address: $address, phoneNumber: $phoneNumber, createdAt: $createdAt, deleteddAt: $deleteddAt)";
+    return "UserModel(id: $id, fullname: $fullname, birthDate: $birthDate, avatar: $avatar, citizenId: $citizenId, address: $address, phoneNumber: $phoneNumber, createdAt: $createdAt, deletedAt: $deletedAt)";
   }
 
   @override
@@ -94,26 +108,26 @@ class UserModel {
     if (identical(this, other)) return true;
 
     return other.id == id &&
-        other.fullName == fullName &&
-        other.birthDay == birthDay &&
+        other.fullname == fullname &&
+        other.birthDate == birthDate &&
         other.avatar == avatar &&
         other.citizenId == citizenId &&
         other.address == address &&
         other.phoneNumber == phoneNumber &&
         other.createdAt == createdAt &&
-        other.deleteddAt == deleteddAt;
+        other.deletedAt == deletedAt;
   }
 
   @override
   int get hashCode {
     return id.hashCode ^
-        fullName.hashCode ^
-        birthDay.hashCode ^
+        fullname.hashCode ^
+        birthDate.hashCode ^
         avatar.hashCode ^
         citizenId.hashCode ^
         address.hashCode ^
         phoneNumber.hashCode ^
         createdAt.hashCode ^
-        deleteddAt.hashCode;
+        deletedAt.hashCode;
   }
 }
