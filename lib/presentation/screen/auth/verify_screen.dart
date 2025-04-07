@@ -69,12 +69,12 @@ class _VerifyScreenState extends State<VerifyScreen> {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
                 content: Text(
-                  "You have successfully verified your email. Returning to login screen...",
+                  "You have successfully verified your email. Please fill in your details.",
                 ),
                 backgroundColor: Colors.green,
               ),
             );
-            context.go(Routes.Auth.login);
+            context.go(Routes.Auth.signUpDetails);
           }
         },
         builder: (context, state) {

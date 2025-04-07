@@ -1,33 +1,22 @@
 import "package:coinhub/core/bloc/auth/auth_event.dart";
 import "package:coinhub/core/bloc/auth/auth_logic.dart";
 import "package:coinhub/core/bloc/auth/auth_state.dart";
+import "package:coinhub/core/util/date_input_field.dart";
+import "package:coinhub/models/user_model.dart";
 import "package:coinhub/presentation/components/welcome_text.dart";
-import "package:coinhub/presentation/routes/routes.dart";
 import "package:flutter/gestures.dart";
 import "package:flutter/material.dart";
 import "package:flutter_bloc/flutter_bloc.dart";
-import "package:go_router/go_router.dart";
 
-class SignUpScreen extends StatelessWidget {
-  const SignUpScreen({super.key});
-
+class SignUpDetailsScreen extends StatelessWidget {
+  const SignUpDetailsScreen({super.key});
   @override
   Widget build(BuildContext context) {
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
-        if (state is SignUpWithEmailSuccess) {
-          context.go(
-            Routes.Auth.verify,
-            extra: {"email": state.email, "password": state.password},
-          );
-        } else if (state is SignUpWithEmailError) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.error), backgroundColor: Colors.red),
-          );
-        } else if (state is LoginInitial) {
-          context.go(Routes.Auth.login);
-        }
+        if (state is SignUpWithEmailInitial) {}
       },
+
       child: Scaffold(
         body: SingleChildScrollView(
           child: Padding(
@@ -44,10 +33,10 @@ class SignUpScreen extends StatelessWidget {
                   ],
                 ),
                 const WelcomeText(
-                  title: "Create Account",
-                  text: "Please enter your details\nto create a new account.",
+                  title: "Sign Up Details",
+                  text: "Please enter details\nfor your new account.",
                 ),
-                const SignUpForm(),
+                const SignUpDetailsForm(),
                 const SizedBox(height: 16),
                 Center(child: Text("Or", style: TextStyle())),
                 const SizedBox(height: 16 * 1.5),
@@ -82,20 +71,30 @@ class SignUpScreen extends StatelessWidget {
   }
 }
 
-class SignUpForm extends StatefulWidget {
-  const SignUpForm({super.key});
+class SignUpDetailsForm extends StatefulWidget {
+  const SignUpDetailsForm({super.key});
 
   @override
-  State<SignUpForm> createState() => _SignUpFormState();
+  State<SignUpDetailsForm> createState() => _SignUpFormState();
 }
 
-class _SignUpFormState extends State<SignUpForm> {
+class _SignUpFormState extends State<SignUpDetailsForm> {
   final _formKey = GlobalKey<FormState>();
-  bool _obscurePassword = true;
-  bool _obscureConfirmPassword = true;
-  String _email = "";
-  String _password = "";
-  String _confirmPassword = "";
+  late UserModel userModel;
+  DateTime? dob = DateTime.now();
+
+  @override
+  void initState() {
+    super.initState();
+    userModel = UserModel(
+      fullName: "",
+      phoneNumber: "",
+      id: "",
+      birthDay: DateTime.now(),
+      citizenId: "",
+      createdAt: DateTime.now(),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -103,70 +102,74 @@ class _SignUpFormState extends State<SignUpForm> {
       key: _formKey,
       child: Column(
         children: [
-          // Email Field
+          // fullName Field
           TextFormField(
             onSaved: (value) {
-              _email = value?.trim() ?? "";
+              userModel.fullName = value?.trim() ?? "";
             },
             textInputAction: TextInputAction.next,
-            keyboardType: TextInputType.emailAddress,
+            keyboardType: TextInputType.name,
             decoration: InputDecoration(
-              hintText: "Email Address",
+              hintText: "Full Name",
               filled: false,
               border: const UnderlineInputBorder(),
-              prefixIcon: const Icon(Icons.email_outlined),
+              prefixIcon: const Icon(Icons.person_outline),
             ),
           ),
           const SizedBox(height: 16),
-
-          // Password Field
+          // citizenId Field
           TextFormField(
-            obscureText: _obscurePassword,
             onSaved: (value) {
-              _password = value ?? "";
+              userModel.citizenId = value ?? "";
             },
+            keyboardType: TextInputType.number,
+            textInputAction: TextInputAction.next,
             decoration: InputDecoration(
-              hintText: "Password",
+              hintText: "Citizen ID",
               filled: false,
               border: const UnderlineInputBorder(),
-              prefixIcon: const Icon(Icons.lock_outline),
-              suffixIcon: IconButton(
-                icon: Icon(
-                  _obscurePassword
-                      ? Icons.visibility_off_outlined
-                      : Icons.visibility_outlined,
-                ),
-                onPressed: () {
-                  setState(() {
-                    _obscurePassword = !_obscurePassword;
-                  });
-                },
-              ),
+              prefixIcon: const Icon(Icons.badge_outlined),
             ),
           ),
           const SizedBox(height: 16),
-          TextFormField(
-            obscureText: _obscureConfirmPassword,
-            onSaved: (value) {
-              _confirmPassword = value ?? "";
+          // birthDay Field
+          DateInputField(
+            onDateSelected: (date) {
+              if (date != null) {
+                userModel.birthDay = date;
+              } else {
+                throw Exception("Date is null");
+              }
             },
+          ),
+          const SizedBox(height: 16),
+          // address Field
+          TextFormField(
+            onSaved: (value) {
+              userModel.address = value ?? "";
+            },
+            textInputAction: TextInputAction.next,
+            keyboardType: TextInputType.streetAddress,
             decoration: InputDecoration(
-              hintText: "Confirm Password",
+              hintText: "Address",
               filled: false,
               border: const UnderlineInputBorder(),
-              prefixIcon: const Icon(Icons.lock_outline),
-              suffixIcon: IconButton(
-                icon: Icon(
-                  _obscureConfirmPassword
-                      ? Icons.visibility_off_outlined
-                      : Icons.visibility_outlined,
-                ),
-                onPressed: () {
-                  setState(() {
-                    _obscureConfirmPassword = !_obscureConfirmPassword;
-                  });
-                },
-              ),
+              prefixIcon: const Icon(Icons.location_on_outlined),
+            ),
+          ),
+          const SizedBox(height: 16),
+          // phoneNumber Field
+          TextFormField(
+            onSaved: (value) {
+              userModel.phoneNumber = value ?? "";
+            },
+            textInputAction: TextInputAction.next,
+            keyboardType: TextInputType.phone,
+            decoration: InputDecoration(
+              hintText: "Phone Number",
+              filled: false,
+              border: const UnderlineInputBorder(),
+              prefixIcon: const Icon(Icons.phone),
             ),
           ),
           const SizedBox(height: 32),
@@ -177,19 +180,19 @@ class _SignUpFormState extends State<SignUpForm> {
               if (_formKey.currentState!.validate()) {
                 _formKey.currentState!.save();
 
-                if (_password != _confirmPassword) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text("Passwords do not match"),
-                      backgroundColor: Colors.red,
-                    ),
-                  );
-                  return;
-                }
-                // Handle sign-up logic here
-                context.read<AuthBloc>().add(
-                  SignUpWithEmailSubmitted(_email, _password),
-                );
+                // if (_password != _confirmPassword) {
+                //   ScaffoldMessenger.of(context).showSnackBar(
+                //     const SnackBar(
+                //       content: Text("Passwords do not match"),
+                //       backgroundColor: Colors.red,
+                //     ),
+                //   );
+                //   return;
+                // }
+                // // Handle sign-up logic here
+                // context.read<AuthBloc>().add(
+                //   SignUpWithEmailSubmitted(_email, _password),
+                // );
               }
             },
             style: FilledButton.styleFrom(
