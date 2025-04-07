@@ -69,24 +69,12 @@ class _VerifyScreenState extends State<VerifyScreen> {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
                 content: Text(
-                  "You have successfully verified your email. Returning to login screen...",
+                  "You have successfully verified your email. Please fill in your details.",
                 ),
                 backgroundColor: Colors.green,
               ),
             );
-            await Future.delayed(const Duration(seconds: 2));
-
-            if (!context.mounted) {
-              return; // check if the context is still mounted before navigating
-            }
             context.go(Routes.auth.login);
-          } else if (state is NotVerified) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text("Please verify your email first."),
-                backgroundColor: Colors.red,
-              ),
-            );
           }
         },
         builder: (context, state) {

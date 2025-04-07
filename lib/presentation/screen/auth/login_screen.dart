@@ -106,6 +106,10 @@ class LoginScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 16),
+                FilledButton(
+                  onPressed: () => context.go(Routes.Auth.signUpDetails),
+                  child: const Text("Test", style: TextStyle(fontSize: 16)),
+                ),
               ],
             ),
           ),
