@@ -80,7 +80,7 @@ class _DateInputFieldState extends State<DateInputField> {
     return TextFormField(
       controller: _controller,
       readOnly: true,
-      onTap: widget.isReadOnly ? _pickDate : null,
+      onTap: widget.isReadOnly ? null : _pickDate,
       decoration: const InputDecoration(
         hintText: "Date of Birth",
         prefixIcon: Icon(Icons.calendar_today),

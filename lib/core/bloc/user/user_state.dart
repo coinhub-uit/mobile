@@ -46,3 +46,16 @@ class UpdateAvatarSuccess extends UserState {
 
   UpdateAvatarSuccess(this.avatarUrl);
 }
+
+// --- delete account states ---
+class DeleteAccountInitial extends UserState {}
+
+class DeleteAccountLoading extends UserState {}
+
+class DeleteAccountError extends UserState {
+  final String error;
+
+  DeleteAccountError(this.error);
+}
+
+class DeleteAccountSuccess extends UserState {}

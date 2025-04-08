@@ -98,13 +98,22 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           password,
         );
         final user = response.user;
-
+        if (response.success == false) {
+          emit(
+            LoginError(
+              "Please check you login credentials and try again.",
+              username,
+            ),
+          );
+          return;
+        }
         if (user?.emailConfirmedAt == null) {
           emit(
             LoginError("Please verify your email before logging in.", username),
           );
           return;
         }
+
         emit(LoginSuccess("Login successful."));
       } catch (error) {
         if (error is supabase.AuthException &&

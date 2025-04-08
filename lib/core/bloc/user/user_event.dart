@@ -24,3 +24,8 @@ class UpdateAvatarSubmitted extends UserEvent {
   final String userId;
   const UpdateAvatarSubmitted(this.userId);
 }
+
+class DeleteAccountRequested extends UserEvent {
+  final String userId;
+  const DeleteAccountRequested(this.userId);
+}

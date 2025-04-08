@@ -1,5 +1,3 @@
-import "dart:io";
-
 import "package:coinhub/core/services/user_service.dart";
 import "package:coinhub/models/user_model.dart";
 import "package:flutter_bloc/flutter_bloc.dart";
@@ -46,6 +44,19 @@ class UserBloc extends Bloc<UserEvent, UserState> {
         emit(UpdateAvatarSuccess(avatarUrl));
       } catch (e) {
         emit(UpdateAvatarError(e.toString()));
+      }
+    });
+    on<DeleteAccountRequested>((event, emit) async {
+      emit(DeleteAccountLoading());
+      try {
+        final response = await UserService.deleteUserAccount(event.userId);
+        if (response.statusCode == 200) {
+          emit(DeleteAccountSuccess());
+        } else {
+          emit(DeleteAccountError("Failed to delete account"));
+        }
+      } catch (e) {
+        emit(DeleteAccountError(e.toString()));
       }
     });
   }
