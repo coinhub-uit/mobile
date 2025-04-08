@@ -1,5 +1,7 @@
 import "package:coinhub/core/constants/api_client.dart";
+import "package:coinhub/core/services/local_storage.dart";
 import "package:coinhub/models/user_model.dart";
+import "package:flutter/foundation.dart";
 import "package:http/http.dart" as http;
 import "package:supabase_flutter/supabase_flutter.dart";
 
@@ -42,10 +44,15 @@ class UserService {
     String userEmail,
     String userPassword,
   ) async {
-    final supabaseResponse = await getAuthResponse(userEmail, userPassword);
-    final accessToken = await getAccessToken(userEmail, userPassword);
-
-    final user = supabaseResponse.user;
+    final accessToken = await LocalStorageService().read("JWT");
+    if (accessToken == null) {
+      throw Exception("Session not found");
+    }
+    final supabaseResponse = await supabaseClient.auth.signInWithPassword(
+      email: userEmail,
+      password: userPassword,
+    );
+    final user = supabaseResponse.user; // gotta get the id
     if (user == null) {
       throw Exception("User not found");
     }
@@ -79,13 +86,14 @@ class UserService {
     }
   }
 
-  static Future<UserModel> getUser(
-    UserModel userModel,
-    String userEmail,
-    String userPassword,
-  ) async {
+  static Future<UserModel> getUser(String id) async {
     final user = supabaseClient.auth.currentUser;
-    final accessToken = await getAccessToken(userEmail, userPassword);
+    final accessToken = await LocalStorageService().read("JWT");
+    if (accessToken == null) {
+      throw Exception("Session not found");
+    }
+    print("access token: $accessToken");
+    print("user id: ${user?.id}");
     if (user == null) {
       throw Exception("User not found");
     }
@@ -96,7 +104,10 @@ class UserService {
         "Authorization": "Bearer $accessToken",
       },
     );
+    print("response: ${response.body}");
+    print("response status code: ${response.statusCode}");
     if (response.statusCode == 200) {
+      debugPrint("User data: ${UserModel.fromJson(response.body)}");
       return UserModel.fromJson(response.body);
     } else {
       throw Exception("Failed to get user: ${response.statusCode}");

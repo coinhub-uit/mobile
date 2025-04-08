@@ -26,11 +26,11 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
             children: [
               CircleAvatar(
                 radius: 27,
-                backgroundImage: NetworkImage(
-                  //imgUrl
-                  //"https://avatars.githubusercontent.com/u/47231161?v=4",
-                  imgUrl,
-                ),
+                backgroundImage:
+                    imgUrl.isNotEmpty
+                        ? NetworkImage(imgUrl)
+                        : AssetImage("assets/images/CoinHub.png")
+                            as ImageProvider,
               ),
               SizedBox(width: 10),
               Text(

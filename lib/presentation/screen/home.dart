@@ -1,3 +1,5 @@
+import "package:coinhub/core/services/user_service.dart";
+import "package:coinhub/models/user_model.dart";
 import "package:flutter/material.dart";
 import "package:coinhub/core/services/auth_service.dart";
 import "package:font_awesome_flutter/font_awesome_flutter.dart";
@@ -17,12 +19,24 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  String userName = "This is a placeholder.";
+  String userId = "This is a placeholder.";
   int _selectedIndex = 0;
-  final List<Widget> _screens = [
-    HomeScreenContent(),
-    SavingsScreen(),
-    ProfileScreen(),
+  UserModel? userModel;
+  bool get isUserLoaded => userModel?.id != "This is a placeholder.";
+
+  // final List<Widget> _screens = [
+  //   HomeScreenContent(model: userModel),
+  //   SavingsScreen(),
+  //   ProfileScreen(),
+  // ];
+  List<Widget> get _screens => [
+    if (userModel != null) ...[
+      HomeScreenContent(model: userModel!),
+      SavingsScreen(model: userModel!),
+      ProfileScreen(model: userModel!),
+    ] else ...[
+      const Center(child: CircularProgressIndicator()),
+    ],
   ];
 
   void onItemTapped(int index) {
@@ -31,18 +45,48 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  Future<UserModel> getUserModel(String id) async {
+    return await UserService.getUser(id)
+        .then((value) {
+          return value;
+        })
+        .catchError((error) {
+          debugPrint("Error: $error");
+          return UserModel(
+            id: "This is a placeholder.",
+            citizenId: "This is a placeholder.",
+            fullname: "This is a placeholder.",
+            phoneNumber: "This is a placeholder.",
+            birthDate: DateTime.now().toUtc().toIso8601String(),
+          );
+        });
+  }
+
   @override
   void initState() {
     super.initState();
-    AuthService.authStateChanges.listen((data) {
-      setState(() {
-        userName = "${data.session?.user.email}";
-      });
+    AuthService.authStateChanges.listen((data) async {
+      final id = data.session?.user.id;
+      if (id != null) {
+        setState(() {
+          userId = id;
+        });
+
+        final model = await getUserModel(id);
+        setState(() {
+          userModel = model;
+        });
+      } else {
+        debugPrint("User not logged in.");
+      }
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    if (!isUserLoaded) {
+      return Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
     return Scaffold(
       body: _screens[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
@@ -71,13 +115,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
 // home screen content
 class HomeScreenContent extends StatelessWidget {
-  const HomeScreenContent({super.key});
+  final UserModel model;
+  const HomeScreenContent({super.key, required this.model});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: HomeAppBar(
-        userName: "User",
-        imgUrl: "https://avatars.githubusercontent.com/u/47231161?v=4",
+        userName: model.fullname.trim().split(" ").last,
+        imgUrl: model.avatar ?? "",
       ),
       body: Center(
         child: Padding(
@@ -187,13 +232,14 @@ class HomeScreenContent extends StatelessWidget {
 
 // savings screen
 class SavingsScreen extends StatelessWidget {
-  const SavingsScreen({super.key});
+  final UserModel model;
+  const SavingsScreen({super.key, required this.model});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: HomeAppBar(
-        userName: "User",
-        imgUrl: "https://avatars.githubusercontent.com/u/47231161?v=4",
+        userName: model.fullname.trim().split(" ").last,
+        imgUrl: model.avatar ?? "",
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -229,7 +275,8 @@ class SavingsScreen extends StatelessWidget {
 }
 
 class ProfileScreen extends StatelessWidget {
-  const ProfileScreen({super.key});
+  final UserModel model;
+  const ProfileScreen({super.key, required this.model});
   @override
   Widget build(BuildContext context) {
     return Scaffold(

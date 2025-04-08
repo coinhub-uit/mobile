@@ -85,11 +85,10 @@ class UserModel {
       address: map["address"] != null ? map["address"] as String : null,
       phoneNumber:
           map["phoneNumber"] != null ? map["phoneNumber"] as String : null,
-      createdAt: DateTime.fromMillisecondsSinceEpoch(map["createdAt"] as int),
+      createdAt:
+          map["createdAt"] != null ? DateTime.parse(map["createdAt"]) : null,
       deletedAt:
-          map["deletedAt"] != null
-              ? DateTime.fromMillisecondsSinceEpoch(map["deletedAt"] as int)
-              : null,
+          map["deletedAt"] != null ? DateTime.parse(map["deletedAt"]) : null,
     );
   }
 
