@@ -109,10 +109,10 @@ class SignUpDetailsForm extends StatefulWidget {
   });
 
   @override
-  State<SignUpDetailsForm> createState() => _SignUpFormState();
+  State<SignUpDetailsForm> createState() => _SignUpDetailsFormState();
 }
 
-class _SignUpFormState extends State<SignUpDetailsForm> {
+class _SignUpDetailsFormState extends State<SignUpDetailsForm> {
   final _formKey = GlobalKey<FormState>();
   late String userEmail = widget.email;
   late String userPassword = widget.password;
@@ -123,7 +123,6 @@ class _SignUpFormState extends State<SignUpDetailsForm> {
     super.initState();
     userModel = UserModel(
       fullname: "",
-      phoneNumber: "",
       id: "",
       avatar: "",
       birthDate: DateTime.now().toUtc().toIso8601String(),
@@ -213,31 +212,7 @@ class _SignUpFormState extends State<SignUpDetailsForm> {
               prefixIcon: const Icon(Icons.location_on_outlined),
             ),
           ),
-          const SizedBox(height: 16),
-          // phoneNumber Field
-          TextFormField(
-            onSaved: (value) {
-              userModel.phoneNumber = value ?? "";
-            },
-            textInputAction: TextInputAction.next,
-            keyboardType: TextInputType.phone,
-            decoration: InputDecoration(
-              hintText: "Phone Number",
-              filled: false,
-              border: const UnderlineInputBorder(),
-              prefixIcon: const Icon(Icons.phone),
-            ),
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return "Please enter your phone number";
-              }
-              if (RegExp(r"^\d{10,15}$").hasMatch(value)) {
-                return null; // accept
-              } else {
-                return "Please enter a valid phone number";
-              }
-            },
-          ),
+
           const SizedBox(height: 32),
 
           // Sign Up Button
