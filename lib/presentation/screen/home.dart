@@ -336,7 +336,7 @@ class ProfileScreen extends StatelessWidget {
                 children: [
                   const SizedBox(height: 16),
                   Padding(
-                    padding: const EdgeInsets.only(left: 16.0, bottom: 8),
+                    padding: const EdgeInsets.only(left: 24.0, bottom: 8),
                     child: const Text(
                       "Account Privacy",
                       style: TextStyle(
@@ -346,7 +346,7 @@ class ProfileScreen extends StatelessWidget {
                     ),
                   ),
                   Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 8.0),
+                    padding: EdgeInsets.symmetric(horizontal: 24.0),
                     child: UpdatePrivacyForm(
                       email: userEmail,
                       password: userPassword,
@@ -354,7 +354,7 @@ class ProfileScreen extends StatelessWidget {
                   ),
                   Padding(
                     padding: const EdgeInsets.only(
-                      left: 16.0,
+                      left: 24.0,
                       top: 16.0,
                       bottom: 8,
                     ),
@@ -367,7 +367,7 @@ class ProfileScreen extends StatelessWidget {
                     ),
                   ),
                   Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 8.0),
+                    padding: EdgeInsets.symmetric(horizontal: 24.0),
                     child: UpdateDetailsForm(userModel: model),
                   ),
                 ],
