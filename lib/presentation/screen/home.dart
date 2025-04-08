@@ -309,12 +309,13 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: HomeAppBar(userName: model.fullname.trim().split(" ").last),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Padding(
-            padding: const EdgeInsets.only(top: 128.0, bottom: 32.0),
+            padding: const EdgeInsets.only(top: 64.0, bottom: 32.0),
             child: Center(
               child: CircleAvatar(
                 radius: 84,
