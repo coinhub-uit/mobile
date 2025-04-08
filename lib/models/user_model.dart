@@ -8,7 +8,6 @@ class UserModel {
   String? avatar;
   String citizenId;
   String? address;
-  String? phoneNumber;
   DateTime? createdAt;
   DateTime? deletedAt;
   UserModel({
@@ -18,7 +17,6 @@ class UserModel {
     this.avatar,
     required this.citizenId,
     this.address,
-    this.phoneNumber,
     this.createdAt,
     this.deletedAt,
   });
@@ -41,7 +39,6 @@ class UserModel {
       avatar: avatar ?? this.avatar,
       citizenId: citizenId ?? this.citizenId,
       address: address ?? this.address,
-      phoneNumber: phoneNumber ?? this.phoneNumber,
       createdAt: createdAt ?? this.createdAt,
       deletedAt: deletedAt ?? this.deletedAt,
     );
@@ -55,7 +52,6 @@ class UserModel {
       "avatar": avatar,
       "citizenId": citizenId,
       "address": address,
-      "phoneNumber": phoneNumber,
       "createdAt": createdAt?.millisecondsSinceEpoch,
       "deletedAt": deletedAt?.millisecondsSinceEpoch,
     };
@@ -69,7 +65,6 @@ class UserModel {
       "avatar": avatar,
       "citizenId": citizenId,
       "address": address,
-      "phoneNumber": phoneNumber,
     };
   }
 
@@ -83,8 +78,6 @@ class UserModel {
       avatar: map["avatar"] != null ? map["avatar"] as String : null,
       citizenId: map["citizenId"] as String,
       address: map["address"] != null ? map["address"] as String : null,
-      phoneNumber:
-          map["phoneNumber"] != null ? map["phoneNumber"] as String : null,
       createdAt:
           map["createdAt"] != null ? DateTime.parse(map["createdAt"]) : null,
       deletedAt:
@@ -99,7 +92,7 @@ class UserModel {
 
   @override
   String toString() {
-    return "UserModel(id: $id, fullname: $fullname, birthDate: $birthDate, avatar: $avatar, citizenId: $citizenId, address: $address, phoneNumber: $phoneNumber, createdAt: $createdAt, deletedAt: $deletedAt)";
+    return "UserModel(id: $id, fullname: $fullname, birthDate: $birthDate, avatar: $avatar, citizenId: $citizenId, address: $address,createdAt: $createdAt, deletedAt: $deletedAt)";
   }
 
   @override
@@ -112,7 +105,6 @@ class UserModel {
         other.avatar == avatar &&
         other.citizenId == citizenId &&
         other.address == address &&
-        other.phoneNumber == phoneNumber &&
         other.createdAt == createdAt &&
         other.deletedAt == deletedAt;
   }
@@ -125,7 +117,6 @@ class UserModel {
         avatar.hashCode ^
         citizenId.hashCode ^
         address.hashCode ^
-        phoneNumber.hashCode ^
         createdAt.hashCode ^
         deletedAt.hashCode;
   }

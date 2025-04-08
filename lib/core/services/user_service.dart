@@ -65,7 +65,6 @@ class UserService {
       avatar: userModel.avatar,
       citizenId: userModel.citizenId,
       address: userModel.address,
-      phoneNumber: userModel.phoneNumber,
     );
     print("newUser as json: ${newUser.toJsonForRequest()}");
     final response = await ApiClient.client.post(
