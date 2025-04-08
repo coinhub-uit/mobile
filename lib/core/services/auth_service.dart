@@ -126,6 +126,36 @@ class AuthService {
     }
   }
 
+  static Future<bool> updatePassword(
+    String email,
+    String oldPassword,
+    String newPassword,
+  ) async {
+    try {
+      supabaseClient.auth.signOut(); // Sign out the user first
+      final response = await supabaseClient.auth.signInWithPassword(
+        email: email,
+        password: oldPassword,
+      );
+      final session = response.session;
+      if (session == null) {
+        return false;
+      }
+      try {
+        await LocalStorageService().write("JWT", session.accessToken);
+      } catch (e) {
+        print("Error writing JWT to local storage: $e");
+      }
+      await supabaseClient.auth.updateUser(
+        UserAttributes(password: newPassword),
+      );
+      return true;
+    } catch (e) {
+      print("Error updating password: $e");
+    }
+    return false;
+  }
+
   static Future<void> resendVerificationCode(String email) async {
     await supabaseClient.auth.resend(type: OtpType.signup, email: email);
   }

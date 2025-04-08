@@ -16,3 +16,33 @@ class SignUpDetailsError extends UserState {
 }
 
 class SignUpDetailsSuccess extends UserState {}
+
+// --- Update Details States ---
+class UpdateDetailsInitial extends UserState {}
+
+class UpdateDetailsLoading extends UserState {}
+
+class UpdateDetailsError extends UserState {
+  final String error;
+
+  UpdateDetailsError(this.error);
+}
+
+class UpdateDetailsSuccess extends UserState {}
+
+// --- update avatar states ---
+class UpdateAvatarInitial extends UserState {}
+
+class UpdateAvatarLoading extends UserState {}
+
+class UpdateAvatarError extends UserState {
+  final String error;
+
+  UpdateAvatarError(this.error);
+}
+
+class UpdateAvatarSuccess extends UserState {
+  final String avatarUrl;
+
+  UpdateAvatarSuccess(this.avatarUrl);
+}

@@ -14,3 +14,13 @@ class SignUpDetailsSubmitted extends UserEvent {
     this.userPassword,
   );
 }
+
+class UpdateDetailsSubmitted extends UserEvent {
+  final UserModel userModel;
+  const UpdateDetailsSubmitted(this.userModel);
+}
+
+class UpdateAvatarSubmitted extends UserEvent {
+  final String userId;
+  const UpdateAvatarSubmitted(this.userId);
+}
