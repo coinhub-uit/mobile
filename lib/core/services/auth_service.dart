@@ -65,6 +65,12 @@ class AuthService {
       redirectTo: "coinhub://auth/reset-password",
     );
   }
+  static Future<UserResponse> updatePassword(String password) async {
+    final response = await supabaseClient.auth.updateUser(
+      UserAttributes(password: password),
+    );
+    return response;
+  }
 
   static Stream<AuthState> get authStateChanges =>
       supabaseClient.auth.onAuthStateChange;

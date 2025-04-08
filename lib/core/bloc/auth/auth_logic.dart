@@ -206,25 +206,30 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         emit(ResendVerificationError(error.toString()));
       }
     });
-    // on<ResetPasswordSubmitted>((event, emit) async {
-    //   try {
-    //     final supabase = Supabase.instance.client;
+    on<ResetPasswordSubmitted>((event, emit) async {
+      try {
+        final password = event.password.trim();
+        if (password.isEmpty) {
+          emit(ResetPasswordError("Please enter a new password."));
+          return;
+        }
+        if (password.length < 6) {
+          emit(ResetPasswordError("Password must be at least 6 characters long."));
+          return;
+        }
+        final response = await AuthService.updatePassword(password);
 
-    //     final response = await supabase.auth.updateUser(
-    //       UserAttributes(password: event.password),
-    //     );
-
-    //     if (response.user != null) {
-    //       emit(ResetPasswordSuccess());
-    //     } else if (response.error != null) {
-    //       emit(ResetPasswordError(response.error!.message));
-    //     } else {
-    //       emit(ResetPasswordError("Unknown error occurred."));
-    //     }
-    //   } catch (e) {
-    //     emit(ResetPasswordError("Exception: ${e.toString()}"));
-    //   }
-    // });
+        if (response.user != null) {
+          emit(ResetPasswordSuccess());
+        } else if (response.user == null) {
+          emit(ResetPasswordError("User not found."));
+        } else {
+          emit(ResetPasswordError("Unknown error occurred."));
+        }
+      } catch (e) {
+        emit(ResetPasswordError("Exception: ${e.toString()}"));
+      }
+    });
 
     on<LogoutEvent>((event, emit) async {
       emit(LoginLoading());
