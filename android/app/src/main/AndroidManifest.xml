@@ -42,4 +42,26 @@
             <data android:mimeType="text/plain"/>
         </intent>
     </queries>
+    <intent-filter android:autoVerify="true">
+    <action android:name="android.intent.action.VIEW"/>
+    <category android:name="android.intent.category.DEFAULT"/>
+    <category android:name="android.intent.category.BROWSABLE"/>
+
+    <data
+        android:scheme="coinhub"
+        android:host="auth"
+        android:pathPrefix="/reset-password"/>
+</intent-filter>
+
+<!-- Optional: if you support verify screen deep links -->
+<intent-filter android:autoVerify="true">
+    <action android:name="android.intent.action.VIEW"/>
+    <category android:name="android.intent.category.DEFAULT"/>
+    <category android:name="android.intent.category.BROWSABLE"/>
+
+    <data
+        android:scheme="coinhub"
+        android:host="auth"
+        android:pathPrefix="/verify"/>
+</intent-filter>
 </manifest>
