@@ -26,15 +26,23 @@ class SignUpDetailsScreen extends StatelessWidget {
         print("state is: $state");
 
         if (state is SignUpDetailsSuccess) {
-          if (context.mounted) {
-            context.go(Routes.Auth.login);
+          try {
+            if (context.mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text("Account created successfully"),
+                  backgroundColor: Colors.green,
+                  duration: Duration(seconds: 1),
+                ),
+              );
+              await Future.delayed(const Duration(seconds: 1));
 
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text("Account created successfully"),
-                backgroundColor: Colors.green,
-              ),
-            );
+              context.go(Routes.Auth.login);
+            } else {
+              print("context is not mounted");
+            }
+          } catch (e) {
+            print(e);
           }
         }
       },
