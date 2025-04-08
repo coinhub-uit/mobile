@@ -48,14 +48,14 @@ class UserService {
     String userEmail,
     String userPassword,
   ) async {
-    final accessToken = await LocalStorageService().read("JWT");
-    if (accessToken == null) {
-      throw Exception("Session not found");
-    }
     final supabaseResponse = await supabaseClient.auth.signInWithPassword(
       email: userEmail,
       password: userPassword,
     );
+    final accessToken = supabaseResponse.session?.accessToken;
+    if (accessToken == null) {
+      throw Exception("Access token not found");
+    }
     final user = supabaseResponse.user; // gotta get the id
     if (user == null) {
       throw Exception("User not found");
@@ -89,7 +89,7 @@ class UserService {
     }
   }
 
-  static Future<UserModel> getUser(String id) async {
+  static Future<UserModel?> getUser(String id) async {
     final user = supabaseClient.auth.currentUser;
     final accessToken = await LocalStorageService().read("JWT");
     if (accessToken == null) {
@@ -98,7 +98,7 @@ class UserService {
     print("access token: $accessToken");
     print("user id: ${user?.id}");
     if (user == null) {
-      throw Exception("User not found");
+      return null;
     }
     final response = await ApiClient.client.get(
       Uri.parse("${ApiClient.userEndpoint}/${user.id}"),
@@ -210,5 +210,33 @@ class UserService {
       return "";
     }
     return ""; // Return an empty string if no image was picked
+  }
+
+  static Future<http.Response> deleteUserAccount(String userId) async {
+    final accessToken = await LocalStorageService().read("JWT");
+    if (accessToken == null) {
+      throw Exception("Session not found");
+    }
+    final response = await ApiClient.client.delete(
+      Uri.parse("${ApiClient.userEndpoint}/$userId"),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $accessToken",
+      },
+    );
+    if (response.statusCode == 200) {
+      // Delete the user from Supabase auth => need backend :(
+      // try {
+      //   await supabaseClient.auth.admin.deleteUser(userId);
+      // } catch (e) {
+      //   print("Error deleting user from Supabase auth: $e");
+      // }
+      // Clear the local storage
+      await LocalStorageService().delete("JWT");
+
+      return response;
+    } else {
+      throw Exception("Failed to delete user: ${response.statusCode}");
+    }
   }
 }

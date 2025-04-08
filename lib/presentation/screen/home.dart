@@ -61,18 +61,20 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  Future<UserModel> getUserModel(String id) async {
+  Future<UserModel?> getUserModel(String id) async {
     return await UserService.getUser(id)
         .then((value) {
           return value;
         })
         .catchError((error) {
           debugPrint("Error: $error");
-          return UserModel(
-            id: "This is a placeholder.",
-            citizenId: "This is a placeholder.",
-            fullname: "This is a placeholder.",
-            birthDate: DateFormat("yyyy-MM-dd").format(DateTime.now()),
+          return Future.value(
+            UserModel(
+              id: "This is a placeholder.",
+              citizenId: "This is a placeholder.",
+              fullname: "This is a placeholder.",
+              birthDate: DateFormat("yyyy-MM-dd").format(DateTime.now()),
+            ),
           );
         });
   }
@@ -313,6 +315,39 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  Future<void> confirmAndDelete(BuildContext context) async {
+    final result = await showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Delete Account"),
+          content: const Text("Are you sure you want to delete your account?"),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(false);
+              },
+              child: const Text("Cancel"),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(true);
+              },
+              child: const Text("Delete"),
+            ),
+          ],
+        );
+      },
+    );
+    if (result == true) {
+      BlocProvider.of<UserBloc>(
+        context,
+      ).add(DeleteAccountRequested(widget.model.id));
+      await AuthService.signOut();
+      // context.go(Routes.Auth.login); // in listener
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -333,6 +368,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             );
             widget.model.avatar = state.avatarUrl;
+          } else if (state is DeleteAccountError) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(state.error), backgroundColor: Colors.red),
+            );
+          } else if (state is DeleteAccountSuccess) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text("Account deleted successfully"),
+                backgroundColor: Colors.green,
+                duration: Duration(seconds: 1),
+              ),
+            );
+            Future.delayed(const Duration(seconds: 1));
+            context.go(Routes.Auth.login);
           }
         },
         child: Column(
@@ -404,6 +453,42 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         onUserUpdated: (updatedUser) {
                           widget.onUserUpdated(updatedUser);
                         },
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        left: 24.0,
+                        bottom: 8,
+                        top: 16,
+                      ),
+                      child: const Text(
+                        "Danger Zone",
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    Center(
+                      child: FilledButton(
+                        onPressed: () => confirmAndDelete(context),
+                        style: FilledButton.styleFrom(
+                          minimumSize: Size(
+                            MediaQuery.of(context).size.width - 48,
+                            48,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          backgroundColor: Colors.red,
+                        ),
+                        child: const Text(
+                          "Delete Account",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ),
                     ),
                   ],
@@ -576,10 +661,6 @@ class _UpdatePrivacyFormState extends State<UpdatePrivacyForm> {
 
                             if (_formKey.currentState!.validate()) {
                               _formKey.currentState!.save();
-                              //print(userModel.toJson());
-                              // context.read<UserBloc>().add(
-                              //   SignUpDetailsSubmitted(userModel, userEmail, userPassword),
-                              // );
                               setState(() {
                                 isEditing = !isEditing;
                               });
