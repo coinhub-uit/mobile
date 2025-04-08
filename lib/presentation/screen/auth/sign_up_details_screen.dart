@@ -20,10 +20,10 @@ class SignUpDetailsScreen extends StatelessWidget {
   });
   @override
   Widget build(BuildContext context) {
-    return BlocListener<UserBloc, UserState>(
+    return BlocConsumer<UserBloc, UserState>(
       listener: (context, state) async {
         if (state is SignUpDetailsLoading) {}
-        print("👀 state is: $state"); // Add this
+        print("state is: $state");
 
         if (state is SignUpDetailsSuccess) {
           if (context.mounted) {
@@ -38,57 +38,63 @@ class SignUpDetailsScreen extends StatelessWidget {
           }
         }
       },
-
-      child: Scaffold(
-        body: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(16, 160, 16, 0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: Image.asset("assets/images/CoinHub-Wordmark.png"),
-                    ),
-                    Expanded(child: Container()),
-                  ],
-                ),
-                const WelcomeText(
-                  title: "Sign Up Details",
-                  text: "Please enter details\nfor your new account.",
-                ),
-                SignUpDetailsForm(email: userEmail, password: userPassword),
-                const SizedBox(height: 16),
-                Center(child: Text("Or", style: TextStyle())),
-                const SizedBox(height: 16 * 1.5),
-
-                Center(
-                  child: Text.rich(
-                    TextSpan(
-                      style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
-                      text: "Already have an account? ",
-                      children: <TextSpan>[
-                        TextSpan(
-                          text: "Sign in!",
-                          style: const TextStyle(fontWeight: FontWeight.w900),
-                          recognizer:
-                              TapGestureRecognizer()
-                                ..onTap = () {
-                                  context.read<AuthBloc>().add(ShowLogin());
-                                },
+      builder: (context, state) {
+        if (state is SignUpDetailsLoading) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        return Scaffold(
+          body: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 160, 16, 0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Image.asset(
+                          "assets/images/CoinHub-Wordmark.png",
                         ),
-                      ],
+                      ),
+                      Expanded(child: Container()),
+                    ],
+                  ),
+                  const WelcomeText(
+                    title: "Sign Up Details",
+                    text: "Please enter details\nfor your new account.",
+                  ),
+                  SignUpDetailsForm(email: userEmail, password: userPassword),
+                  const SizedBox(height: 16),
+                  Center(child: Text("Or", style: TextStyle())),
+                  const SizedBox(height: 16 * 1.5),
+
+                  Center(
+                    child: Text.rich(
+                      TextSpan(
+                        style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                        text: "Already have an account? ",
+                        children: <TextSpan>[
+                          TextSpan(
+                            text: "Sign in!",
+                            style: const TextStyle(fontWeight: FontWeight.w900),
+                            recognizer:
+                                TapGestureRecognizer()
+                                  ..onTap = () {
+                                    context.read<AuthBloc>().add(ShowLogin());
+                                  },
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }
@@ -239,20 +245,6 @@ class _SignUpFormState extends State<SignUpDetailsForm> {
             onPressed: () async {
               if (_formKey.currentState!.validate()) {
                 _formKey.currentState!.save();
-
-                // if (_password != _confirmPassword) {
-                //   ScaffoldMessenger.of(context).showSnackBar(
-                //     const SnackBar(
-                //       content: Text("Passwords do not match"),
-                //       backgroundColor: Colors.red,
-                //     ),
-                //   );
-                //   return;
-                // }
-                // // Handle sign-up logic here
-                // context.read<AuthBloc>().add(
-                //   SignUpWithEmailSubmitted(_email, _password),
-                // );
                 print(userModel.toJson());
                 context.read<UserBloc>().add(
                   SignUpDetailsSubmitted(userModel, userEmail, userPassword),

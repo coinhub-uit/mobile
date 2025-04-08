@@ -17,14 +17,14 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  String placeholderText = "This is a placeholder.";
+  String userName = "This is a placeholder.";
   int _selectedIndex = 0;
   final List<Widget> _screens = [
     HomeScreenContent(),
     SavingsScreen(),
     ProfileScreen(),
   ];
-  
+
   void onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -36,7 +36,7 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     AuthService.authStateChanges.listen((data) {
       setState(() {
-        placeholderText = "User is signed in: ${data.session?.user.email}";
+        userName = "${data.session?.user.email}";
       });
     });
   }
@@ -116,7 +116,7 @@ class HomeScreenContent extends StatelessWidget {
                   ),
                 ],
               ),
-              
+
               SizedBox(height: 32),
               Column(
                 children: [
@@ -220,8 +220,7 @@ class SavingsScreen extends StatelessWidget {
                   );
                 },
               ),
-            )
-            
+            ),
           ],
         ),
       ),
