@@ -2,8 +2,16 @@ import "package:flutter/material.dart";
 
 class DateInputField extends StatefulWidget {
   final void Function(DateTime?) onDateSelected;
+  final DateTime initialDate;
+  // ignore: prefer_typing_uninitialized_variables
+  final isReadOnly;
 
-  const DateInputField({super.key, required this.onDateSelected});
+  const DateInputField({
+    super.key,
+    required this.initialDate,
+    required this.onDateSelected,
+    required this.isReadOnly,
+  });
 
   @override
   State<DateInputField> createState() => _DateInputFieldState();
@@ -12,6 +20,15 @@ class DateInputField extends StatefulWidget {
 class _DateInputFieldState extends State<DateInputField> {
   final _controller = TextEditingController();
   DateTime? selectedDate;
+
+  @override
+  void initState() {
+    super.initState();
+    selectedDate = widget.initialDate;
+    print("Selected date: $selectedDate");
+    _controller.text =
+        "${selectedDate?.day}/${selectedDate?.month}/${selectedDate?.year}";
+  }
 
   @override
   void dispose() {
@@ -63,7 +80,7 @@ class _DateInputFieldState extends State<DateInputField> {
     return TextFormField(
       controller: _controller,
       readOnly: true,
-      onTap: _pickDate,
+      onTap: widget.isReadOnly ? _pickDate : null,
       decoration: const InputDecoration(
         hintText: "Date of Birth",
         prefixIcon: Icon(Icons.calendar_today),

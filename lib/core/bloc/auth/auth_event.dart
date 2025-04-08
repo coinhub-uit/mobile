@@ -102,3 +102,11 @@ class ResendVerification extends AuthEvent {
 class LogoutEvent extends AuthEvent {
   const LogoutEvent();
 }
+
+/// Event to update the email field in the sign-up with Google form.
+class UpdatePasswordSubmitted extends AuthEvent {
+  final String email;
+  final String oldPassword;
+  final String newPassword;
+  const UpdatePasswordSubmitted(this.email, this.oldPassword, this.newPassword);
+}

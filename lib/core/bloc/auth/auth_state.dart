@@ -103,3 +103,20 @@ class ResendVerificationError extends AuthState {
 
   ResendVerificationError(this.error);
 }
+
+// update password
+class UpdatePasswordInitial extends AuthState {}
+
+class UpdatePasswordLoading extends AuthState {}
+
+class UpdatePasswordError extends AuthState {
+  final String error;
+
+  UpdatePasswordError(this.error);
+}
+
+class UpdatePasswordSuccess extends AuthState {
+  final String message;
+
+  UpdatePasswordSuccess(this.message);
+}
