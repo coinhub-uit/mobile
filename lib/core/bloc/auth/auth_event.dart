@@ -96,6 +96,11 @@ class ResendVerification extends AuthEvent {
   final String email;
   const ResendVerification(this.email);
 }
+class ResetPasswordSubmitted extends AuthEvent {
+  final String password;
+
+  ResetPasswordSubmitted(this.password);
+}
 
 class LogoutEvent extends AuthEvent {
   const LogoutEvent();

@@ -27,7 +27,6 @@ class ForgotPasswordScreen extends StatelessWidget {
                   ? (context.read<AuthBloc>().state as ForgotPasswordInitial)
                       .email
                   : "";
-          context.go(Routes.Auth.verify, extra: {"email": email});
         } else if (state is ForgotPasswordError) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(state.error), backgroundColor: Colors.red),
@@ -36,10 +35,6 @@ class ForgotPasswordScreen extends StatelessWidget {
       },
       child: Scaffold(
         appBar: AppBar(
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () {}, // Navigation logic removed
-          ),
           backgroundColor: Colors.transparent,
           elevation: 0,
         ),

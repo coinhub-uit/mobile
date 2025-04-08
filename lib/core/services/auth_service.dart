@@ -56,12 +56,14 @@ class AuthService {
     String email,
     String password,
   ) async {
-    final response = await supabaseClient.auth.signUp(email: email, password: password);
-    LocalStorageService().write("JWT", response.session!.accessToken);
+    final response = await supabaseClient.auth.signUp(email: email, password: password,emailRedirectTo: "coinhub://auth/verify");
   }
 
   static Future<void> forgotPassword(String email) async {
-    //TODO: Implement forgot password
+    final response = await supabaseClient.auth.resetPasswordForEmail(
+      email,
+      redirectTo: "coinhub://auth/reset-password",
+    );
   }
 
   static Stream<AuthState> get authStateChanges =>

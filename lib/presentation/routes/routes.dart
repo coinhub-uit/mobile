@@ -14,6 +14,7 @@ class _Auth {
   String get signUp => "$root/signUp";
   String get forgotPassword => "$root/forgotPassword";
   String get verify => "$root/verify";
+  String get resetPassword => "$root/reset-password";
 }
 
 class _Account {

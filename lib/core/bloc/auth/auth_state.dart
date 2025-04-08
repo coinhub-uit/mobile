@@ -101,3 +101,12 @@ class ResendVerificationError extends AuthState {
 
   ResendVerificationError(this.error);
 }
+
+// --- Reset password state ---
+class ResetPasswordSuccess extends AuthState {}
+
+class ResetPasswordError extends AuthState {
+  final String error;
+
+  ResetPasswordError(this.error);
+}

@@ -1,6 +1,7 @@
 import "package:coinhub/presentation/screen/account/create_pin_screen.dart";
 import "package:coinhub/presentation/screen/auth/forgot_password_screen.dart";
 import "package:coinhub/presentation/screen/auth/login_screen.dart";
+import "package:coinhub/presentation/screen/auth/reset_password_screen.dart";
 import "package:coinhub/presentation/screen/auth/sign_up_screen.dart";
 import "package:coinhub/presentation/screen/auth/verify_screen.dart";
 import "package:coinhub/presentation/screen/home.dart";
@@ -50,6 +51,14 @@ class RouteRouter {
         pageBuilder: (context, state) {
           final email = state.extra as String;
           return MaterialPage(child: VerifyScreen(userEmail: email));
+        },
+      ),
+      GoRoute(
+        name: "resetPassword",
+        path: Routes.Auth.resetPassword,
+        pageBuilder: (context, state) {
+          final code = state.uri.queryParameters["code"]; 
+          return MaterialPage(child: ResetPasswordScreen(code: code));
         },
       ),
       GoRoute(

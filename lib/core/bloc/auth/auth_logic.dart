@@ -179,12 +179,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
         emit(ForgotPasswordLoading());
 
-        // try {
-        // await AuthService.sendPasswordResetEmail(email);
+        try {
+        await AuthService.forgotPassword(email);
         emit(ForgotPasswordSuccess("Password reset email sent."));
-        // } catch (error) {
-        //   emit(ForgotPasswordError(error.toString()));
-        // }
+        } catch (error) {
+          emit(ForgotPasswordError(error.toString()));
+        }
       }
     });
 
@@ -206,6 +206,25 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         emit(ResendVerificationError(error.toString()));
       }
     });
+    // on<ResetPasswordSubmitted>((event, emit) async {
+    //   try {
+    //     final supabase = Supabase.instance.client;
+
+    //     final response = await supabase.auth.updateUser(
+    //       UserAttributes(password: event.password),
+    //     );
+
+    //     if (response.user != null) {
+    //       emit(ResetPasswordSuccess());
+    //     } else if (response.error != null) {
+    //       emit(ResetPasswordError(response.error!.message));
+    //     } else {
+    //       emit(ResetPasswordError("Unknown error occurred."));
+    //     }
+    //   } catch (e) {
+    //     emit(ResetPasswordError("Exception: ${e.toString()}"));
+    //   }
+    // });
 
     on<LogoutEvent>((event, emit) async {
       emit(LoginLoading());
