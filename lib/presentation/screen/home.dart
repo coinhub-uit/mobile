@@ -17,7 +17,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  String placeholderText = "This is a placeholder.";
+  String userName = "This is a placeholder.";
   int _selectedIndex = 0;
   final List<Widget> _screens = [
     HomeScreenContent(),
@@ -36,7 +36,7 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     AuthService.authStateChanges.listen((data) {
       setState(() {
-        placeholderText = "User is signed in: ${data.session?.user.email}";
+        userName = "${data.session?.user.email}";
       });
     });
   }
