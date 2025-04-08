@@ -1,3 +1,5 @@
+import "dart:io";
+
 import "package:coinhub/core/services/user_service.dart";
 import "package:coinhub/models/user_model.dart";
 import "package:flutter_bloc/flutter_bloc.dart";
@@ -22,6 +24,28 @@ class UserBloc extends Bloc<UserEvent, UserState> {
         }
       } catch (e) {
         emit(SignUpDetailsError(e.toString()));
+      }
+    });
+    on<UpdateDetailsSubmitted>((event, emit) async {
+      emit(UpdateDetailsLoading());
+      try {
+        final response = await UserService.updateUserDetails(event.userModel);
+        if (response.statusCode == 200) {
+          emit(UpdateDetailsSuccess());
+        } else {
+          emit(UpdateDetailsError("Failed to update user details"));
+        }
+      } catch (e) {
+        emit(UpdateDetailsError(e.toString()));
+      }
+    });
+    on<UpdateAvatarSubmitted>((event, emit) async {
+      emit(UpdateAvatarLoading());
+      try {
+        final avatarUrl = await UserService.pickAndUploadAvatar(event.userId);
+        emit(UpdateAvatarSuccess(avatarUrl));
+      } catch (e) {
+        emit(UpdateAvatarError(e.toString()));
       }
     });
   }

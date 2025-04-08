@@ -9,6 +9,7 @@ import "package:flutter/gestures.dart";
 import "package:flutter/material.dart";
 import "package:flutter_bloc/flutter_bloc.dart";
 import "package:go_router/go_router.dart";
+import "package:intl/intl.dart";
 
 class SignUpDetailsScreen extends StatelessWidget {
   final String userEmail;
@@ -133,7 +134,7 @@ class _SignUpDetailsFormState extends State<SignUpDetailsForm> {
       fullname: "",
       id: "",
       avatar: "",
-      birthDate: DateTime.now().toUtc().toIso8601String(),
+      birthDate: DateFormat("yyyy-MM-dd").format(DateTime.now()),
       citizenId: "",
       createdAt: DateTime.now(),
     );
@@ -197,9 +198,11 @@ class _SignUpDetailsFormState extends State<SignUpDetailsForm> {
           const SizedBox(height: 16),
           // birthDay Field
           DateInputField(
+            initialDate: DateTime.now(),
+            isReadOnly: false,
             onDateSelected: (date) {
               if (date != null) {
-                userModel.birthDate = date.toUtc().toIso8601String();
+                userModel.birthDate = DateFormat("yyyy-MM-dd").format(date);
               } else {
                 throw Exception("Date is null");
               }

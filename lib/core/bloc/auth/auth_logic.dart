@@ -244,5 +244,23 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         emit(LoginError(error.toString(), ""));
       }
     });
+
+    // update password
+    on<UpdatePasswordSubmitted>((event, emit) async {
+      emit(UpdatePasswordLoading());
+      try {
+        if (await AuthService.updatePassword(
+          event.email,
+          event.oldPassword,
+          event.newPassword,
+        )) {
+          emit(UpdatePasswordSuccess("Password updated successfully."));
+        } else {
+          emit(UpdatePasswordError("Failed to update password."));
+        }
+      } catch (error) {
+        emit(UpdatePasswordError(error.toString()));
+      }
+    });
   }
 }
