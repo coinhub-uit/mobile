@@ -1,4 +1,5 @@
 import "package:coinhub/core/services/user_service.dart";
+import "package:coinhub/core/util/date_input_field.dart";
 import "package:coinhub/models/user_model.dart";
 import "package:flutter/material.dart";
 import "package:coinhub/core/services/auth_service.dart";
@@ -19,10 +20,12 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  String userId = "This is a placeholder.";
+  String userId = "temporaryId";
   int _selectedIndex = 0;
   UserModel? userModel;
-  bool get isUserLoaded => userModel?.id != "This is a placeholder.";
+  String? userEmail;
+  String? userPassword;
+  bool get isUserLoaded => userModel?.id != "temporaryId";
 
   // final List<Widget> _screens = [
   //   HomeScreenContent(model: userModel),
@@ -33,7 +36,11 @@ class _HomeScreenState extends State<HomeScreen> {
     if (userModel != null) ...[
       HomeScreenContent(model: userModel!),
       SavingsScreen(model: userModel!),
-      ProfileScreen(model: userModel!),
+      ProfileScreen(
+        model: userModel!,
+        userEmail: userEmail!,
+        userPassword: userPassword!,
+      ),
     ] else ...[
       const Center(child: CircularProgressIndicator()),
     ],
@@ -56,7 +63,6 @@ class _HomeScreenState extends State<HomeScreen> {
             id: "This is a placeholder.",
             citizenId: "This is a placeholder.",
             fullname: "This is a placeholder.",
-            phoneNumber: "This is a placeholder.",
             birthDate: DateTime.now().toUtc().toIso8601String(),
           );
         });
@@ -67,6 +73,22 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     AuthService.authStateChanges.listen((data) async {
       final id = data.session?.user.id;
+      final email = data.session?.user.email;
+      final password =
+          data.session?.accessToken; // fake password for showing only
+      print(password);
+      print(email);
+      if (email != null) {
+        setState(() {
+          userEmail = email;
+        });
+      }
+      if (password != null) {
+        setState(() {
+          userPassword = password;
+        });
+      }
+
       if (id != null) {
         setState(() {
           userId = id;
@@ -276,12 +298,444 @@ class SavingsScreen extends StatelessWidget {
 
 class ProfileScreen extends StatelessWidget {
   final UserModel model;
-  const ProfileScreen({super.key, required this.model});
+  final String userEmail;
+  final String userPassword;
+  const ProfileScreen({
+    super.key,
+    required this.model,
+    required this.userEmail,
+    required this.userPassword,
+  });
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Profile")),
-      body: Center(child: Text("Profile")),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(top: 128.0, bottom: 32.0),
+            child: Center(
+              child: CircleAvatar(
+                radius: 84,
+                backgroundImage:
+                    model.avatar!.isNotEmpty
+                        ? NetworkImage(model.avatar!)
+                        : AssetImage("assets/images/CoinHub.png")
+                            as ImageProvider,
+              ),
+            ),
+          ),
+          Expanded(
+            child: SingleChildScrollView(
+              scrollDirection: Axis.vertical,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 16),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 16.0, bottom: 8),
+                    child: const Text(
+                      "Account Privacy",
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 8.0),
+                    child: UpdatePrivacyForm(
+                      email: userEmail,
+                      password: userPassword,
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      left: 16.0,
+                      top: 16.0,
+                      bottom: 8,
+                    ),
+                    child: const Text(
+                      "Account Details",
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 8.0),
+                    child: UpdateDetailsForm(userModel: model),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class UpdatePrivacyForm extends StatefulWidget {
+  final String email;
+  final String password;
+  const UpdatePrivacyForm({
+    super.key,
+    required this.email,
+    required this.password,
+  });
+
+  @override
+  State<UpdatePrivacyForm> createState() => _UpdatePrivacyFormState();
+}
+
+class _UpdatePrivacyFormState extends State<UpdatePrivacyForm> {
+  final _formKey = GlobalKey<FormState>();
+  bool isObscurePassword = true;
+  bool isEditing = false;
+  @override
+  Widget build(BuildContext context) {
+    return Form(
+      key: _formKey,
+      child: Column(
+        children: [
+          // email Field
+          TextFormField(
+            readOnly: !isEditing,
+            onSaved: (value) {
+              //_email = value?.trim() ?? "";
+            },
+            controller: TextEditingController(text: widget.email),
+            textInputAction: TextInputAction.next,
+            keyboardType: TextInputType.emailAddress,
+            decoration: InputDecoration(
+              hintText: "Email Address",
+              filled: false,
+              border: const UnderlineInputBorder(),
+              prefixIcon: const Icon(Icons.email_outlined),
+            ),
+          ),
+          const SizedBox(height: 16),
+          // citizenId Field
+          TextFormField(
+            obscureText: isObscurePassword,
+            readOnly: !isEditing,
+            controller: TextEditingController(text: widget.password),
+            onSaved: (value) {
+              //_password = value ?? "";
+            },
+            decoration: InputDecoration(
+              hintText: "Password",
+              filled: false,
+              border: const UnderlineInputBorder(),
+              prefixIcon: const Icon(Icons.lock_outline),
+              suffixIcon: IconButton(
+                icon: Icon(
+                  isObscurePassword
+                      ? Icons.visibility_off_outlined
+                      : Icons.visibility_outlined,
+                ),
+                onPressed:
+                    isEditing
+                        ? () {
+                          setState(() {
+                            isObscurePassword = !isObscurePassword;
+                          });
+                        }
+                        : null,
+              ),
+            ),
+          ),
+          const SizedBox(height: 8),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              FilledButton(
+                onPressed:
+                    isEditing
+                        ? () async {
+                          // handle toggle back
+                          setState(() {
+                            isEditing = !isEditing;
+                          });
+                          if (_formKey.currentState!.validate()) {
+                            _formKey.currentState!.save();
+                            //print(userModel.toJson());
+                            // context.read<UserBloc>().add(
+                            //   SignUpDetailsSubmitted(userModel, userEmail, userPassword),
+                            // );
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text(
+                                  "Please fill in all fields correctly",
+                                ),
+                                backgroundColor: Colors.red,
+                              ),
+                            );
+                          }
+                        }
+                        : null,
+                style: FilledButton.styleFrom(
+                  minimumSize: Size(
+                    MediaQuery.of(context).size.width / 2 - 48,
+                    48,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                ),
+                child: const Text("Save", style: TextStyle(fontSize: 16)),
+              ),
+              const SizedBox(width: 16),
+              FilledButton(
+                onPressed:
+                    !isEditing
+                        ? () async {
+                          // handle toggle back
+                          setState(() {
+                            isEditing = !isEditing;
+                          });
+                          if (_formKey.currentState!.validate()) {
+                            _formKey.currentState!.save();
+                            //print(userModel.toJson());
+                            // context.read<UserBloc>().add(
+                            //   SignUpDetailsSubmitted(userModel, userEmail, userPassword),
+                            // );
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text(
+                                  "Please fill in all fields correctly",
+                                ),
+                                backgroundColor: Colors.red,
+                              ),
+                            );
+                          }
+                        }
+                        : null,
+                style: FilledButton.styleFrom(
+                  minimumSize: Size(
+                    MediaQuery.of(context).size.width / 2 - 48,
+                    48,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  backgroundColor: Theme.of(context).colorScheme.onSecondary,
+                ),
+                child: const Text("Change", style: TextStyle(fontSize: 16)),
+              ),
+            ],
+          ),
+
+          // Sign Up Button
+        ],
+      ),
+    );
+  }
+}
+
+class UpdateDetailsForm extends StatefulWidget {
+  final UserModel userModel;
+  const UpdateDetailsForm({super.key, required this.userModel});
+
+  @override
+  State<UpdateDetailsForm> createState() => _UpdateDetailsFormState();
+}
+
+class _UpdateDetailsFormState extends State<UpdateDetailsForm> {
+  final _formKey = GlobalKey<FormState>();
+  bool isEditing = false;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Form(
+      key: _formKey,
+      child: Column(
+        children: [
+          // fullname Field
+          TextFormField(
+            readOnly: !isEditing,
+            onSaved: (value) {
+              //userModel.fullname = value?.trim() ?? "";
+            },
+            controller: TextEditingController(text: widget.userModel.fullname),
+            textInputAction: TextInputAction.next,
+            keyboardType: TextInputType.name,
+            decoration: InputDecoration(
+              hintText: "Full Name",
+              filled: false,
+              border: const UnderlineInputBorder(),
+              prefixIcon: const Icon(Icons.person_outline),
+            ),
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return "Please enter your full name";
+              }
+              if (RegExp(r"^[a-zA-Z\s]+$").hasMatch(value)) {
+                return null;
+              } else {
+                return "Please enter a valid name";
+              }
+            },
+          ),
+          const SizedBox(height: 16),
+          // citizenId Field
+          TextFormField(
+            readOnly: !isEditing,
+            controller: TextEditingController(text: widget.userModel.citizenId),
+            onSaved: (value) {
+              //userModel.citizenId = value ?? "";
+            },
+            keyboardType: TextInputType.number,
+            textInputAction: TextInputAction.next,
+            decoration: InputDecoration(
+              hintText: "Citizen ID",
+              filled: false,
+              border: const UnderlineInputBorder(),
+              prefixIcon: const Icon(Icons.badge_outlined),
+            ),
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return "Please enter your citizen ID";
+              }
+              if (RegExp(r"^\d{12}$").hasMatch(value)) {
+                return null;
+              } else {
+                return "Please enter a valid citizen ID";
+              }
+            },
+          ),
+          const SizedBox(height: 16),
+          // birthDay Field
+          DateInputField(
+            // TODO: make it read only!!!!!!!!!!!!!!!!!
+
+            // onDateSelected: (date) {
+            //   if (date != null) {
+            //     //userModel.birthDate = date.toUtc().toIso8601String();
+            //   } else {
+            //     throw Exception("Date is null");
+            //   }
+            // },
+            onDateSelected: (date) {
+              if (date != null) {
+                date = DateTime.parse(widget.userModel.birthDate);
+              }
+            },
+          ),
+          const SizedBox(height: 16),
+          // address Field
+          TextFormField(
+            readOnly: !isEditing,
+            onSaved: (value) {
+              //userModel.address = value ?? "";
+            },
+            controller: TextEditingController(text: widget.userModel.address),
+            textInputAction: TextInputAction.next,
+            keyboardType: TextInputType.streetAddress,
+            decoration: InputDecoration(
+              hintText: "Address",
+              filled: false,
+              border: const UnderlineInputBorder(),
+              prefixIcon: const Icon(Icons.location_on_outlined),
+            ),
+          ),
+          const SizedBox(height: 8),
+
+          // account details Buttons
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              FilledButton(
+                onPressed:
+                    isEditing
+                        ? () async {
+                          // handle toggle back
+                          setState(() {
+                            isEditing = !isEditing;
+                          });
+                          if (_formKey.currentState!.validate()) {
+                            _formKey.currentState!.save();
+                            //print(userModel.toJson());
+                            // context.read<UserBloc>().add(
+                            //   SignUpDetailsSubmitted(userModel, userEmail, userPassword),
+                            // );
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text(
+                                  "Please fill in all fields correctly",
+                                ),
+                                backgroundColor: Colors.red,
+                              ),
+                            );
+                          }
+                        }
+                        : null,
+                style: FilledButton.styleFrom(
+                  minimumSize: Size(
+                    MediaQuery.of(context).size.width / 2 - 48,
+                    48,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                ),
+                child: const Text("Save", style: TextStyle(fontSize: 16)),
+              ),
+              const SizedBox(width: 16),
+              FilledButton(
+                onPressed:
+                    !isEditing
+                        ? () async {
+                          // handle toggle back
+                          setState(() {
+                            isEditing = !isEditing;
+                          });
+                          if (_formKey.currentState!.validate()) {
+                            _formKey.currentState!.save();
+                            //print(userModel.toJson());
+                            // context.read<UserBloc>().add(
+                            //   SignUpDetailsSubmitted(userModel, userEmail, userPassword),
+                            // );
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text(
+                                  "Please fill in all fields correctly",
+                                ),
+                                backgroundColor: Colors.red,
+                              ),
+                            );
+                          }
+                        }
+                        : null,
+                style: FilledButton.styleFrom(
+                  minimumSize: Size(
+                    MediaQuery.of(context).size.width / 2 - 48,
+                    48,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  backgroundColor: Theme.of(context).colorScheme.onSecondary,
+                ),
+                child: const Text("Change", style: TextStyle(fontSize: 16)),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }
