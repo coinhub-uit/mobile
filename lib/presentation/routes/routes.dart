@@ -14,6 +14,7 @@ class _Auth {
   String get signUp => "$root/signUp";
   String get forgotPassword => "$root/forgotPassword";
   String get verify => "$root/verify";
+  String get signUpDetails => "$root/signUpDetails";
   String get resetPassword => "$root/reset-password";
 }
 
@@ -33,5 +34,3 @@ class _Transaction {
   String get withdraw => "$root/withdraw";
   String get transfer => "$root/transfer";
 }
-
-

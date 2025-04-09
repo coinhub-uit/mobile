@@ -1,9 +1,9 @@
 import "package:flutter/material.dart";
 
 class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
-  final String imgUrl;
+  final String? imgUrl;
   final String userName;
-  const HomeAppBar({super.key, required this.imgUrl, required this.userName});
+  const HomeAppBar({super.key, this.imgUrl, required this.userName});
   @override
   Size get preferredSize => Size.fromHeight(kToolbarHeight);
 
@@ -24,14 +24,16 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
         children: [
           Row(
             children: [
-              CircleAvatar(
-                radius: 27,
-                backgroundImage: NetworkImage(
-                  //imgUrl
-                  //"https://avatars.githubusercontent.com/u/47231161?v=4",
-                  imgUrl,
-                ),
-              ),
+              imgUrl != null
+                  ? CircleAvatar(
+                    radius: 27,
+                    backgroundImage:
+                        imgUrl!.isNotEmpty
+                            ? NetworkImage(imgUrl!)
+                            : AssetImage("assets/images/CoinHub.png")
+                                as ImageProvider,
+                  )
+                  : const SizedBox.shrink(),
               SizedBox(width: 10),
               Text(
                 "Hello,",

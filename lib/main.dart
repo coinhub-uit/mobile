@@ -1,5 +1,6 @@
 import "dart:async";
 import "package:coinhub/core/bloc/auth/auth_logic.dart";
+import "package:coinhub/core/bloc/user/user_logic.dart";
 import "package:coinhub/core/constants/theme.dart";
 import "package:coinhub/presentation/routes/router.dart";
 import "package:flutter/material.dart";
@@ -14,8 +15,6 @@ void main() async {
     url: Env.supabaseUrl,
     anonKey: Env.supabaseAnonKey,
   );
-
-
   runApp(const MyApp());
 }
 
@@ -35,17 +34,14 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    _handleInitialUri();     // Cold start links
-    _handleStreamedLinks();  // Links received while app is running
+    _handleInitialUri();
+    _handleStreamedLinks();
   }
 
   Future<void> _handleInitialUri() async {
     try {
       final uri = await getInitialUri();
-
-      if (uri != null) {
-        _handleUri(uri);
-      }
+      if (uri != null) _handleUri(uri);
     } catch (e) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         goRouter.go("/auth/login");
@@ -55,10 +51,9 @@ class _MyAppState extends State<MyApp> {
 
   void _handleStreamedLinks() {
     _sub = uriLinkStream.listen((uri) {
-      if (uri != null) {
-        _handleUri(uri);
-      }
+      if (uri != null) _handleUri(uri);
     }, onError: (err) {
+      // Handle stream errors here
     });
   }
 
@@ -90,7 +85,8 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (context) => AuthBloc()),
+        BlocProvider(create: (_) => AuthBloc()),
+        BlocProvider(create: (_) => UserBloc()),
       ],
       child: MaterialApp.router(
         theme: catppuccinTheme(isDark: false),
