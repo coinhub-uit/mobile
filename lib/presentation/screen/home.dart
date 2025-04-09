@@ -848,7 +848,7 @@ class _UpdateDetailsFormState extends State<UpdateDetailsForm> {
             const SizedBox(height: 16),
             // birthDay Field
             DateInputField(
-              isReadOnly: isEditing,
+              isReadOnly: !isEditing,
               initialDate: DateTime.parse(widget.userModel.birthDate),
               onDateSelected: (date) {
                 if (date != null) {
