@@ -22,11 +22,6 @@ class ForgotPasswordScreen extends StatelessWidget {
               backgroundColor: Colors.green,
             ),
           );
-          final email =
-              context.read<AuthBloc>().state is ForgotPasswordInitial
-                  ? (context.read<AuthBloc>().state as ForgotPasswordInitial)
-                      .email
-                  : "";
         } else if (state is ForgotPasswordError) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(state.error), backgroundColor: Colors.red),
