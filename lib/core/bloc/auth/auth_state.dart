@@ -119,4 +119,11 @@ class UpdatePasswordSuccess extends AuthState {
   final String message;
 
   UpdatePasswordSuccess(this.message);
+// --- Reset password state ---
+class ResetPasswordSuccess extends AuthState {}
+
+class ResetPasswordError extends AuthState {
+  final String error;
+
+  ResetPasswordError(this.error);
 }

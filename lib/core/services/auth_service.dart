@@ -114,10 +114,21 @@ class AuthService {
         throw "An unknown error occurred";
       }
     }
+
+    final response = await supabaseClient.auth.signUp(email: email, password: password,emailRedirectTo: "coinhub://auth/verify");
   }
 
   static Future<void> forgotPassword(String email) async {
-    //TODO: Implement forgot password
+    final response = await supabaseClient.auth.resetPasswordForEmail(
+      email,
+      redirectTo: "coinhub://auth/reset-password",
+    );
+  }
+  static Future<UserResponse> updatePassword(String password) async {
+    final response = await supabaseClient.auth.updateUser(
+      UserAttributes(password: password),
+    );
+    return response;
   }
 
   static Stream<AuthState> get authStateChanges =>

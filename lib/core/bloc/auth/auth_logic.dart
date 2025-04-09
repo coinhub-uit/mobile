@@ -190,12 +190,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
         emit(ForgotPasswordLoading());
 
-        // try {
-        // await AuthService.sendPasswordResetEmail(email);
+        try {
+        await AuthService.forgotPassword(email);
         emit(ForgotPasswordSuccess("Password reset email sent."));
-        // } catch (error) {
-        //   emit(ForgotPasswordError(error.toString()));
-        // }
+        } catch (error) {
+          emit(ForgotPasswordError(error.toString()));
+        }
       }
     });
 
@@ -215,6 +215,30 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         emit(ResendVerificationSuccess());
       } catch (error) {
         emit(ResendVerificationError(error.toString()));
+      }
+    });
+    on<ResetPasswordSubmitted>((event, emit) async {
+      try {
+        final password = event.password.trim();
+        if (password.isEmpty) {
+          emit(ResetPasswordError("Please enter a new password."));
+          return;
+        }
+        if (password.length < 6) {
+          emit(ResetPasswordError("Password must be at least 6 characters long."));
+          return;
+        }
+        final response = await AuthService.updatePassword(password);
+
+        if (response.user != null) {
+          emit(ResetPasswordSuccess());
+        } else if (response.user == null) {
+          emit(ResetPasswordError("User not found."));
+        } else {
+          emit(ResetPasswordError("Unknown error occurred."));
+        }
+      } catch (e) {
+        emit(ResetPasswordError("Exception: ${e.toString()}"));
       }
     });
 
