@@ -258,7 +258,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<UpdatePasswordSubmitted>((event, emit) async {
       emit(UpdatePasswordLoading());
       try {
-        if (await AuthService.updatePassword(
+        if (await AuthService.updateNewPassword(
           event.email,
           event.oldPassword,
           event.newPassword,
