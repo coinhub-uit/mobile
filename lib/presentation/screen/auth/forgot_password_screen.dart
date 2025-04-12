@@ -57,7 +57,7 @@ class ForgotPasswordScreen extends StatelessWidget {
                 Center(
                   child: TextButton(
                     onPressed: () {
-                      context.go(Routes.Auth.login);
+                      context.go(Routes.auth.login);
                     }, // Navigation logic removed
                     child: const Text(
                       "Back to Login",

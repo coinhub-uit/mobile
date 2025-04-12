@@ -1,9 +1,9 @@
 class Routes {
   static const String home = "/";
 
-  static const Auth = _Auth();
-  static const Account = _Account();
-  static const Transaction = _Transaction();
+  static const auth = _Auth();
+  static const account = _Account();
+  static const transaction = _Transaction();
 }
 
 class _Auth {

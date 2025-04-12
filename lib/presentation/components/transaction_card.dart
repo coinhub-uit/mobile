@@ -4,6 +4,7 @@ import "package:coinhub/presentation/components/mini_source_card.dart";
 class TransactionCard extends StatefulWidget {
   final String title;
   const TransactionCard({super.key, required this.title});
+
   @override
   State<TransactionCard> createState() => _TransactionCardState();
 }
@@ -19,6 +20,8 @@ class _TransactionCardState extends State<TransactionCard> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Card(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
@@ -28,17 +31,24 @@ class _TransactionCardState extends State<TransactionCard> {
             Text(
               widget.title,
               style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             SizedBox(
               height: 50,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
                 itemCount: 3,
                 itemBuilder: (context, index) {
+                  final isSelected = selectedIndex == index;
+                  final Color cardColor = isSelected
+                      ? colorScheme.onSecondary.withValues(
+                          alpha: (0.8 * 255).round().toDouble(),
+                        )
+                      : colorScheme.secondary;
+
                   return GestureDetector(
                     onTap: () {
                       setState(() {
@@ -49,20 +59,17 @@ class _TransactionCardState extends State<TransactionCard> {
                       icon: Icons.account_balance_wallet,
                       moneyInit: 10000000,
                       sourceId: "098573821",
-                      color:
-                          selectedIndex == index
-                              ? Theme.of(
-                                context,
-                              ).colorScheme.onSecondary.withOpacity(0.8)
-                              : Theme.of(context).colorScheme.secondary,
+                      color: cardColor,
                     ),
                   );
                 },
               ),
             ),
-            SizedBox(height: 16),
-            TextField(decoration: InputDecoration(labelText: "Amount")),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
+            const TextField(
+              decoration: InputDecoration(labelText: "Amount"),
+            ),
+            const SizedBox(height: 16),
           ],
         ),
       ),

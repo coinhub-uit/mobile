@@ -24,12 +24,12 @@ class LoginScreen extends StatelessWidget {
           if (state.error ==
               "Your email is not verified. Please check your inbox for the verification link.") {
             context.read<AuthBloc>().add(ResendVerification(state.email));
-            context.go(Routes.Auth.verify, extra: state.email);
+            context.go(Routes.auth.verify, extra: state.email);
           }
         } else if (state is SignUpWithEmailInitial) {
-          context.go(Routes.Auth.signUp);
+          context.go(Routes.auth.signUp);
         } else if (state is ForgotPasswordInitial) {
-          context.go(Routes.Auth.forgotPassword);
+          context.go(Routes.auth.forgotPassword);
         } else if (state is SignUpWithGoogleSuccess) {
           context.go(Routes.home);
         } else if (state is SignUpWithGoogleError) {

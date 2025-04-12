@@ -18,10 +18,14 @@ class MiniSourceCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String vndFormat(int amount) {
-      // format money to VND
       final formatter = NumberFormat("#,###", "vi_VN");
       return "${formatter.format(amount)}đ";
     }
+
+    final Color onSurface = Theme.of(context).colorScheme.onSurface;
+    final Color onSurfaceWithOpacity = onSurface.withValues(
+      alpha: (0.8 * 255).round().toDouble(),
+    );
 
     return Padding(
       padding: const EdgeInsets.only(right: 10.0),
@@ -42,26 +46,26 @@ class MiniSourceCard extends StatelessWidget {
                   Icon(
                     icon,
                     size: 30,
-                    color: Theme.of(context).colorScheme.onSurface,
+                    color: onSurface,
                   ),
-                  SizedBox(width: 8),
+                  const SizedBox(width: 8),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           sourceId,
                           style: TextStyle(
-                            color: Theme.of(context).colorScheme.onSurface,
+                            color: onSurface,
                             fontSize: 14,
                           ),
                         ),
                         Text(
                           vndFormat(moneyInit),
                           style: TextStyle(
-                            color: Theme.of(
-                              context,
-                            ).colorScheme.onSurface.withOpacity(0.8),
+                            color: onSurfaceWithOpacity,
                             fontSize: 10,
                           ),
                         ),

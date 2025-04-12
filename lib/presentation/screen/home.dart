@@ -52,7 +52,7 @@ class _HomeScreenState extends State<HomeScreen> {
         },
         items: [
           BottomNavigationBarItem(
-            icon: Icon(FontAwesomeIcons.home),
+            icon: Icon(FontAwesomeIcons.house),
             label: "Home",
           ),
           BottomNavigationBarItem(
@@ -60,7 +60,7 @@ class _HomeScreenState extends State<HomeScreen> {
             label: "Savings",
           ),
           BottomNavigationBarItem(
-            icon: Icon(FontAwesomeIcons.portrait),
+            icon: Icon(FontAwesomeIcons.imagePortrait),
             label: "Profile",
           ),
         ],
@@ -98,7 +98,7 @@ class HomeScreenContent extends StatelessWidget {
                       height: 60,
                       child: GestureDetector(
                         onTap:
-                            () => {context.push(Routes.Transaction.transfer)},
+                            () => {context.push(Routes.transaction.transfer)},
                         child: PurpleCard(
                           icon: Icons.money,
                           label: "Transfer",
@@ -144,7 +144,7 @@ class HomeScreenContent extends StatelessWidget {
                           height: 180,
                           child: GestureDetector(
                             onTap: () {
-                              context.push(Routes.Transaction.deposit);
+                              context.push(Routes.transaction.deposit);
                             },
                             child: PurpleCard(
                               icon: FontAwesomeIcons.arrowDown,
@@ -161,7 +161,7 @@ class HomeScreenContent extends StatelessWidget {
                           height: 180,
                           child: GestureDetector(
                             onTap: () {
-                              context.push(Routes.Transaction.withdraw);
+                              context.push(Routes.transaction.withdraw);
                             },
                             child: PurpleCard(
                               icon: FontAwesomeIcons.arrowUpFromBracket,

@@ -16,13 +16,13 @@ class SignUpScreen extends StatelessWidget {
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state is SignUpWithEmailSuccess) {
-          context.go(Routes.Auth.verify, extra: state.email);
+          context.go(Routes.auth.verify, extra: state.email);
         } else if (state is SignUpWithEmailError) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(state.error), backgroundColor: Colors.red),
           );
         } else if (state is LoginInitial) {
-          context.go(Routes.Auth.login);
+          context.go(Routes.auth.login);
         }
       },
       child: Scaffold(

@@ -56,9 +56,7 @@ class _MyAppState extends State<MyApp> {
 
   void _handleStreamedLinks() {
     _sub = _appLinks.uriLinkStream.listen((uri) {
-      if (uri != null) {
-        _handleUri(uri);
-      }
+      _handleUri(uri);
     }, onError: (err) {
       // Log or ignore errors depending on what you want
     });

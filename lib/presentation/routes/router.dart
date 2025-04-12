@@ -15,7 +15,7 @@ import "package:coinhub/presentation/routes/routes.dart";
 
 class RouteRouter {
   GoRouter router = GoRouter(
-    initialLocation: Routes.Auth.login,
+    initialLocation: Routes.auth.login,
     routes: [
       GoRoute(
         name: "home",
@@ -26,28 +26,28 @@ class RouteRouter {
       ),
       GoRoute(
         name: "login",
-        path: Routes.Auth.login,
+        path: Routes.auth.login,
         pageBuilder: (context, state) {
           return MaterialPage(child: LoginScreen());
         },
       ),
       GoRoute(
         name: "signUp",
-        path: Routes.Auth.signUp,
+        path: Routes.auth.signUp,
         pageBuilder: (context, state) {
           return MaterialPage(child: SignUpScreen());
         },
       ),
       GoRoute(
         name: "forgotPassword",
-        path: Routes.Auth.forgotPassword,
+        path: Routes.auth.forgotPassword,
         pageBuilder: (context, state) {
           return MaterialPage(child: ForgotPasswordScreen());
         },
       ),
       GoRoute(
         name: "verify",
-        path: Routes.Auth.verify,
+        path: Routes.auth.verify,
         pageBuilder: (context, state) {
           final email = state.extra as String;
           return MaterialPage(child: VerifyScreen(userEmail: email));
@@ -55,7 +55,7 @@ class RouteRouter {
       ),
       GoRoute(
         name: "resetPassword",
-        path: Routes.Auth.resetPassword,
+        path: Routes.auth.resetPassword,
         pageBuilder: (context, state) {
           final code = state.uri.queryParameters["code"]; 
           return MaterialPage(child: ResetPasswordScreen(code: code));
@@ -63,35 +63,35 @@ class RouteRouter {
       ),
       GoRoute(
         name: "pin",
-        path: Routes.Transaction.pin,
+        path: Routes.transaction.pin,
         builder: (context, state) {
           return PinEntryScreen();
         },
       ),
       GoRoute(
         name: "newPin",
-        path: Routes.Account.pin,
+        path: Routes.account.pin,
         builder: (context, state) {
           return CreatePinScreen();
         },
       ),
       GoRoute(
         name: "deposit",
-        path: Routes.Transaction.deposit,
+        path: Routes.transaction.deposit,
         builder: (context, state) {
           return DepositScreen();
         },
       ),
       GoRoute(
         name: "withdraw",
-        path: Routes.Transaction.withdraw,
+        path: Routes.transaction.withdraw,
         builder: (context, state) {
           return WithdrawScreen();
         },
       ),
       GoRoute(
         name: "transfer",
-        path: Routes.Transaction.transfer,
+        path: Routes.transaction.transfer,
         builder: (context, state) {
           return TransferScreen();
         },

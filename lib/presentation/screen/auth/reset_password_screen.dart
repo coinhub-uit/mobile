@@ -22,7 +22,7 @@ class ResetPasswordScreen extends StatelessWidget {
               backgroundColor: Colors.green,
             ),
           );
-          context.go(Routes.Auth.login);
+          context.go(Routes.auth.login);
         } else if (state is ResetPasswordError) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(state.error), backgroundColor: Colors.red),

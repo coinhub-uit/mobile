@@ -31,7 +31,6 @@ class AuthService {
     );
     LocalStorageService().write("JWT",response.session!.accessToken);
 
-    print("${response.session?.accessToken} token is here");
     return response.user;
   }
 
@@ -44,7 +43,6 @@ class AuthService {
       password: password,
     );
     LocalStorageService().write("JWT",response.session!.accessToken);
-    print("${response.session?.accessToken} token is here");
     return response;
   }
 
