@@ -381,7 +381,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             );
             Future.delayed(const Duration(seconds: 1));
-            context.go(Routes.Auth.login);
+            context.go(Routes.auth.login);
           }
         },
         child: Column(

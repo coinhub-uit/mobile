@@ -18,7 +18,7 @@ class SignUpScreen extends StatelessWidget {
         if (state is SignUpWithEmailSuccess) {
           context.go(
             Routes.auth.verify,
-            extra: {'email': state.email, 'password': state.password},
+            extra: {"email": state.email, "password": state.password},
           );
         } else if (state is SignUpWithEmailError) {
           ScaffoldMessenger.of(context).showSnackBar(

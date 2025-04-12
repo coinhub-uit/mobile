@@ -168,7 +168,7 @@ class AuthService {
     }
   }
 
-  static Future<bool> updatePassword(
+  static Future<bool> updateNewPassword(
     String email,
     String oldPassword,
     String newPassword,

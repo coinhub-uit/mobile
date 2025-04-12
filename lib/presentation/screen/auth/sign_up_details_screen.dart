@@ -35,7 +35,7 @@ class SignUpDetailsScreen extends StatelessWidget {
           //   ),
           // );
           // Future.delayed(const Duration(seconds: 2));
-          context.go(Routes.Auth.login);
+          context.go(Routes.auth.login);
         }
         if (state is SignUpDetailsError) {
           ScaffoldMessenger.of(context).showSnackBar(
