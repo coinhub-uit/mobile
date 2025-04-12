@@ -1,4 +1,5 @@
 // Base state class
+
 abstract class AuthState {}
 
 // --- Login States ---
@@ -43,8 +44,9 @@ class SignUpWithEmailError extends AuthState {
 
 class SignUpWithEmailSuccess extends AuthState {
   final String email;
+  final String password;
 
-  SignUpWithEmailSuccess(this.email);
+  SignUpWithEmailSuccess(this.email, this.password);
 }
 
 // --- Sign-Up with Google States ---
@@ -109,4 +111,21 @@ class ResetPasswordError extends AuthState {
   final String error;
 
   ResetPasswordError(this.error);
+}
+
+// update password
+class UpdatePasswordInitial extends AuthState {}
+
+class UpdatePasswordLoading extends AuthState {}
+
+class UpdatePasswordError extends AuthState {
+  final String error;
+
+  UpdatePasswordError(this.error);
+}
+
+class UpdatePasswordSuccess extends AuthState {
+  final String message;
+
+  UpdatePasswordSuccess(this.message);
 }

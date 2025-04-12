@@ -98,13 +98,22 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           password,
         );
         final user = response.user;
-
+        if (response.success == false) {
+          emit(
+            LoginError(
+              "Please check you login credentials and try again.",
+              username,
+            ),
+          );
+          return;
+        }
         if (user?.emailConfirmedAt == null) {
           emit(
             LoginError("Please verify your email before logging in.", username),
           );
           return;
         }
+
         emit(LoginSuccess("Login successful."));
       } catch (error) {
         if (error is supabase.AuthException &&
@@ -122,6 +131,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     });
 
     on<SignUpWithEmailSubmitted>((event, emit) async {
+      await AuthService.signOut(); // sign out old user first
+
       final email = event.email.trim();
       final password = event.password.trim();
 
@@ -148,7 +159,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
       try {
         await AuthService.signUpWithEmailandPassword(email, password);
-        emit(SignUpWithEmailSuccess(email));
+        emit(SignUpWithEmailSuccess(email, password));
       } catch (error) {
         emit(SignUpWithEmailError(error.toString()));
       }
@@ -190,7 +201,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     on<CheckIfVerified>((event, emit) async {
       emit(CheckingIfVerified());
-      if (AuthService.isUserVerified()) {
+      if (await AuthService.isUserVerified(event.email, event.password)) {
         emit(Verified());
       } else {
         emit(NotVerified());
@@ -240,6 +251,24 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         emit(LoginInitial("", ""));
       } catch (error) {
         emit(LoginError(error.toString(), ""));
+      }
+    });
+
+    // update password
+    on<UpdatePasswordSubmitted>((event, emit) async {
+      emit(UpdatePasswordLoading());
+      try {
+        if (await AuthService.updateNewPassword(
+          event.email,
+          event.oldPassword,
+          event.newPassword,
+        )) {
+          emit(UpdatePasswordSuccess("Password updated successfully."));
+        } else {
+          emit(UpdatePasswordError("Failed to update password."));
+        }
+      } catch (error) {
+        emit(UpdatePasswordError(error.toString()));
       }
     });
   }

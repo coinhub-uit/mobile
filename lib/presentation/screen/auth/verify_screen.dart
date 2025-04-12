@@ -9,7 +9,12 @@ import "package:go_router/go_router.dart";
 
 class VerifyScreen extends StatefulWidget {
   final String userEmail;
-  const VerifyScreen({super.key, required this.userEmail});
+  final String userPassword;
+  const VerifyScreen({
+    super.key,
+    required this.userEmail,
+    required this.userPassword,
+  });
 
   @override
   State<VerifyScreen> createState() => _VerifyScreenState();
@@ -17,12 +22,27 @@ class VerifyScreen extends StatefulWidget {
 
 class _VerifyScreenState extends State<VerifyScreen> {
   int _resendTimer = 0;
+  bool _initialCheckDone = false;
 
   @override
   void initState() {
     super.initState();
-    context.read<AuthBloc>().add(CheckIfVerified());
     _startResendTimer();
+    _startCheckTimer();
+  }
+
+  void _startCheckTimer() {
+    Timer.periodic(const Duration(seconds: 2), (timer) {
+      if (mounted) {
+        setState(
+          () => context.read<AuthBloc>().add(
+            CheckIfVerified(widget.userEmail, widget.userPassword),
+          ),
+        );
+      } else {
+        timer.cancel();
+      }
+    });
   }
 
   void _startResendTimer() {
@@ -40,16 +60,36 @@ class _VerifyScreenState extends State<VerifyScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: BlocConsumer<AuthBloc, AuthState>(
-        listener: (context, state) {
+        listener: (context, state) async {
+          if (!_initialCheckDone && state is! CheckingIfVerified) {
+            setState(() => _initialCheckDone = true);
+          }
           if (state is ResendVerificationSuccess) _startResendTimer();
+          if (state is Verified) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text(
+                  "You have successfully verified your email. Please fill in your details.",
+                ),
+                backgroundColor: Colors.green,
+              ),
+            );
+            print(widget.userEmail);
+            print(widget.userPassword);
+            context.go(
+              Routes.auth.signUpDetails,
+              extra: {
+                "email": widget.userEmail,
+                "password": widget.userPassword,
+              },
+            );
+          }
         },
         builder: (context, state) {
-          if (state is CheckingIfVerified) {
+          if (state is CheckingIfVerified && !_initialCheckDone) {
             return const Center(child: CircularProgressIndicator());
           }
-          if (state is Verified) {
-            context.go(Routes.home);
-          }
+
           return _buildVerificationUI(state);
         },
       ),
