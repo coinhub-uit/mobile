@@ -180,8 +180,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         emit(ForgotPasswordLoading());
 
         try {
-        await AuthService.forgotPassword(email);
-        emit(ForgotPasswordSuccess("Password reset email sent."));
+          await AuthService.forgotPassword(email);
+          emit(ForgotPasswordSuccess("Password reset email sent."));
         } catch (error) {
           emit(ForgotPasswordError(error.toString()));
         }
@@ -214,7 +214,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           return;
         }
         if (password.length < 6) {
-          emit(ResetPasswordError("Password must be at least 6 characters long."));
+          emit(
+            ResetPasswordError("Password must be at least 6 characters long."),
+          );
           return;
         }
         final response = await AuthService.updatePassword(password);

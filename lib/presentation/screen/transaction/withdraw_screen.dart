@@ -20,9 +20,7 @@ class WithdrawScreen extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            TransactionCard(title: "Withdraw from: "),
-          ],
+          children: [TransactionCard(title: "Withdraw from: ")],
         ),
       ),
       floatingActionButton: Padding(

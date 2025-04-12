@@ -33,5 +33,3 @@ class _Transaction {
   String get withdraw => "$root/withdraw";
   String get transfer => "$root/transfer";
 }
-
-

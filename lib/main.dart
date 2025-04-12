@@ -10,11 +10,7 @@ import "package:app_links/app_links.dart";
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Supabase.initialize(
-    url: Env.supabaseUrl,
-    anonKey: Env.supabaseAnonKey,
-  );
-
+  await Supabase.initialize(url: Env.supabaseUrl, anonKey: Env.supabaseAnonKey);
 
   runApp(const MyApp());
 }
@@ -55,11 +51,14 @@ class _MyAppState extends State<MyApp> {
   }
 
   void _handleStreamedLinks() {
-    _sub = _appLinks.uriLinkStream.listen((uri) {
-      _handleUri(uri);
-    }, onError: (err) {
-      // Log or ignore errors depending on what you want
-    });
+    _sub = _appLinks.uriLinkStream.listen(
+      (uri) {
+        _handleUri(uri);
+      },
+      onError: (err) {
+        // Log or ignore errors depending on what you want
+      },
+    );
   }
 
   void _handleUri(Uri uri) {
@@ -89,9 +88,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
-      providers: [
-        BlocProvider(create: (context) => AuthBloc()),
-      ],
+      providers: [BlocProvider(create: (context) => AuthBloc())],
       child: MaterialApp.router(
         theme: catppuccinTheme(isDark: false),
         darkTheme: catppuccinTheme(isDark: true),

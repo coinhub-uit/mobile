@@ -43,11 +43,7 @@ class MiniSourceCard extends StatelessWidget {
               padding: const EdgeInsets.only(left: 8.0),
               child: Row(
                 children: [
-                  Icon(
-                    icon,
-                    size: 30,
-                    color: onSurface,
-                  ),
+                  Icon(icon, size: 30, color: onSurface),
                   const SizedBox(width: 8),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
@@ -57,10 +53,7 @@ class MiniSourceCard extends StatelessWidget {
                       children: [
                         Text(
                           sourceId,
-                          style: TextStyle(
-                            color: onSurface,
-                            fontSize: 14,
-                          ),
+                          style: TextStyle(color: onSurface, fontSize: 14),
                         ),
                         Text(
                           vndFormat(moneyInit),

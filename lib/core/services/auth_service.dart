@@ -29,7 +29,7 @@ class AuthService {
       idToken: idToken,
       accessToken: accessToken,
     );
-    LocalStorageService().write("JWT",response.session!.accessToken);
+    LocalStorageService().write("JWT", response.session!.accessToken);
 
     return response.user;
   }
@@ -42,7 +42,7 @@ class AuthService {
       email: email,
       password: password,
     );
-    LocalStorageService().write("JWT",response.session!.accessToken);
+    LocalStorageService().write("JWT", response.session!.accessToken);
     return response;
   }
 
@@ -54,7 +54,11 @@ class AuthService {
     String email,
     String password,
   ) async {
-    await supabaseClient.auth.signUp(email: email, password: password,emailRedirectTo: "coinhub://auth/verify");
+    await supabaseClient.auth.signUp(
+      email: email,
+      password: password,
+      emailRedirectTo: "coinhub://auth/verify",
+    );
   }
 
   static Future<void> forgotPassword(String email) async {
@@ -63,6 +67,7 @@ class AuthService {
       redirectTo: "coinhub://auth/reset-password",
     );
   }
+
   static Future<UserResponse> updatePassword(String password) async {
     final response = await supabaseClient.auth.updateUser(
       UserAttributes(password: password),

@@ -57,7 +57,7 @@ class RouteRouter {
         name: "resetPassword",
         path: Routes.auth.resetPassword,
         pageBuilder: (context, state) {
-          final code = state.uri.queryParameters["code"]; 
+          final code = state.uri.queryParameters["code"];
           return MaterialPage(child: ResetPasswordScreen(code: code));
         },
       ),

@@ -9,7 +9,7 @@ import "package:go_router/go_router.dart";
 
 class ResetPasswordScreen extends StatelessWidget {
   final String? code;
-  const ResetPasswordScreen({super.key,this.code});
+  const ResetPasswordScreen({super.key, this.code});
 
   @override
   Widget build(BuildContext context) {
@@ -111,11 +111,11 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
               border: const UnderlineInputBorder(),
               prefixIcon: const Icon(Icons.lock_outline),
               suffixIcon: IconButton(
-                icon: Icon(
-                    _obscure ? Icons.visibility_off : Icons.visibility),
-                onPressed: () => setState(() {
-                  _obscure = !_obscure;
-                }),
+                icon: Icon(_obscure ? Icons.visibility_off : Icons.visibility),
+                onPressed:
+                    () => setState(() {
+                      _obscure = !_obscure;
+                    }),
               ),
             ),
             validator: (value) {
@@ -137,19 +137,17 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
                 borderRadius: BorderRadius.circular(8),
               ),
             ),
-            child: _isSubmitting
-                ? const SizedBox(
-                    width: 24,
-                    height: 24,
-                    child: CircularProgressIndicator(
-                      color: Colors.white,
-                      strokeWidth: 2,
-                    ),
-                  )
-                : const Text(
-                    "Confirm",
-                    style: TextStyle(fontSize: 16),
-                  ),
+            child:
+                _isSubmitting
+                    ? const SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: CircularProgressIndicator(
+                        color: Colors.white,
+                        strokeWidth: 2,
+                      ),
+                    )
+                    : const Text("Confirm", style: TextStyle(fontSize: 16)),
           ),
         ],
       ),

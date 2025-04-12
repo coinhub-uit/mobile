@@ -32,19 +32,19 @@ class PurpleCard extends StatelessWidget {
       decoration:
           !isTransferButton
               ? BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Theme.of(context).colorScheme.primary,
-            Theme.of(context).colorScheme.primary.withValues(),
-          ],
-        ),
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(24),
-          topLeft: Radius.circular(24),
-          topRight: Radius.circular(24),
-        ),
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Theme.of(context).colorScheme.primary,
+                    Theme.of(context).colorScheme.primary.withValues(),
+                  ],
+                ),
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(24),
+                  topLeft: Radius.circular(24),
+                  topRight: Radius.circular(24),
+                ),
               )
               : BoxDecoration(
                 gradient: LinearGradient(
@@ -74,7 +74,7 @@ class PurpleCard extends StatelessWidget {
                           bottomLeft: Radius.circular(24),
                           topLeft: Radius.circular(24),
                         ),
-      ),
+              ),
       child: Card(
         elevation: 0,
         color: Colors.transparent,
@@ -94,27 +94,27 @@ class PurpleCard extends StatelessWidget {
                 children: [
                   !isTransferButton
                       ? Icon(
-                    icon,
-                    color: Theme.of(context).colorScheme.secondary,
-                    size: iconSize,
+                        icon,
+                        color: Theme.of(context).colorScheme.secondary,
+                        size: iconSize,
                       )
                       : Icon(
                         icon,
                         color: Theme.of(context).colorScheme.onSurface,
                         size: iconSize,
-                  ),
+                      ),
 
                   !isTransferButton
                       ? Icon(
-                    Icons.arrow_circle_right_outlined,
-                    color: Theme.of(context).colorScheme.onSecondary,
-                    size: arrowSize,
+                        Icons.arrow_circle_right_outlined,
+                        color: Theme.of(context).colorScheme.onSecondary,
+                        size: arrowSize,
                       )
                       : Icon(
                         Icons.arrow_forward_ios_rounded,
                         color: Theme.of(context).colorScheme.secondary,
-                        size: arrowSize,                        
-                  ),
+                        size: arrowSize,
+                      ),
                 ],
               ),
               SizedBox(height: 4),
@@ -135,9 +135,8 @@ class PurpleCard extends StatelessWidget {
                       fontSize: labelSize,
                       fontWeight: FontWeight.bold,
                       height: 1.2,
-                      
-                ),
-              ),
+                    ),
+                  ),
             ],
           ),
         ),

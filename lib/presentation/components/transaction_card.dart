@@ -31,9 +31,9 @@ class _TransactionCardState extends State<TransactionCard> {
             Text(
               widget.title,
               style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
             ),
             const SizedBox(height: 16),
             SizedBox(
@@ -43,11 +43,12 @@ class _TransactionCardState extends State<TransactionCard> {
                 itemCount: 3,
                 itemBuilder: (context, index) {
                   final isSelected = selectedIndex == index;
-                  final Color cardColor = isSelected
-                      ? colorScheme.onSecondary.withValues(
-                          alpha: (0.8 * 255).round().toDouble(),
-                        )
-                      : colorScheme.secondary;
+                  final Color cardColor =
+                      isSelected
+                          ? colorScheme.onSecondary.withValues(
+                            alpha: (0.8 * 255).round().toDouble(),
+                          )
+                          : colorScheme.secondary;
 
                   return GestureDetector(
                     onTap: () {
@@ -66,9 +67,7 @@ class _TransactionCardState extends State<TransactionCard> {
               ),
             ),
             const SizedBox(height: 16),
-            const TextField(
-              decoration: InputDecoration(labelText: "Amount"),
-            ),
+            const TextField(decoration: InputDecoration(labelText: "Amount")),
             const SizedBox(height: 16),
           ],
         ),

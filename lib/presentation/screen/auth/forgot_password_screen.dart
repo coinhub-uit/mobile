@@ -29,10 +29,7 @@ class ForgotPasswordScreen extends StatelessWidget {
         }
       },
       child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-        ),
+        appBar: AppBar(backgroundColor: Colors.transparent, elevation: 0),
         body: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.fromLTRB(16, 40, 16, 0),

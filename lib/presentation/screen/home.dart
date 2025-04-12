@@ -24,7 +24,7 @@ class _HomeScreenState extends State<HomeScreen> {
     SavingsScreen(),
     ProfileScreen(),
   ];
-  
+
   void onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -116,7 +116,7 @@ class HomeScreenContent extends StatelessWidget {
                   ),
                 ],
               ),
-              
+
               SizedBox(height: 32),
               Column(
                 children: [
@@ -220,8 +220,7 @@ class SavingsScreen extends StatelessWidget {
                   );
                 },
               ),
-            )
-            
+            ),
           ],
         ),
       ),
@@ -239,6 +238,7 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 }
+
 // Container(
 //   constraints: BoxConstraints.expand(height: 100),
 //   padding: EdgeInsets.symmetric(horizontal: 30),

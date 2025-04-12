@@ -20,9 +20,7 @@ class DepositScreen extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            TransactionCard(title: "Deposit into: "),
-          ],
+          children: [TransactionCard(title: "Deposit into: ")],
         ),
       ),
       floatingActionButton: Padding(
