@@ -6,7 +6,7 @@ import "package:flutter/material.dart";
 import "package:supabase_flutter/supabase_flutter.dart";
 import "package:flutter_bloc/flutter_bloc.dart";
 import "package:coinhub/core/util/env.dart";
-import "package:uni_links/uni_links.dart";
+import "package:app_links/app_links.dart";
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -30,19 +30,20 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  StreamSubscription? _sub;
+  late final AppLinks _appLinks;
+  StreamSubscription<Uri>? _sub;
 
   @override
   void initState() {
     super.initState();
-    _handleInitialUri();     // Cold start links
-    _handleStreamedLinks();  // Links received while app is running
+    _appLinks = AppLinks();
+    _handleInitialUri();
+    _handleStreamedLinks();
   }
 
   Future<void> _handleInitialUri() async {
     try {
-      final uri = await getInitialUri();
-
+      final uri = await _appLinks.getInitialLink();
       if (uri != null) {
         _handleUri(uri);
       }
@@ -54,11 +55,12 @@ class _MyAppState extends State<MyApp> {
   }
 
   void _handleStreamedLinks() {
-    _sub = uriLinkStream.listen((uri) {
+    _sub = _appLinks.uriLinkStream.listen((uri) {
       if (uri != null) {
         _handleUri(uri);
       }
     }, onError: (err) {
+      // Log or ignore errors depending on what you want
     });
   }
 
