@@ -89,7 +89,9 @@ class ForgotPasswordSubmitted extends AuthEvent {
 }
 
 class CheckIfVerified extends AuthEvent {
-  const CheckIfVerified();
+  final String email;
+  final String password;
+  const CheckIfVerified(this.email, this.password);
 }
 
 class ResendVerification extends AuthEvent {
@@ -105,4 +107,12 @@ class ResetPasswordSubmitted extends AuthEvent {
 
 class LogoutEvent extends AuthEvent {
   const LogoutEvent();
+}
+
+/// Event to update the email field in the sign-up with Google form.
+class UpdatePasswordSubmitted extends AuthEvent {
+  final String email;
+  final String oldPassword;
+  final String newPassword;
+  const UpdatePasswordSubmitted(this.email, this.oldPassword, this.newPassword);
 }
