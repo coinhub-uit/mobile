@@ -400,7 +400,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   child: CircleAvatar(
                     radius: 84,
                     backgroundImage:
-                        widget.model.avatar!.isNotEmpty
+                        (widget.model.avatar != null &&
+                                widget.model.avatar!.isNotEmpty)
                             ? NetworkImage(
                               "${widget.model.avatar!}?t=${DateTime.now().millisecondsSinceEpoch}",
                             )
