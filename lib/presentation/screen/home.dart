@@ -341,6 +341,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
     if (result == true) {
       BlocProvider.of<UserBloc>(
+        // ignore: use_build_context_synchronously
         context,
       ).add(DeleteAccountRequested(widget.model.id));
       await AuthService.signOut();

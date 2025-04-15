@@ -3,6 +3,7 @@ import "dart:developer";
 import "dart:typed_data";
 
 import "package:firebase_messaging/firebase_messaging.dart";
+import "package:flutter/rendering.dart";
 import "package:flutter_local_notifications/flutter_local_notifications.dart";
 import "package:http/http.dart" as http;
 
@@ -84,10 +85,10 @@ class NotificationService {
             summaryText: message.notification?.body,
           );
         } else {
-          print("Image fetch failed: ${response.statusCode}");
+          debugPrint("Image fetch failed: ${response.statusCode}");
         }
       } catch (e) {
-        print("Error fetching image: $e");
+        debugPrint("Error fetching image: $e");
       }
     }
 
@@ -133,7 +134,7 @@ class NotificationService {
 
   Future<String?> getDeviceToken() async {
     String? token = await _firebaseMessaging.getToken();
-    print("Device Token: $token");
+    debugPrint("Device Token: $token");
     return token;
   }
 }

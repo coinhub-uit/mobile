@@ -25,7 +25,6 @@ class _DateInputFieldState extends State<DateInputField> {
   void initState() {
     super.initState();
     selectedDate = widget.initialDate;
-    print("Selected date: $selectedDate");
     _controller.text =
         "${selectedDate?.day}/${selectedDate?.month}/${selectedDate?.year}";
   }

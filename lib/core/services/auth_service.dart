@@ -73,13 +73,10 @@ class AuthService {
         foundInDb = false;
       }
       final dbResult = await UserService.getUser(userId!);
-      print("User ID: $userId");
-      print("DB Result: $dbResult");
       if (dbResult == null) {
         foundInDb = false;
       } else {
         await LocalStorageService().write("JWT", response.session!.accessToken);
-        print("${response.session?.accessToken} token is here");
       }
       return AuthResult(
         user: response.user,
@@ -87,7 +84,6 @@ class AuthService {
         success: foundInDb,
       );
     } catch (e) {
-      print("Sign-in error: $e");
       return AuthResult(user: null, session: null, success: false);
     }
   }
@@ -101,7 +97,7 @@ class AuthService {
     String password,
   ) async {
     try {
-      final response = await supabaseClient.auth.signUp(email: email, password: password);
+      await supabaseClient.auth.signUp(email: email, password: password);
       //await LocalStorageService().write("JWT", response.session!.accessToken);
       // print("${response.session?.accessToken} token is here");
 
@@ -156,25 +152,20 @@ class AuthService {
       );
       final session = response.session;
       if (session == null) {
-        print("failed to get session");
         return false;
       }
       await LocalStorageService().write("JWT", session.accessToken);
-      print("${session.accessToken} token is here");
 
       final user = response.user;
       if (user == null) {
-        print("failed to get user");
         return false;
       }
       if (user.emailConfirmedAt != null) {
         return true;
       } else {
-        print("email not verified");
         return false;
       }
     } catch (e) {
-      print("Error checking user verification: $e");
       return false;
     }
   }
@@ -194,19 +185,15 @@ class AuthService {
       if (session == null) {
         return false;
       }
-      try {
-        await LocalStorageService().write("JWT", session.accessToken);
-      } catch (e) {
-        print("Error writing JWT to local storage: $e");
-      }
+      await LocalStorageService().write("JWT", session.accessToken);
+
       await supabaseClient.auth.updateUser(
         UserAttributes(password: newPassword),
       );
       return true;
     } catch (e) {
-      print("Error updating password: $e");
-    }
     return false;
+    }
   }
 
   static Future<void> resendVerificationCode(String email) async {

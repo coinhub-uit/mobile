@@ -113,16 +113,16 @@ class _MyAppState extends State<MyApp> {
 }
 
 void testHttp() async {
-  print("Requesting: ${Env.supabaseUrl}");
+  debugPrint("Requesting: ${Env.supabaseUrl}");
   try {
     final url = Uri.parse(Env.apiServerUrl); // get url
     final response = await http.get(url); // get response
     if (response.statusCode == 200) {
-      print("Response: ${response.body}"); // print response body
+      debugPrint("Response: ${response.body}"); // debugPrin response body
     } else {
-      print("Error: ${response.statusCode}"); // print error status code
+      debugPrint("Error: ${response.statusCode}"); // debugPrint error status code
     }
   } catch (e) {
-    print("Error: $e"); // print error message
+    debugPrint("Error: $e"); // debugPrint error message
   }
 }

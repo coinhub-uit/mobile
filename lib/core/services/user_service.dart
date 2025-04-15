@@ -61,7 +61,6 @@ class UserService {
       throw Exception("User not found");
     }
     final userId = user.id;
-    print(user.id);
     UserModel newUser = UserModel(
       id: userId,
       fullname: userModel.fullname,
@@ -70,7 +69,6 @@ class UserService {
       citizenId: userModel.citizenId,
       address: userModel.address,
     );
-    print("newUser as json: ${newUser.toJsonForRequest()}");
     final response = await ApiClient.client.post(
       Uri.parse("${ApiClient.userEndpoint}"),
       headers: {
@@ -80,7 +78,6 @@ class UserService {
       body: newUser.toJsonForRequest(),
     );
 
-    print("reponse: ${response.body}");
 
     if (response.statusCode == 201) {
       return response;
@@ -95,8 +92,6 @@ class UserService {
     if (accessToken == null) {
       throw Exception("Session not found");
     }
-    print("access token: $accessToken");
-    print("user id: ${user?.id}");
     if (user == null) {
       return null;
     }
@@ -107,8 +102,6 @@ class UserService {
         "Authorization": "Bearer $accessToken",
       },
     );
-    print("response: ${response.body}");
-    print("response status code: ${response.statusCode}");
     if (response.statusCode == 200) {
       debugPrint("User data: ${UserModel.fromJson(response.body)}");
       return UserModel.fromJson(response.body);
@@ -130,9 +123,6 @@ class UserService {
       },
       body: userModel.toJsonForRequest(),
     );
-    print("response: ${response.body}");
-    print("response status code: ${response.statusCode}");
-    print("user model: ${userModel.toJsonForRequest()}");
     if (response.statusCode == 200) {
       return response;
     } else {
@@ -143,7 +133,6 @@ class UserService {
   static Future<String> uploadAvatar(String userId, File imageFile) async {
     final user = Supabase.instance.client.auth.currentUser;
     if (user == null) throw Exception("Not signed in");
-    print(Supabase.instance.client.auth.currentSession?.accessToken);
 
     final storageRef = Supabase.instance.client.storage.from("avatars");
     final path = "user_$userId.jpg";
@@ -151,9 +140,8 @@ class UserService {
     // delete the old avatar if it exists
     try {
       await storageRef.remove([path]);
-      print("Deleted old avatar: $path");
     } catch (error) {
-      print("Error deleting old avatar: $error");
+      debugPrint("Error deleting old avatar: $error");
     }
 
     try {
@@ -163,14 +151,11 @@ class UserService {
         imageFile,
         fileOptions: const FileOptions(upsert: true),
       );
-      print("Uploaded avatar: $path");
     } catch (error) {
-      print("Error uploading avatar: $error");
       rethrow;
     }
     // get the public url of the image
     final publicUrl = storageRef.getPublicUrl(path);
-    print("Public url: $publicUrl");
     return publicUrl;
   }
 
@@ -206,7 +191,6 @@ class UserService {
         return avatarUrl;
       }
     } catch (e) {
-      print("Error picking image: $e");
       return "";
     }
     return ""; // Return an empty string if no image was picked

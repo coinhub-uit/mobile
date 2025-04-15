@@ -74,8 +74,6 @@ class _VerifyScreenState extends State<VerifyScreen> {
                 backgroundColor: Colors.green,
               ),
             );
-            print(widget.userEmail);
-            print(widget.userPassword);
             context.go(
               Routes.auth.signUpDetails,
               extra: {

@@ -24,7 +24,6 @@ class SignUpDetailsScreen extends StatelessWidget {
     return BlocConsumer<UserBloc, UserState>(
       listener: (context, state) {
         if (state is SignUpDetailsLoading) {}
-        print("state is: $state");
 
         if (state is SignUpDetailsSuccess) {
           // ScaffoldMessenger.of(context).showSnackBar(
@@ -227,7 +226,6 @@ class _SignUpDetailsFormState extends State<SignUpDetailsForm> {
             onPressed: () async {
               if (_formKey.currentState!.validate()) {
                 _formKey.currentState!.save();
-                print(userModel.toJson());
                 context.read<UserBloc>().add(
                   SignUpDetailsSubmitted(userModel, userEmail, userPassword),
                 );
