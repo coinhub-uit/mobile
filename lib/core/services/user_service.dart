@@ -78,7 +78,6 @@ class UserService {
       body: newUser.toJsonForRequest(),
     );
 
-
     if (response.statusCode == 201) {
       return response;
     } else {

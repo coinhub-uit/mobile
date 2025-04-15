@@ -9,8 +9,8 @@ class DeviceRegistrationService {
   static var baseUrl = Env.apiServerUrl;
   static Future<void> registerDevice(
     String supabaseUserId,
-    String jwtToken, 
-) async {
+    String jwtToken,
+  ) async {
     try {
       // Get FCM token
       String? fcmToken = await FirebaseMessaging.instance.getToken();
@@ -22,21 +22,16 @@ class DeviceRegistrationService {
       String deviceId = await _getDeviceId();
 
       // Construct URL
-      final url = Uri.parse(
-        "$baseUrl/users/$supabaseUserId/devices",
-      );
+      final url = Uri.parse("$baseUrl/users/$supabaseUserId/devices");
 
       // Send POST request
       final response = await http.post(
         url,
         headers: {
           "Content-Type": "application/json",
-          "Authorization": "Bearer $jwtToken", 
+          "Authorization": "Bearer $jwtToken",
         },
-        body: jsonEncode({
-          "fcmToken": fcmToken,
-          "deviceId": deviceId,
-        }),
+        body: jsonEncode({"fcmToken": fcmToken, "deviceId": deviceId}),
       );
 
       // Check response

@@ -35,16 +35,16 @@ class NotificationService {
 
     const DarwinInitializationSettings initializationSettingsDarwin =
         DarwinInitializationSettings(
-      requestAlertPermission: true,
-      requestBadgePermission: true,
-      requestSoundPermission: true,
-    );
+          requestAlertPermission: true,
+          requestBadgePermission: true,
+          requestSoundPermission: true,
+        );
 
     const InitializationSettings initializationSettings =
         InitializationSettings(
-      android: initializationSettingsAndroid,
-      iOS: initializationSettingsDarwin,
-    );
+          android: initializationSettingsAndroid,
+          iOS: initializationSettingsDarwin,
+        );
 
     await _flutterLocalNotificationsPlugin.initialize(
       initializationSettings,
@@ -61,7 +61,9 @@ class NotificationService {
     });
 
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      log("firebase :: Notification clicked! Message: ${message.notification?.title}");
+      log(
+        "firebase :: Notification clicked! Message: ${message.notification?.title}",
+      );
       _handleNotificationClick(message);
     });
 
@@ -94,12 +96,12 @@ class NotificationService {
 
     AndroidNotificationDetails androidPlatformChannelSpecifics =
         AndroidNotificationDetails(
-      "high_importance_channel",
-      "High Importance Notifications",
-      importance: Importance.high,
-      priority: Priority.high,
-      styleInformation: bigPictureStyleInformation,
-    );
+          "high_importance_channel",
+          "High Importance Notifications",
+          importance: Importance.high,
+          priority: Priority.high,
+          styleInformation: bigPictureStyleInformation,
+        );
 
     NotificationDetails platformChannelSpecifics = NotificationDetails(
       android: androidPlatformChannelSpecifics,
@@ -115,12 +117,15 @@ class NotificationService {
   }
 
   Future<void> _handleNotificationClick(RemoteMessage message) async {
-    log("firebase :: User tapped on notification: ${message.notification?.title}");
+    log(
+      "firebase :: User tapped on notification: ${message.notification?.title}",
+    );
     // Handle navigation here if needed
   }
 
   Future<void> _onDidReceiveNotificationResponse(
-      NotificationResponse notificationResponse) async {
+    NotificationResponse notificationResponse,
+  ) async {
     final String? payload = notificationResponse.payload;
     if (payload != null) {
       log("firebase :: Notification payload: $payload");
@@ -128,7 +133,8 @@ class NotificationService {
   }
 
   static Future<void> _firebaseMessagingBackgroundHandler(
-      RemoteMessage message) async {
+    RemoteMessage message,
+  ) async {
     log("firebase :: Handling a background message: ${message.messageId}");
   }
 

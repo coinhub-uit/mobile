@@ -192,7 +192,7 @@ class AuthService {
       );
       return true;
     } catch (e) {
-    return false;
+      return false;
     }
   }
 

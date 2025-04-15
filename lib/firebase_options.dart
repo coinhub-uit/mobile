@@ -69,9 +69,10 @@ class DefaultFirebaseOptions {
     messagingSenderId: '823330898154',
     projectId: 'coinhub-451504',
     storageBucket: 'coinhub-451504.firebasestorage.app',
-    androidClientId: '823330898154-vbdagjf2fhf6184m4difqi8gtsqtsb1q.apps.googleusercontent.com',
-    iosClientId: '823330898154-27ajrbc06rkkl0bscah9h67id4osktb3.apps.googleusercontent.com',
+    androidClientId:
+        '823330898154-vbdagjf2fhf6184m4difqi8gtsqtsb1q.apps.googleusercontent.com',
+    iosClientId:
+        '823330898154-27ajrbc06rkkl0bscah9h67id4osktb3.apps.googleusercontent.com',
     iosBundleId: 'com.coinhub.coinhub',
   );
-
 }

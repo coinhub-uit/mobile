@@ -17,9 +17,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Supabase.initialize(url: Env.supabaseUrl, anonKey: Env.supabaseAnonKey);
   testHttp(); // Test HTTP request to the API server
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   NotificationService.instance.initialize();
   NotificationService.instance.getDeviceToken();
   runApp(const MyApp());
@@ -120,7 +118,9 @@ void testHttp() async {
     if (response.statusCode == 200) {
       debugPrint("Response: ${response.body}"); // debugPrin response body
     } else {
-      debugPrint("Error: ${response.statusCode}"); // debugPrint error status code
+      debugPrint(
+        "Error: ${response.statusCode}",
+      ); // debugPrint error status code
     }
   } catch (e) {
     debugPrint("Error: $e"); // debugPrint error message
