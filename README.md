@@ -44,19 +44,21 @@
 ### Prerequisites
 
 - [just](https://github.com/casey/just)
-- [npm & node](https://nodejs.org/en)
-- [flutter](https://flutter.dev/)
+- [Flutter](https://flutter.dev/)
+- [Firebase CLI](https://firebase.google.com/docs/cli#install_the_firebase_cli)
+  > Need to be in `$PATH`
 
 ### Setup
 
 - Bootstrap
   ```sh
-  just restore
+  just s
   ```
 - Init FCM
   ```sh
-  flutter run flutterfire -- configure --project='<PROJECT_ID>'
+  just sf '<PROJECT_ID>'
   ```
+  > Quote isn't required
 
 ### Develop
 

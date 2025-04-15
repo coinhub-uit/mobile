@@ -1,10 +1,11 @@
-default: run
+default: run-debug
 
-restore:
+alias s := setup-devenv
+alias sf := setup-firebase
+
+setup-devenv: && setup-dotenv
   flutter pub get
-  npm i
   dart run husky install
-  just setup-dotenv
 
 [private]
 [unix]
@@ -18,5 +19,8 @@ setup-dotenv:
 setup-dotenv:
   IF NOT EXIST .env COPY .env.example .env
 
-run:
+setup-firebase project_id:
+  dart run flutterfire_cli:flutterfire configure --project='{{project_id}}'
+
+run-debug:
   flutter run --dart-define-from-file=.env
