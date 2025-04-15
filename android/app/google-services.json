@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "823330898154",
+    "project_id": "coinhub-451504",
+    "storage_bucket": "coinhub-451504.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:823330898154:android:1d3c3d0f180e32b2299793",
+        "android_client_info": {
+          "package_name": "com.coinhub.coinhub"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "823330898154-2qdocndn72u8fo4uut2pgbppmmord4eu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "***REMOVED***"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "823330898154-2qdocndn72u8fo4uut2pgbppmmord4eu.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "823330898154-27ajrbc06rkkl0bscah9h67id4osktb3.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.coinhub.coinhub"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
