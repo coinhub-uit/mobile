@@ -41,15 +41,24 @@
 
 ## DEV
 
-- Bootstrapping
+### Prerequisites
 
+- [just](https://github.com/casey/just)
+- [npm & node](https://nodejs.org/en)
+- [flutter](https://flutter.dev/)
+
+### Setup
+
+- Bootstrap
   ```sh
-  dart run ./scripts/bootstrap.dart
-
-  # or
-  # just restore
+  just restore
+  ```
+- Init FCM
+  ```sh
+  flutter run flutterfire -- configure --project='<PROJECT_ID>'
   ```
 
-- Dev:
-  - Vscode: Press <kbd>F5</kbd> to debug _(need dart and flutter extension)_
-  - CLI: `just` to run debug
+### Develop
+
+- Vscode: Press <kbd>F5</kbd> to debug _(need dart and flutter extension)_
+- CLI: `just` to run debug
