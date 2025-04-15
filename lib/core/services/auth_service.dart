@@ -1,5 +1,6 @@
 import "package:coinhub/core/services/local_storage.dart";
 import "package:coinhub/core/services/user_service.dart";
+import "package:coinhub/core/util/device_register.dart";
 import "package:google_sign_in/google_sign_in.dart";
 import "package:supabase_flutter/supabase_flutter.dart";
 import "package:coinhub/core/util/env.dart";
@@ -43,6 +44,16 @@ class AuthService {
       accessToken: accessToken,
     );
     LocalStorageService().write("JWT", response.session!.accessToken);
+    if (response.user?.id == null) {
+      throw "Something went wrong. User not found";
+    }
+    if (response.session?.accessToken == null) {
+      throw "Something went wrong. session not found";
+    }
+    DeviceRegistrationService.registerDevice(
+      response.user!.id,
+      response.session!.accessToken,
+    );
 
     return response.user;
   }
@@ -90,7 +101,7 @@ class AuthService {
     String password,
   ) async {
     try {
-      await supabaseClient.auth.signUp(email: email, password: password);
+      final response = await supabaseClient.auth.signUp(email: email, password: password);
       //await LocalStorageService().write("JWT", response.session!.accessToken);
       // print("${response.session?.accessToken} token is here");
 
@@ -110,7 +121,7 @@ class AuthService {
       if (e is AuthException) {
         throw e.message;
       } else {
-        throw "An unknown error occurred";
+        throw "$e";
       }
     }
   }

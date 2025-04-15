@@ -2,7 +2,10 @@ import "dart:async";
 import "package:coinhub/core/bloc/auth/auth_logic.dart";
 import "package:coinhub/core/bloc/user/user_logic.dart";
 import "package:coinhub/core/constants/theme.dart";
+import "package:coinhub/core/util/notification.dart";
+import "package:coinhub/firebase_options.dart";
 import "package:coinhub/presentation/routes/router.dart";
+import "package:firebase_core/firebase_core.dart";
 import "package:flutter/material.dart";
 import "package:supabase_flutter/supabase_flutter.dart";
 import "package:flutter_bloc/flutter_bloc.dart";
@@ -14,6 +17,11 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Supabase.initialize(url: Env.supabaseUrl, anonKey: Env.supabaseAnonKey);
   testHttp(); // Test HTTP request to the API server
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  NotificationService.instance.initialize();
+  NotificationService.instance.getDeviceToken();
   runApp(const MyApp());
 }
 
