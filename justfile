@@ -1,9 +1,9 @@
 default: run-debug
 
-alias s := setup-devenv
+alias b := bootstrap
 alias sf := setup-firebase
 
-setup-devenv: && setup-dotenv
+bootstrap: && setup-dotenv
   flutter pub get
   dart run husky install
 

@@ -36,31 +36,3 @@
 >
 > - The IPA is unsigned. You need to sign it before installing. Or you can install with Trollstore, Jailbreak, etc...
 > - With trollstore link, you have to enable trollstore "URL Scheme" in Trollstore's security
-
----
-
-## DEV
-
-### Prerequisites
-
-- [just](https://github.com/casey/just)
-- [Flutter](https://flutter.dev/)
-- [Firebase CLI](https://firebase.google.com/docs/cli#install_the_firebase_cli)
-  > Need to be in `$PATH`
-
-### Setup
-
-- Bootstrap
-  ```sh
-  just s
-  ```
-- Init FCM
-  ```sh
-  just sf '<PROJECT_ID>'
-  ```
-  > Quote isn't required
-
-### Develop
-
-- Vscode: Press <kbd>F5</kbd> to debug _(need dart and flutter extension)_
-- CLI: `just` to run debug
