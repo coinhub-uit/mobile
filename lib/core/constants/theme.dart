@@ -16,7 +16,7 @@ class AppTheme {
 
   // Dark theme colors - vintage inspired
   static const Color darkBackground = Color(0xFF1A1625);
-  static const Color darkSurface = Color(0xFF1A1625);
+  static const Color darkSurface = Color(0xFF2A2438);
   static const Color darkText = Color(0xFFF1F0F5);
   static const Color darkTextSecondary = Color(0xFFB4B0C5);
   static const Color darkBorder = Color(0xFF3D3A50);
@@ -77,11 +77,11 @@ class AppTheme {
       colorScheme: ColorScheme.light(
         primary: primaryColor,
         secondary: accentTeal,
-        surface: lightSurface
+        surface: lightSurface, // Changed from lightBackground
         error: error,
         onPrimary: Colors.white,
         onSecondary: Colors.white,
-        onSurface: lightText
+        onSurface: lightText, // Keep for backward compatibility
         onError: Colors.white,
       ),
       textTheme: GoogleFonts.interTextTheme(
@@ -329,10 +329,12 @@ class AppTheme {
         surface: darkSurface, // Changed from darkBackground
         error: error,
         onPrimary: Colors.white,
-          onSurface: darkText, // Keep for backward compatibility
+        onSecondary: Colors.black,
+        onSurface: darkText, // Keep for backward compatibility
         onError: Colors.white,
       ),
-      textTheme: Go  ThemeData.dark().textTheme,
+      textTheme: GoogleFonts.interTextTheme(
+        ThemeData.dark().textTheme,
       ).copyWith(
         displayLarge: GoogleFonts.playfairDisplay(
           color: darkText,
@@ -556,6 +558,6 @@ class AppTheme {
         circularTrackColor: darkBorder,
         linearTrackColor: darkBorder,
       ),
-    )
+    );
   }
 }
