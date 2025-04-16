@@ -2,11 +2,13 @@ import "dart:async";
 import "package:coinhub/core/bloc/auth/auth_logic.dart";
 import "package:coinhub/core/bloc/user/user_logic.dart";
 import "package:coinhub/core/constants/theme.dart";
+import "package:coinhub/core/constants/theme_provider.dart";
 import "package:coinhub/core/util/notification.dart";
 import "package:coinhub/firebase_options.dart";
 import "package:coinhub/presentation/routes/router.dart";
 import "package:firebase_core/firebase_core.dart";
 import "package:flutter/material.dart";
+import "package:provider/provider.dart";
 import "package:supabase_flutter/supabase_flutter.dart";
 import "package:flutter_bloc/flutter_bloc.dart";
 import "package:coinhub/core/util/env.dart";
@@ -20,7 +22,12 @@ void main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   NotificationService.instance.initialize();
   NotificationService.instance.getDeviceToken();
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => ThemeProvider(),
+      child: const MyApp(),
+    ),
+  );
 }
 
 final supabase = Supabase.instance.client;
@@ -95,14 +102,17 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
+
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (context) => AuthBloc()),
         BlocProvider(create: (context) => UserBloc()),
       ],
       child: MaterialApp.router(
-        theme: catppuccinTheme(isDark: false),
-        darkTheme: catppuccinTheme(isDark: true),
+        theme: AppTheme.lightTheme(),
+        darkTheme: AppTheme.darkTheme(),
+        themeMode: themeProvider.themeMode,
         debugShowCheckedModeBanner: false,
         routerConfig: goRouter,
       ),

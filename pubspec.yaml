@@ -54,6 +54,10 @@ dependencies:
   flutter_local_notifications: ^19.1.0
   device_info_plus: ^11.3.3
   intl: ^0.18.1
+  flutter_svg: ^2.0.17
+  google_fonts: ^6.2.1
+  provider: ^6.1.4
+  shared_preferences: ^2.5.3
 
 dev_dependencies:
   flutter_test:

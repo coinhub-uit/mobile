@@ -36,7 +36,7 @@ class WithdrawScreen extends StatelessWidget {
               "Withdraw",
               style: Theme.of(
                 context,
-              ).textTheme.displayMedium!.copyWith(color: Colors.white),
+              ).textTheme.headlineLarge!.copyWith(color: Colors.white),
             ),
           ),
         ),

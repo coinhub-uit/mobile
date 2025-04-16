@@ -5,7 +5,7 @@ import "package:coinhub/presentation/screen/auth/reset_password_screen.dart";
 import "package:coinhub/presentation/screen/auth/sign_up_details_screen.dart";
 import "package:coinhub/presentation/screen/auth/sign_up_screen.dart";
 import "package:coinhub/presentation/screen/auth/verify_screen.dart";
-import "package:coinhub/presentation/screen/home.dart";
+import "package:coinhub/presentation/screen/main/home.dart";
 import "package:coinhub/presentation/screen/setting/pin_screen.dart";
 import "package:coinhub/presentation/screen/transaction/deposit_screen.dart";
 import "package:coinhub/presentation/screen/transaction/withdraw_screen.dart";
