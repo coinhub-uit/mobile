@@ -34,7 +34,7 @@ jobs:
           # - x86 # Cannot build for x86 anymore...
           - x64
     env:
-      GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GCP_SA }}
+      GOOGLE_APPLICATION_CREDENTIALS: ${{ github.workspace }}/gcp-sa-private-key.json
     steps:
       - uses: actions/checkout@v4
 
@@ -48,14 +48,14 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
       #
-      # - name: Get GCP_SA
-      #   run: echo '${{ secrets.GCP_SA }}' > 'gcp-sa.json'
+      - name: Get GCP_SA
+        run: echo '${{ secrets.GCP_SA_PRIVATE_KEY }}' > '${{ env.GOOGLE_APPLICATION_CREDENTIALS }}'
 
       - name: Get Firebase CLI
         run: curl -sL https://firebase.tools | bash
 
       - name: Setup firebase
-        run: dart run flutterfire_cli:flutterfire configure --project='${{ vars.GOOGLE_CLOUD_PROJECT_ID }}' --yes --platforms=android
+        run: dart run flutterfire_cli:flutterfire configure --project='${{ vars.GCP_ID }}' --yes --platforms=android
 
       - name: Setup keystore
         shell: bash
