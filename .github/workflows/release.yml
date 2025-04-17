@@ -48,6 +48,7 @@ jobs:
       - name: Update version and commit
         run: |
           version_assist set --version ${{ steps.cz.outputs.version }}
+          git add .cz.yaml # version_assist doesn't commit this
           version_assist commit
 
       - uses: fregante/setup-git-user@v2
