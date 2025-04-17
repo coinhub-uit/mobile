@@ -28,6 +28,8 @@ jobs:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
 
+      - uses: fregante/setup-git-user@v2
+
       - uses: dart-lang/setup-dart@v1
         with:
           sdk: 3.7.0
