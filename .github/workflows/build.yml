@@ -14,6 +14,7 @@ on:
 env:
   FLUTTER_VERSION: 3.29.x
   FLUTTER_CHANNEL: stable
+  GOOGLE_APPLICATION_CREDENTIALS: ${{ github.workspace }}/gcp-sa-private-key.json
   DART_DEFINE_ARGS: >
     --dart-define API_SERVER_URL=${{ secrets.API_SERVER_URL }}
     --dart-define SUPABASE_URL=${{ secrets.SUPABASE_URL }}
@@ -33,8 +34,6 @@ jobs:
           - arm64
           # - x86 # Cannot build for x86 anymore...
           - x64
-    env:
-      GOOGLE_APPLICATION_CREDENTIALS: ${{ github.workspace }}/gcp-sa-private-key.json
     steps:
       - uses: actions/checkout@v4
 
@@ -47,7 +46,7 @@ jobs:
 
       - name: Install dependencies
         run: flutter pub get
-      #
+
       - name: Get GCP_SA
         run: echo '${{ secrets.GCP_SA_PRIVATE_KEY }}' > '${{ env.GOOGLE_APPLICATION_CREDENTIALS }}'
 
@@ -97,6 +96,15 @@ jobs:
 
       - name: Install dependencies
         run: flutter pub get
+
+      - name: Get GCP_SA
+        run: echo '${{ secrets.GCP_SA_PRIVATE_KEY }}' > '${{ env.GOOGLE_APPLICATION_CREDENTIALS }}'
+
+      - name: Get Firebase CLI
+        run: curl -sL https://firebase.tools | bash
+
+      - name: Setup firebase
+        run: dart run flutterfire_cli:flutterfire configure --project='${{ vars.GCP_ID }}' --yes --platforms=ios
 
       - name: Build unsign
         run: flutter build ipa --release --no-codesign ${{ env.DART_DEFINE_ARGS }}
