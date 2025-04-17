@@ -10,6 +10,7 @@ on:
       - pubspec.lock
       - android/**
       - ios/**
+  workflow_call:
 
 env:
   FLUTTER_VERSION: 3.29.x
