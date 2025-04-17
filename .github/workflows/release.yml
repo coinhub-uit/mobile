@@ -88,6 +88,7 @@ jobs:
 
       - uses: actions/download-artifact@v4
         with:
+          path: build
           merge-multiple: true
 
       - name: Release
@@ -95,8 +96,7 @@ jobs:
         with:
           tag_name: ${{ needs.bump-version.outputs.NEW_VERSION }}
           files: |
-            build/app/outputs/flutter-apk/*
-            build/ios/archive/Runner.xcarchive/Products/Applications/*.ipa
+            build/*
           body: ${{ needs.bump-version.outputs.RELEASE_NOTE }}
           make_latest: ${{ ! inputs.prerelease && github.ref != 'main' }}
           prerelease: ${{ github.ref != 'main' || inputs.prerelease }}
