@@ -3,13 +3,8 @@ name: Release
 on:
   workflow_dispatch:
     inputs:
-      release:
-        description: Release to Github?
-        required: false
-        default: false
-        type: boolean
       prerelease:
-        description: Make it pre-release / ! latest?
+        description: Make it pre-release
         required: false
         default: true
         type: boolean
@@ -22,7 +17,6 @@ jobs:
   bump-version:
     runs-on: ubuntu-latest
     name: Bump version
-    if: ${{ inputs.release }}
     outputs:
       NEW_VERSION: ${{ steps.cz.outputs.version }}
       RELEASE_NOTE: ${{ steps.git-cliff.outputs.content }}
@@ -94,8 +88,6 @@ jobs:
           merge-multiple: true
 
       - name: Release
-        env:
-          cool: true
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ needs.bump-version.outputs.NEW_VERSION }}
