@@ -30,7 +30,9 @@
 [![Android X64](https://img.shields.io/badge/android-x64-fab387?style=for-the-badge&logo=android&logoColor=a6e3a1)](../../releases/latest/download/coinhub-x64.apk)
 
 [![IOS / IPADOS](https://img.shields.io/badge/ios%20%2F%20ipados-ipa-f9e2af?style=for-the-badge&logo=apple&logoColor=cdd6f4)](../../releases/latest/download/coinhub.ipa)
-[![Trollstore](https://img.shields.io/badge/ios%20%2F%20ipados-trollstore-89b4fa?style=for-the-badge&logoColor=cdd6f4)](https://coinhub-uit.github.io/mobile/trollstore/)
+[![Trollstore](https://img.shields.io/badge/ios%20%2F%20ipados-trollstore-89b4fa?style=for-the-badge&logoColor=cdd6f4)](https://tinyurl.com/coinhub-ipa)
+
+<!-- apple-magnifier://install?url=https://github.com/coinhub-uit/mobile/releases/latest/download/coinhub.ipa -->
 
 > [!NOTE]
 >
