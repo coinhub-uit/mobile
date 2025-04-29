@@ -1,12 +1,12 @@
+import "package:coinhub/presentation/components/profile/account_action_section.dart";
+import "package:flutter/material.dart";
+import "package:flutter_bloc/flutter_bloc.dart";
 import "package:coinhub/core/bloc/user/user_logic.dart";
 import "package:coinhub/models/user_model.dart";
-import "package:coinhub/presentation/components/profile/account_action_section.dart";
 import "package:coinhub/presentation/components/profile/account_section.dart";
 import "package:coinhub/presentation/components/profile/profile_header.dart";
 import "package:coinhub/presentation/components/profile/profile_snackbar.dart";
 import "package:coinhub/presentation/components/profile/support_section.dart";
-import "package:flutter/material.dart";
-import "package:flutter_bloc/flutter_bloc.dart";
 import "package:coinhub/presentation/routes/routes.dart";
 import "package:go_router/go_router.dart";
 
@@ -44,13 +44,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop(false);
+                context.pop(false);
               },
               child: Text("Cancel", style: theme.textTheme.labelLarge),
             ),
             ElevatedButton(
               onPressed: () {
-                Navigator.of(context).pop(true);
+                context.pop(true);
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.red,

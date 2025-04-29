@@ -1,5 +1,6 @@
 import "package:flutter/material.dart";
 import "package:coinhub/presentation/components/theme_switcher.dart";
+import "package:go_router/go_router.dart";
 
 class ThemeSettingsScreen extends StatelessWidget {
   const ThemeSettingsScreen({super.key});
@@ -19,7 +20,7 @@ class ThemeSettingsScreen extends StatelessWidget {
         backgroundColor: Colors.transparent,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () => context.pop(),
         ),
       ),
       body: SingleChildScrollView(
@@ -112,7 +113,7 @@ class ThemeSettingsScreen extends StatelessWidget {
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            "This is how text will appear in your app.\nThis button do nothing... duh?",
+                            "This is how text will appear in your app.",
                             style: theme.textTheme.bodyMedium,
                           ),
                           const SizedBox(height: 16),

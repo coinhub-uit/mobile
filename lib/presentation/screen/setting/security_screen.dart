@@ -3,6 +3,7 @@ import "package:flutter_bloc/flutter_bloc.dart";
 import "package:coinhub/core/bloc/auth/auth_event.dart";
 import "package:coinhub/core/bloc/auth/auth_logic.dart";
 import "package:coinhub/core/bloc/auth/auth_state.dart" as auth_state;
+import "package:go_router/go_router.dart";
 
 class SecurityScreen extends StatefulWidget {
   final String email;
@@ -54,7 +55,7 @@ class _SecurityScreenState extends State<SecurityScreen> {
         iconTheme: IconThemeData(color: theme.colorScheme.onSurface),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () => context.pop(),
         ),
       ),
       body: BlocListener<AuthBloc, auth_state.AuthState>(
@@ -65,7 +66,7 @@ class _SecurityScreenState extends State<SecurityScreen> {
             _showSnackBar(context, "Password updated successfully");
             // ignore: use_build_context_synchronously
             Future.delayed(const Duration(seconds: 1), () {
-              Navigator.of(context).pop();
+              context.pop();
             });
           }
         },

@@ -3,6 +3,7 @@ import "package:coinhub/models/user_model.dart";
 import "package:flutter/material.dart";
 import "package:flutter_bloc/flutter_bloc.dart";
 import "package:intl/intl.dart";
+import "package:go_router/go_router.dart";
 
 class AccountDetailsScreen extends StatefulWidget {
   final UserModel userModel;
@@ -64,7 +65,7 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
         iconTheme: IconThemeData(color: theme.colorScheme.onSurface),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () => context.pop(),
         ),
       ),
       body: BlocListener<UserBloc, UserState>(
@@ -75,7 +76,7 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
             _showSnackBar(context, "User details updated successfully");
             // ignore: use_build_context_synchronously
             Future.delayed(const Duration(seconds: 1), () {
-              Navigator.of(context).pop();
+              context.pop();
             });
           }
         },
@@ -143,7 +144,7 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
                     borderRadius: BorderRadius.circular(20),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withAlpha(64),
+                        color: Colors.black.withAlpha(8),
                         blurRadius: 10,
                         offset: const Offset(0, 2),
                       ),

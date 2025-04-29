@@ -4,6 +4,7 @@ class Routes {
   static const auth = _Auth();
   static const account = _Account();
   static const transaction = _Transaction();
+  static const settings = _Settings();
 }
 
 class _Auth {
@@ -33,4 +34,15 @@ class _Transaction {
   String get deposit => "$root/deposit";
   String get withdraw => "$root/withdraw";
   String get transfer => "$root/transfer";
+}
+
+class _Settings {
+  final String root = "/settings";
+  const _Settings();
+
+  String get theme => "$root/theme";
+  String get security => "$root/security";
+  String get privacy => "$root/privacy";
+  String get accountDetails => "$root/account-details";
+  String get advanced => "$root/advanced";
 }

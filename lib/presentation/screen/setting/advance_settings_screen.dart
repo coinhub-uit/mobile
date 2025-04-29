@@ -1,4 +1,5 @@
 import "package:flutter/material.dart";
+import "package:go_router/go_router.dart";
 
 class AdvancedSettingsScreen extends StatelessWidget {
   final String userId;
@@ -29,7 +30,7 @@ class AdvancedSettingsScreen extends StatelessWidget {
         iconTheme: IconThemeData(color: theme.colorScheme.onSurface),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () => context.pop(),
         ),
       ),
       body: SingleChildScrollView(
@@ -68,7 +69,6 @@ class AdvancedSettingsScreen extends StatelessWidget {
                           Text(
                             "Caution",
                             style: theme.textTheme.titleMedium?.copyWith(
-                              color: Colors.orange[800],
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -96,7 +96,7 @@ class AdvancedSettingsScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withAlpha(64),
+                      color: Colors.black.withAlpha(8),
                       blurRadius: 10,
                       offset: const Offset(0, 2),
                     ),
@@ -145,7 +145,7 @@ class AdvancedSettingsScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withAlpha(128),
+                      color: Colors.black.withAlpha(8),
                       blurRadius: 10,
                       offset: const Offset(0, 2),
                     ),
@@ -180,7 +180,6 @@ class AdvancedSettingsScreen extends StatelessWidget {
                           Text(
                             "Delete Account",
                             style: theme.textTheme.titleMedium?.copyWith(
-                              color: Colors.red[700],
                               fontWeight: FontWeight.bold,
                             ),
                           ),

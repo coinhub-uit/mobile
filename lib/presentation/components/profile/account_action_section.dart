@@ -1,4 +1,3 @@
-import "package:coinhub/presentation/screen/setting/advance_settings_screen.dart";
 import "package:flutter/material.dart";
 import "package:coinhub/core/services/auth_service.dart";
 import "package:coinhub/presentation/components/profile/navigation_option_item.dart";
@@ -43,15 +42,9 @@ class AccountActionsSection extends StatelessWidget {
           subtitle: "Account deletion and other advanced options",
           iconColor: Theme.of(context).colorScheme.onSurface.withAlpha(179),
           onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder:
-                    (context) => AdvancedSettingsScreen(
-                      userId: userId,
-                      onDeleteAccount: onDeleteAccount,
-                    ),
-              ),
+            context.push(
+              Routes.settings.advanced,
+              extra: {"userId": userId, "onDeleteAccount": onDeleteAccount},
             );
           },
         ),

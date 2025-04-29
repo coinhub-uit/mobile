@@ -1,11 +1,12 @@
 import "package:flutter/material.dart";
 import "package:flutter/services.dart";
 import "package:shared_preferences/shared_preferences.dart";
+import "package:go_router/go_router.dart";
 
 class PinSetupScreen extends StatefulWidget {
-  final Function(bool) onPinSet;
+  final Function(bool)? onPinSet;
 
-  const PinSetupScreen({super.key, required this.onPinSet});
+  const PinSetupScreen({super.key, this.onPinSet});
 
   @override
   State<PinSetupScreen> createState() => _PinSetupScreenState();
@@ -52,12 +53,14 @@ class _PinSetupScreenState extends State<PinSetupScreen> {
     await prefs.setString("app_pin", _pinController.text);
     await prefs.setBool("pin_enabled", true);
 
-    // Notify parent
-    widget.onPinSet(true);
+    // Notify parent if callback exists
+    if (widget.onPinSet != null) {
+      widget.onPinSet!(true);
+    }
 
     // Return to previous screen
     // ignore: use_build_context_synchronously
-    Navigator.of(context).pop();
+    context.pop();
 
     // Show success message
     // ignore: use_build_context_synchronously
@@ -90,7 +93,7 @@ class _PinSetupScreenState extends State<PinSetupScreen> {
         iconTheme: IconThemeData(color: theme.colorScheme.onSurface),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () => context.pop(),
         ),
       ),
       body: SingleChildScrollView(

@@ -1,11 +1,10 @@
-import "package:coinhub/presentation/screen/setting/account_detail_screen.dart";
-import "package:coinhub/presentation/screen/setting/security_screen.dart";
-import "package:coinhub/presentation/screen/setting/theme_setting_screen.dart";
 import "package:flutter/material.dart";
 import "package:coinhub/models/user_model.dart";
 import "package:coinhub/presentation/components/profile/navigation_option_item.dart";
 import "package:coinhub/presentation/components/profile/profile_divider.dart";
 import "package:coinhub/presentation/components/profile/profile_section_container.dart";
+import "package:coinhub/presentation/routes/routes.dart";
+import "package:go_router/go_router.dart";
 
 class AccountSection extends StatelessWidget {
   final UserModel userModel;
@@ -29,15 +28,9 @@ class AccountSection extends StatelessWidget {
           title: "Account Details",
           subtitle: "Edit your personal information",
           onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder:
-                    (context) => AccountDetailsScreen(
-                      userModel: userModel,
-                      onUserUpdated: onUserUpdated,
-                    ),
-              ),
+            context.push(
+              Routes.settings.accountDetails,
+              extra: {"userModel": userModel, "onUserUpdated": onUserUpdated},
             );
           },
         ),
@@ -50,12 +43,19 @@ class AccountSection extends StatelessWidget {
           title: "Security",
           subtitle: "Change your password",
           onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => SecurityScreen(email: userEmail),
-              ),
-            );
+            context.push(Routes.settings.security, extra: {"email": userEmail});
+          },
+        ),
+
+        const ProfileDivider(),
+
+        // Privacy Option
+        NavigationOptionItem(
+          icon: Icons.privacy_tip_outlined,
+          title: "Privacy",
+          subtitle: "Manage your privacy and security settings",
+          onTap: () {
+            context.push(Routes.settings.privacy);
           },
         ),
 
@@ -73,30 +73,13 @@ class AccountSection extends StatelessWidget {
 
         const ProfileDivider(),
 
-        // Privacy Option
-        NavigationOptionItem(
-          icon: Icons.privacy_tip_outlined,
-          title: "Privacy",
-          subtitle: "Manage your privacy settings",
-          onTap: () {
-            // Navigate to privacy screen
-          },
-        ),
-
-        const ProfileDivider(),
-
         // Theme Settings Option
         NavigationOptionItem(
           icon: Icons.color_lens_outlined,
           title: "Theme Settings",
           subtitle: "Customize app appearance",
           onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const ThemeSettingsScreen(),
-              ),
-            );
+            context.push(Routes.settings.theme);
           },
         ),
       ],

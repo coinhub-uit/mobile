@@ -214,7 +214,7 @@ class UserService {
       // } catch (e) {
       //   print("Error deleting user from Supabase auth: $e");
       // }
-      // Clear the local storage
+      // Clear the local storage5
       await LocalStorageService().delete("JWT");
 
       return response;
