@@ -1,17 +1,17 @@
 import "package:flutter/material.dart";
 import "package:flutter/services.dart";
 import "package:shared_preferences/shared_preferences.dart";
-import "package:go_router/go_router.dart";
-import "package:coinhub/presentation/routes/routes.dart";
 
-class CreatePinScreen extends StatefulWidget {
-  const CreatePinScreen({super.key});
+class PinSetupScreen extends StatefulWidget {
+  final Function(bool) onPinSet;
+
+  const PinSetupScreen({super.key, required this.onPinSet});
 
   @override
-  State<CreatePinScreen> createState() => _CreatePinScreenState();
+  State<PinSetupScreen> createState() => _PinSetupScreenState();
 }
 
-class _CreatePinScreenState extends State<CreatePinScreen> {
+class _PinSetupScreenState extends State<PinSetupScreen> {
   final TextEditingController _pinController = TextEditingController();
   final TextEditingController _confirmPinController = TextEditingController();
   String _errorText = "";
@@ -52,15 +52,18 @@ class _CreatePinScreenState extends State<CreatePinScreen> {
     await prefs.setString("app_pin", _pinController.text);
     await prefs.setBool("pin_enabled", true);
 
-    // Return to home screen
+    // Notify parent
+    widget.onPinSet(true);
+
+    // Return to previous screen
     // ignore: use_build_context_synchronously
-    context.go(Routes.home);
+    Navigator.of(context).pop();
 
     // Show success message
     // ignore: use_build_context_synchronously
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: const Text("PIN created successfully"),
+        content: const Text("PIN set successfully"),
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         margin: const EdgeInsets.all(16),
@@ -76,7 +79,7 @@ class _CreatePinScreenState extends State<CreatePinScreen> {
       backgroundColor: theme.colorScheme.surface,
       appBar: AppBar(
         title: Text(
-          "Create PIN",
+          "Set PIN",
           style: theme.textTheme.titleLarge?.copyWith(
             fontWeight: FontWeight.bold,
           ),
@@ -87,7 +90,7 @@ class _CreatePinScreenState extends State<CreatePinScreen> {
         iconTheme: IconThemeData(color: theme.colorScheme.onSurface),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => context.pop(),
+          onPressed: () => Navigator.of(context).pop(),
         ),
       ),
       body: SingleChildScrollView(
@@ -365,7 +368,7 @@ class _CreatePinScreenState extends State<CreatePinScreen> {
                           elevation: 0,
                         ),
                         child: Text(
-                          "Create PIN",
+                          "Set PIN",
                           style: theme.textTheme.labelLarge?.copyWith(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
@@ -376,9 +379,68 @@ class _CreatePinScreenState extends State<CreatePinScreen> {
                   ],
                 ),
               ),
+
+              const SizedBox(height: 24),
+
+              // PIN Tips
+              Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: Colors.blue[50],
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: Colors.blue[200]!, width: 1),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "PIN Tips",
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    _buildPinTip(
+                      "Use a PIN that is easy for you to remember but hard for others to guess",
+                    ),
+                    _buildPinTip(
+                      "Avoid using sequential numbers like 1234 or 5678",
+                    ),
+                    _buildPinTip(
+                      "Don't use easily guessable numbers like your birth date",
+                    ),
+                    _buildPinTip(
+                      "Consider using a 6-digit PIN for enhanced security",
+                    ),
+                  ],
+                ),
+              ),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildPinTip(String tip) {
+    final theme = Theme.of(context);
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(Icons.check_circle, color: Colors.blue[700], size: 16),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              tip,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: theme.colorScheme.onSurface.withAlpha(204),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
