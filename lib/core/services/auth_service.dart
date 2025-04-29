@@ -200,5 +200,15 @@ class AuthService {
     await supabaseClient.auth.resend(type: OtpType.signup, email: email);
   }
 
+  static Future<void> deleteUser() async {
+    final user = supabaseClient.auth.currentUser;
+    if (user == null) {
+      throw "User not found";
+    }
+    final userId = user.id;
+    await supabaseClient.auth.admin.deleteUser(userId);
+    await LocalStorageService().delete("JWT");
+  }
+
   static User? get currentUser => supabaseClient.auth.currentUser;
 }

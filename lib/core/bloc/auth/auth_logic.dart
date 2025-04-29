@@ -136,9 +136,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       final email = event.email.trim();
       final password = event.password.trim();
 
-      final name = "test";
-
-      if (email.isEmpty || password.isEmpty || name.isEmpty) {
+      if (email.isEmpty || password.isEmpty) {
         emit(SignUpWithEmailError("Please fill in all fields."));
         return;
       }
