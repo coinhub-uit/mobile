@@ -59,6 +59,7 @@ dependencies:
   provider: ^6.1.4
   shared_preferences: ^2.5.3
   local_auth: ^2.3.0
+  flutter_native_splash: ^2.4.6
 
 dev_dependencies:
   flutter_test:
@@ -77,6 +78,19 @@ dev_dependencies:
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
+
+flutter_native_splash:
+  android: true
+  ios: true
+  web: true
+  color: "#ffffff"
+  image: assets/images/CoinHub_SS.png
+  branding: assets/images/CoinHub-Wordmark_SS.png
+ 
+  android_12:
+    image: assets/images/CoinHub_SS.png
+    branding: assets/images/CoinHub-Wordmark_SS.png
+
 
 # The following section is specific to Flutter packages.
 flutter:

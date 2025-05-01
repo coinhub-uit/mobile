@@ -190,9 +190,9 @@ class UserService {
         return avatarUrl;
       }
     } catch (e) {
-      return "";
+      return "No avatar was found";
     }
-    return ""; // Return an empty string if no image was picked
+    return "No avatar was found"; // Return an empty string if no image was picked
   }
 
   static Future<http.Response> deleteUserAccount(String userId) async {
