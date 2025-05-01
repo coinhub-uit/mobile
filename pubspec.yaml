@@ -84,11 +84,13 @@ flutter_native_splash:
   ios: true
   web: true
   color: "#ffffff"
-  image: assets/images/CoinHub.png
+  image: assets/images/CoinHub_SS.png
+  branding: assets/images/CoinHub-Wordmark_SS.png
  
   android_12:
-    image: assets/images/CoinHub.png
-    
+    image: assets/images/CoinHub_SS.png
+    branding: assets/images/CoinHub-Wordmark_SS.png
+
 
 # The following section is specific to Flutter packages.
 flutter:
