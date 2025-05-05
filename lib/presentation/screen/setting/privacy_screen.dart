@@ -1,5 +1,6 @@
 import "package:coinhub/core/services/biometric_service.dart";
 import "package:coinhub/core/services/local_storage.dart";
+import "package:coinhub/core/services/otp_service.dart";
 import "package:flutter/material.dart";
 import "package:flutter/services.dart";
 import "package:local_auth/local_auth.dart";
@@ -307,6 +308,7 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
                       onChanged: (value) {
                         if (value) {
                           _showSmartOtpSetupDialog();
+                          OtpService().init();
                         } else {
                           setState(() {
                             _smartOtpEnabled = false;
