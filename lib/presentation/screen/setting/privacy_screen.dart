@@ -1,3 +1,4 @@
+import "package:coinhub/core/services/biometric_service.dart";
 import "package:flutter/material.dart";
 import "package:flutter/services.dart";
 import "package:local_auth/local_auth.dart";
@@ -14,7 +15,7 @@ class PrivacyScreen extends StatefulWidget {
 
 class _PrivacyScreenState extends State<PrivacyScreen> {
   final LocalAuthentication _localAuth = LocalAuthentication();
-
+  final _biometricService = BiometricService();
   // Authentication settings
   bool _fingerprintEnabled = false;
   bool _faceIdEnabled = false;
@@ -42,6 +43,7 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
     bool canCheckBiometrics;
     try {
       canCheckBiometrics = await _localAuth.canCheckBiometrics;
+      debugPrint("Can check biometrics: $canCheckBiometrics");
     } on PlatformException {
       canCheckBiometrics = false;
     }
@@ -61,6 +63,7 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
     List<BiometricType> availableBiometrics;
     try {
       availableBiometrics = await _localAuth.getAvailableBiometrics();
+      debugPrint("Available biometrics: $availableBiometrics");
     } on PlatformException {
       availableBiometrics = <BiometricType>[];
     }
@@ -114,7 +117,7 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
             ),
           ),
           content: Text(
-            "This would connect to your Smart OTP setup flow. Would you like to enable Smart OTP?",
+            "This would connect to your Smart OTP setup flow. Would you like to enable Smart OTP (no function now)?",
             style: theme.textTheme.bodyMedium,
           ),
           actions: [
@@ -282,51 +285,6 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
                     ),
 
                     const SizedBox(height: 16),
-
-                    // Fingerprint Authentication
-                    _buildSwitchTile(
-                      icon: Icons.fingerprint,
-                      title: "Fingerprint Authentication",
-                      subtitle: "Use your fingerprint to unlock the app",
-                      value: _fingerprintEnabled,
-                      enabled: _hasFingerprint,
-                      onChanged: (value) {
-                        setState(() {
-                          _fingerprintEnabled = value;
-                        });
-                        _saveSettings();
-                        if (value) {
-                          _showSnackBar("Fingerprint authentication enabled");
-                        } else {
-                          _showSnackBar("Fingerprint authentication disabled");
-                        }
-                      },
-                    ),
-
-                    const SizedBox(height: 16),
-
-                    // Face ID Authentication
-                    _buildSwitchTile(
-                      icon: Icons.face_outlined,
-                      title: "Face ID Authentication",
-                      subtitle: "Use facial recognition to unlock the app",
-                      value: _faceIdEnabled,
-                      enabled: _hasFaceId,
-                      onChanged: (value) {
-                        setState(() {
-                          _faceIdEnabled = value;
-                        });
-                        _saveSettings();
-                        if (value) {
-                          _showSnackBar("Face ID authentication enabled");
-                        } else {
-                          _showSnackBar("Face ID authentication disabled");
-                        }
-                      },
-                    ),
-
-                    const SizedBox(height: 16),
-
                     // Smart OTP
                     _buildSwitchTile(
                       icon: Icons.security_outlined,
@@ -345,6 +303,77 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
                         }
                       },
                     ),
+                    const SizedBox(height: 16),
+
+                    // Fingerprint Authentication
+                    if (_availableBiometrics.contains(
+                      BiometricType.fingerprint,
+                    ))
+                      _buildSwitchTile(
+                        icon: Icons.fingerprint,
+                        title: "Fingerprint Authentication",
+                        subtitle: "Use your fingerprint to unlock the app",
+                        value: _fingerprintEnabled,
+                        enabled: _hasFingerprint,
+                        onChanged: (value) async {
+                          if (value) {
+                            final authenticated = await _biometricService
+                                .authenticate(
+                                  reason: "Enable fingerprint authentication",
+                                );
+                            if (!authenticated) {
+                              _showSnackBar(
+                                "Fingerprint authentication failed",
+                              );
+                              return;
+                            }
+                          }
+
+                          setState(() {
+                            _fingerprintEnabled = value;
+                          });
+                          _saveSettings();
+                          _showSnackBar(
+                            value
+                                ? "Fingerprint authentication enabled"
+                                : "Fingerprint authentication disabled",
+                          );
+                        },
+                      ),
+
+                    const SizedBox(height: 16),
+
+                    // Face ID Authentication
+                    if (_availableBiometrics.contains(BiometricType.face))
+                      _buildSwitchTile(
+                        icon: Icons.face_outlined,
+                        title: "Face ID Authentication",
+                        subtitle: "Use facial recognition to unlock the app",
+                        value: _faceIdEnabled,
+                        enabled: _hasFaceId,
+                        onChanged: (value) async {
+                          if (value) {
+                            final authenticated = await _biometricService
+                                .authenticate(
+                                  reason: "Enable Face ID authentication",
+                                );
+                            if (!authenticated) {
+                              _showSnackBar("Face ID authentication failed :v");
+                              return;
+                            }
+                          }
+
+                          setState(() {
+                            _faceIdEnabled = value;
+                          });
+                          _saveSettings();
+                          _showSnackBar(
+                            value
+                                ? "Face ID authentication enabled"
+                                : "Face ID authentication disabled",
+                          );
+                        },
+                      ),
                   ],
                 ),
               ),

@@ -16,7 +16,6 @@ import "package:app_links/app_links.dart";
 import "package:http/http.dart" as http;
 
 void main() async {
-
   print("Env.supabaseUrl: ${Env.supabaseUrl}");
   print("Env.supabaseAnonKey: ${Env.supabaseAnonKey}");
   print("Env.apiServerUrl: ${Env.apiServerUrl}");

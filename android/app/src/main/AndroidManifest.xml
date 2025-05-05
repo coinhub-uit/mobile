@@ -13,6 +13,10 @@
 
     <!-- Required for Firebase authentication and Firestore -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <!-- Permissions for biometric authentication -->
+    <uses-permission android:name="android.permission.USE_BIOMETRIC"/>
+    <uses-permission android:name="android.permission.USE_FINGERPRINT"/>
+
     
     <application
         android:label="coinhub"
