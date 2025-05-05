@@ -9,11 +9,11 @@ class LocalStorageService {
 
   final FlutterSecureStorage _storage = FlutterSecureStorage();
 
-  Future<void> write(String key, String value) async {
-    await _storage.write(key: key, value: value);
+  Future<void> write(String key, dynamic value) async {
+    await _storage.write(key: key, value: value.toString());
   }
 
-  Future<String?> read(String key) async {
+  Future<dynamic> read(String key) async {
     return await _storage.read(key: key);
   }
 

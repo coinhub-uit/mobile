@@ -1,8 +1,8 @@
 import "package:coinhub/core/services/biometric_service.dart";
+import "package:coinhub/core/services/local_storage.dart";
 import "package:flutter/material.dart";
 import "package:flutter/services.dart";
 import "package:local_auth/local_auth.dart";
-import "package:shared_preferences/shared_preferences.dart";
 import "package:go_router/go_router.dart";
 import "package:coinhub/presentation/routes/routes.dart";
 
@@ -80,23 +80,36 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
   }
 
   Future<void> _loadSettings() async {
-    final prefs = await SharedPreferences.getInstance();
+    var localStorage = LocalStorageService();
+
+    final fingerprintEnabled =
+        await localStorage.read("fingerprint_enabled") == "true";
+    final faceIdEnabled = await localStorage.read("face_id_enabled") == "true";
+    final smartOtpEnabled =
+        await localStorage.read("smart_otp_enabled") == "true";
+    final pinEnabled = await localStorage.read("pin_enabled") == "true";
+    final autoLockTimeoutStr = await localStorage.read("auto_lock_timeout");
+
+    final autoLockTimeout = int.tryParse(autoLockTimeoutStr ?? "") ?? 5;
+
+    if (!mounted) return;
+
     setState(() {
-      _fingerprintEnabled = prefs.getBool("fingerprint_enabled") ?? false;
-      _faceIdEnabled = prefs.getBool("face_id_enabled") ?? false;
-      _smartOtpEnabled = prefs.getBool("smart_otp_enabled") ?? false;
-      _pinEnabled = prefs.getBool("pin_enabled") ?? false;
-      _autoLockTimeout = prefs.getInt("auto_lock_timeout") ?? 5;
+      _fingerprintEnabled = fingerprintEnabled;
+      _faceIdEnabled = faceIdEnabled;
+      _smartOtpEnabled = smartOtpEnabled;
+      _pinEnabled = pinEnabled;
+      _autoLockTimeout = autoLockTimeout;
     });
   }
 
   Future<void> _saveSettings() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool("fingerprint_enabled", _fingerprintEnabled);
-    await prefs.setBool("face_id_enabled", _faceIdEnabled);
-    await prefs.setBool("smart_otp_enabled", _smartOtpEnabled);
-    await prefs.setBool("pin_enabled", _pinEnabled);
-    await prefs.setInt("auto_lock_timeout", _autoLockTimeout);
+    var localStorage = LocalStorageService();
+    await localStorage.write("fingerprint_enabled", _fingerprintEnabled);
+    await localStorage.write("face_id_enabled", _faceIdEnabled);
+    await localStorage.write("smart_otp_enabled", _smartOtpEnabled);
+    await localStorage.write("pin_enabled", _pinEnabled);
+    await localStorage.write("auto_lock_timeout", _autoLockTimeout);
   }
 
   void _showPinSetupDialog() {
