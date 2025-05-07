@@ -14,6 +14,11 @@ setup-dotenv:
     cp .env.example .env; \
   fi
 
+config-flutter:
+  dart --disable-analytics
+  flutter config --no-analytics
+  flutter doctor --android-licenses
+
 [private]
 [windows]
 setup-dotenv:
