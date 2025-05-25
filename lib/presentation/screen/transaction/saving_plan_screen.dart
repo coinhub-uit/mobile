@@ -1,10 +1,12 @@
+import "package:coinhub/models/user_model.dart";
 import "package:coinhub/presentation/components/saving_plan_card.dart";
 import "package:flutter/material.dart";
 import "package:flutter/widgets.dart";
 import "package:intl/intl.dart";
 
 class SavingPlanScreen extends StatefulWidget {
-  const SavingPlanScreen({super.key});
+  final UserModel model; // Replace 'dynamic' with the actual type if known
+  const SavingPlanScreen({super.key, required this.model});
 
   @override
   State<SavingPlanScreen> createState() => _SavingPlanScreenState();
@@ -104,6 +106,7 @@ class _SavingPlanScreenState extends State<SavingPlanScreen> {
                       firstTitle: "Choose funding source: ",
                       thirdTitle: "Choose saving method: ",
                       secondTitle: "Choose saving plan:",
+                      userId: widget.model.id,
                     ),
                   ],
                 ),

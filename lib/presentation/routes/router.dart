@@ -128,7 +128,9 @@ class RouteRouter {
         name: "new-saving-plan",
         path: Routes.transaction.savingPlan,
         builder: (context, state) {
-          return const SavingPlanScreen();
+          // You can pass any required data through state.extra if needed
+          final model = state.extra as UserModel;
+          return SavingPlanScreen(model: model);
         },
       ),
       // Settings routes
