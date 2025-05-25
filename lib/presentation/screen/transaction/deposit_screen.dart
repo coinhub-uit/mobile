@@ -1,3 +1,4 @@
+import "package:coinhub/presentation/components/transaction_card.dart";
 import "package:flutter/material.dart";
 import "package:flutter/services.dart";
 import "package:intl/intl.dart";
@@ -157,158 +158,33 @@ class _DepositScreenState extends State<DepositScreen> {
 
                 const SizedBox(height: 24),
 
-                // Deposit Form
-                Container(
-                  padding: const EdgeInsets.all(24),
-                  decoration: BoxDecoration(
-                    color: theme.colorScheme.surface,
-                    borderRadius: BorderRadius.circular(20),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withAlpha(8),
-                        blurRadius: 10,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Amount Field
-                      TextFormField(
-                        controller: _amountController,
-                        keyboardType: TextInputType.number,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly,
-                        ],
-                        style: theme.textTheme.headlineSmall,
-                        decoration: InputDecoration(
-                          labelText: "Amount",
-                          labelStyle: TextStyle(
-                            color: theme.primaryColor,
-                            fontSize: 14,
-                          ),
-                          prefixIcon: Icon(
-                            Icons.attach_money_outlined,
-                            color: theme.primaryColor,
-                          ),
-                          prefixText: "đ ",
-                          prefixStyle: theme.textTheme.headlineSmall,
-                          filled: true,
-                          fillColor: theme.colorScheme.surface,
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide(
-                              color: theme.dividerTheme.color!,
-                              width: 1.5,
-                            ),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide(
-                              color: theme.primaryColor,
-                              width: 2,
-                            ),
-                          ),
-                          errorBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: const BorderSide(
-                              color: Colors.red,
-                              width: 1,
-                            ),
-                          ),
-                          focusedErrorBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: const BorderSide(
-                              color: Colors.red,
-                              width: 2,
-                            ),
-                          ),
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 16,
-                          ),
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return "Please enter an amount";
-                          }
-                          if (double.tryParse(value) == null) {
-                            return "Please enter a valid amount";
-                          }
-                          if (double.parse(value) <= 0) {
-                            return "Amount must be greater than zero";
-                          }
-                          return null;
-                        },
-                      ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [TransactionCard(title: "Deposit into: ")],
+                ),
 
-                      const SizedBox(height: 20),
+                const SizedBox(height: 24),
 
-                      // Note Field
-                      TextFormField(
-                        controller: _noteController,
-                        style: theme.textTheme.bodyLarge,
-                        maxLines: 3,
-                        decoration: InputDecoration(
-                          labelText: "Note (Optional)",
-                          labelStyle: TextStyle(
-                            color: theme.primaryColor,
-                            fontSize: 14,
-                          ),
-                          prefixIcon: Icon(
-                            Icons.note_outlined,
-                            color: theme.primaryColor,
-                          ),
-                          filled: true,
-                          fillColor: theme.colorScheme.surface,
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide(
-                              color: theme.dividerTheme.color!,
-                              width: 1.5,
-                            ),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide(
-                              color: theme.primaryColor,
-                              width: 2,
-                            ),
-                          ),
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 16,
-                          ),
-                        ),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: _processDeposit,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: theme.primaryColor,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
                       ),
-
-                      const SizedBox(height: 24),
-
-                      // Deposit Button
-                      SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          onPressed: _processDeposit,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: theme.primaryColor,
-                            foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            elevation: 0,
-                          ),
-                          child: Text(
-                            "Deposit",
-                            style: theme.textTheme.labelLarge?.copyWith(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
+                      elevation: 0,
+                    ),
+                    child: Text(
+                      "Deposit",
+                      style: theme.textTheme.labelLarge?.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
                       ),
-                    ],
+                    ),
                   ),
                 ),
               ],

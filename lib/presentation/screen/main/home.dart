@@ -354,21 +354,10 @@ class HomeScreenContent extends StatelessWidget {
           children: [
             _buildActionButton(
               context,
-              icon: Icons.swap_horiz_rounded,
-              label: "Transfer",
-              color: const Color(0xFF3B82F6),
-              width: (screenSize.width - 56) / 2,
-              onTap: () {
-                context.push(Routes.transaction.transfer);
-              },
-            ),
-            const SizedBox(width: 8),
-            _buildActionButton(
-              context,
               icon: Icons.savings_outlined,
               label: "New Saving Plan",
               color: const Color(0xFF8B5CF6),
-              width: (screenSize.width - 56) / 2,
+              width: (screenSize.width - 48),
               onTap: () {
                 // Navigate to new savings plan
               },
