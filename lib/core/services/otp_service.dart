@@ -1,4 +1,4 @@
-import "dart:math";
+//import "dart:math";
 import "package:otp/otp.dart";
 import "package:coinhub/core/services/local_storage.dart";
 
@@ -7,8 +7,8 @@ class OtpService {
 
   /// Generate a Base32 secret for TOTP and store it
   void init() {
-    final random = Random.secure();
-    final bytes = List<int>.generate(10, (_) => random.nextInt(256));
+    // final random = Random.secure();
+    // final bytes = List<int>.generate(10, (_) => random.nextInt(256));
     final secret =
         OTP.randomSecret(); // You can also Base32 encode your own bytes
 

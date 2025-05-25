@@ -1,5 +1,6 @@
 import "dart:async";
 import "package:coinhub/core/bloc/auth/auth_logic.dart";
+import "package:coinhub/core/bloc/plan/plan_logic.dart";
 import "package:coinhub/core/bloc/user/user_logic.dart";
 import "package:coinhub/core/constants/theme.dart";
 import "package:coinhub/core/constants/theme_provider.dart";
@@ -112,6 +113,7 @@ class _MyAppState extends State<MyApp> {
       providers: [
         BlocProvider(create: (context) => AuthBloc()),
         BlocProvider(create: (context) => UserBloc()),
+        BlocProvider(create: (context) => PlanBloc()),
       ],
       child: MaterialApp.router(
         theme: AppTheme.lightTheme(),

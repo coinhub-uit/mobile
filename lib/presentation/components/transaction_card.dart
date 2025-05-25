@@ -68,7 +68,7 @@ class _TransactionCardState extends State<TransactionCard> {
                     },
                     child: MiniSourceCard(
                       icon: Icons.account_balance_wallet,
-                      moneyInit: 10000000,
+                      moneyInit: "10000000",
                       sourceId: "098573821",
                       color: cardColor,
                     ),
