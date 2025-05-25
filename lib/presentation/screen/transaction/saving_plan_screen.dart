@@ -1,86 +1,20 @@
-import "package:coinhub/presentation/components/transaction_card.dart";
+import "package:coinhub/presentation/components/saving_plan_card.dart";
 import "package:flutter/material.dart";
-import "package:flutter/services.dart";
+import "package:flutter/widgets.dart";
 import "package:intl/intl.dart";
-import "package:go_router/go_router.dart";
 
-class WithdrawScreen extends StatefulWidget {
-  const WithdrawScreen({super.key});
+class SavingPlanScreen extends StatefulWidget {
+  const SavingPlanScreen({super.key});
 
   @override
-  State<WithdrawScreen> createState() => _WithdrawScreenState();
+  State<SavingPlanScreen> createState() => _SavingPlanScreenState();
 }
 
-class _WithdrawScreenState extends State<WithdrawScreen> {
-  final TextEditingController _amountController = TextEditingController();
-  final TextEditingController _noteController = TextEditingController();
+class _SavingPlanScreenState extends State<SavingPlanScreen> {
   final _formKey = GlobalKey<FormState>();
-
+  void _processWithdraw() {}
   // Mock balance for demonstration
   final double _balance = 21987000;
-
-  @override
-  void dispose() {
-    _amountController.dispose();
-    _noteController.dispose();
-    super.dispose();
-  }
-
-  void _processWithdraw() {
-    if (_formKey.currentState!.validate()) {
-      // Process withdraw logic would go here
-
-      // Show success dialog
-      showDialog(
-        context: context,
-        builder: (context) {
-          final theme = Theme.of(context);
-          return AlertDialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-            ),
-            title: Text(
-              "Withdrawal Successful",
-              style: theme.textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(
-                  Icons.check_circle_outline,
-                  color: Colors.green[600],
-                  size: 64,
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  "Your withdrawal of ${NumberFormat.currency(locale: 'vi_VN', symbol: 'đ', decimalDigits: 0).format(double.parse(_amountController.text))} has been processed successfully.",
-                  style: theme.textTheme.bodyMedium,
-                  textAlign: TextAlign.center,
-                ),
-              ],
-            ),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  context.pop();
-                  context.pop();
-                },
-                child: Text(
-                  "Done",
-                  style: theme.textTheme.labelLarge?.copyWith(
-                    color: theme.primaryColor,
-                  ),
-                ),
-              ),
-            ],
-          );
-        },
-      );
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -94,7 +28,7 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
       backgroundColor: theme.colorScheme.surface,
       appBar: AppBar(
         title: Text(
-          "Withdraw",
+          "New Saving Plan",
           style: theme.textTheme.titleLarge?.copyWith(
             fontWeight: FontWeight.bold,
           ),
@@ -105,7 +39,7 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
         iconTheme: IconThemeData(color: theme.colorScheme.onSurface),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => context.pop(),
+          onPressed: () => Navigator.of(context).pop(),
         ),
       ),
       body: SingleChildScrollView(
@@ -165,7 +99,13 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                 // Withdraw Form
                 Column(
                   mainAxisAlignment: MainAxisAlignment.start,
-                  children: [TransactionCard(title: "Withdraw from: ")],
+                  children: [
+                    SavingPlanCard(
+                      firstTitle: "Choose funding source: ",
+                      thirdTitle: "Choose saving method: ",
+                      secondTitle: "Choose saving plan:",
+                    ),
+                  ],
                 ),
 
                 const SizedBox(height: 24),
@@ -184,7 +124,7 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                       elevation: 0,
                     ),
                     child: Text(
-                      "Withdraw",
+                      "Create Saving Plan",
                       style: theme.textTheme.labelLarge?.copyWith(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,

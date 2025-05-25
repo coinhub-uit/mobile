@@ -34,6 +34,7 @@ class _Transaction {
   String get deposit => "$root/deposit";
   String get withdraw => "$root/withdraw";
   String get transfer => "$root/transfer";
+  String get savingPlan => "$root/new-saving-plan";
 }
 
 class _Settings {

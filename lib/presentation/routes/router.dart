@@ -14,6 +14,7 @@ import "package:coinhub/presentation/screen/setting/privacy_screen.dart";
 import "package:coinhub/presentation/screen/setting/security_screen.dart";
 import "package:coinhub/presentation/screen/setting/theme_setting_screen.dart";
 import "package:coinhub/presentation/screen/transaction/deposit_screen.dart";
+import "package:coinhub/presentation/screen/transaction/saving_plan_screen.dart";
 import "package:coinhub/presentation/screen/transaction/withdraw_screen.dart";
 import "package:coinhub/presentation/screen/transaction/transfer_screen.dart";
 import "package:flutter/material.dart";
@@ -121,6 +122,13 @@ class RouteRouter {
         path: Routes.transaction.transfer,
         builder: (context, state) {
           return const TransferScreen();
+        },
+      ),
+      GoRoute(
+        name: "new-saving-plan",
+        path: Routes.transaction.savingPlan,
+        builder: (context, state) {
+          return const SavingPlanScreen();
         },
       ),
       // Settings routes

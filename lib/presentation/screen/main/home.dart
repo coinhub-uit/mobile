@@ -359,7 +359,7 @@ class HomeScreenContent extends StatelessWidget {
               color: const Color(0xFF8B5CF6),
               width: (screenSize.width - 48),
               onTap: () {
-                // Navigate to new savings plan
+                context.push(Routes.transaction.savingPlan);
               },
             ),
           ],
