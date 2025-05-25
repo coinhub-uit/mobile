@@ -29,9 +29,11 @@ class UserBloc extends Bloc<UserEvent, UserState> {
           }
           emit(SignUpDetailsSuccess());
         } else {
+          print("Failed to create user: ${response.statusCode}");
           emit(SignUpDetailsError("Failed to create user"));
         }
       } catch (e) {
+        print("Error during sign up details submission: $e");
         emit(SignUpDetailsError(e.toString()));
       }
     });

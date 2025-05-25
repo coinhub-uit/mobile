@@ -23,23 +23,30 @@ class SignUpDetailsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocConsumer<UserBloc, UserState>(
       listener: (context, state) {
-        if (state is SignUpDetailsLoading) {}
+        if (state is SignUpDetailsLoading) {
+          print("🔄 Loading sign-up details...");
+        }
 
         if (state is SignUpDetailsSuccess) {
-          // ScaffoldMessenger.of(context).showSnackBar(
-          //   const SnackBar(
-          //     content: Text("Account created successfully"),
-          //     backgroundColor: Colors.green,
-          //     duration: Duration(seconds: 2),
-          //   ),
-          // );
-          // Future.delayed(const Duration(seconds: 2));
+          print("✅ Sign-up success!");
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text("Sign up successfully"),
+                backgroundColor: Colors.green,
+              ),
+            );
+          });
           context.go(Routes.auth.login);
         }
+
         if (state is SignUpDetailsError) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.error), backgroundColor: Colors.red),
-          );
+          print("❌ Sign-up error: ${state.error}");
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(state.error), backgroundColor: Colors.red),
+            );
+          });
         }
       },
       builder: (context, state) {

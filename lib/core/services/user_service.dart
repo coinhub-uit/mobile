@@ -57,6 +57,8 @@ class UserService {
     if (accessToken == null) {
       throw Exception("Access token not found");
     }
+    print("Access token: $accessToken");
+
     final user = supabaseResponse.user; // gotta get the id
     if (user == null) {
       throw Exception("User not found");
@@ -70,6 +72,8 @@ class UserService {
       citizenId: userModel.citizenId,
       address: userModel.address,
     );
+    print(jsonEncode(newUser.toJsonForRequest()));
+
     final response = await ApiClient.client.post(
       Uri.parse("${ApiClient.userEndpoint}"),
       headers: {
