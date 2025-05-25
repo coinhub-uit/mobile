@@ -8,10 +8,12 @@ class SignUpDetailsSubmitted extends UserEvent {
   final UserModel userModel;
   final String userEmail;
   final String userPassword;
+  final String sourceId;
   const SignUpDetailsSubmitted(
     this.userModel,
     this.userEmail,
     this.userPassword,
+    this.sourceId,
   );
 }
 
@@ -28,4 +30,9 @@ class UpdateAvatarSubmitted extends UserEvent {
 class DeleteAccountRequested extends UserEvent {
   final String userId;
   const DeleteAccountRequested(this.userId);
+}
+
+class SourceFetching extends UserEvent {
+  final String userId;
+  const SourceFetching(this.userId);
 }

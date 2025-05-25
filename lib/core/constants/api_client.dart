@@ -9,5 +9,6 @@ class ApiClient {
   static final userEndpoint = Uri.parse("$baseUrl/users");
   static final authEndpoint = Uri.parse("$baseUrl/auth");
   static final planEndpoint = Uri.parse("$baseUrl/plans");
+  static final sourceEndpoint = Uri.parse("$baseUrl/sources");
   // more to come
 }

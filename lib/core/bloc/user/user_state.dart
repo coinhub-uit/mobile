@@ -59,3 +59,18 @@ class DeleteAccountError extends UserState {
 }
 
 class DeleteAccountSuccess extends UserState {}
+
+// get sources states
+class SourceFetchedSuccess extends UserState {
+  final List<SourceModel> sources;
+
+  SourceFetchedSuccess(this.sources);
+}
+
+class SourceLoading extends UserState {}
+
+class SourceError extends UserState {
+  final String error;
+
+  SourceError(this.error);
+}

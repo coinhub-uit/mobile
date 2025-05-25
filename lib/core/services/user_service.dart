@@ -3,6 +3,7 @@ import "dart:io";
 
 import "package:coinhub/core/constants/api_client.dart";
 import "package:coinhub/core/services/local_storage.dart";
+import "package:coinhub/models/source_model.dart";
 import "package:coinhub/models/user_model.dart";
 import "package:flutter/foundation.dart";
 import "package:http/http.dart" as http;
@@ -220,6 +221,36 @@ class UserService {
       return response;
     } else {
       throw Exception("Failed to delete user: ${response.statusCode}");
+    }
+  }
+
+  // source
+
+  static Future<List<SourceModel>> fetchSources(String userId) async {
+    final accessToken = await LocalStorageService().read("JWT");
+    if (accessToken == null) {
+      throw Exception("Session not found");
+    }
+    print("Access token: $accessToken");
+
+    final response = await ApiClient.client.get(
+      Uri.parse("${ApiClient.userEndpoint}/${userId}/sources"),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $accessToken",
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final List<dynamic> decoded = jsonDecode(response.body);
+      print("Decoded sources: $decoded");
+      print("Decoded sources length: ${decoded.length}");
+      return decoded.map((plan) => SourceModel.fromJson(plan)).toList();
+    } else if (response.contentLength == 0) {
+      print("No sources found for user $userId");
+      return [];
+    } else {
+      throw Exception("Failed to fetch sources: ${response.statusCode}");
     }
   }
 }

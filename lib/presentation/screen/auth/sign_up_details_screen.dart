@@ -121,6 +121,7 @@ class _SignUpDetailsFormState extends State<SignUpDetailsForm> {
   late String userEmail = widget.email;
   late String userPassword = widget.password;
   late UserModel userModel;
+  late String sourceId;
 
   @override
   void initState() {
@@ -133,6 +134,7 @@ class _SignUpDetailsFormState extends State<SignUpDetailsForm> {
       citizenId: "",
       createdAt: DateTime.now(),
     );
+    sourceId = "";
   }
 
   @override
@@ -219,15 +221,34 @@ class _SignUpDetailsFormState extends State<SignUpDetailsForm> {
             ),
           ),
 
-          const SizedBox(height: 32),
+          const SizedBox(height: 16),
 
+          TextFormField(
+            onSaved: (value) {
+              sourceId = value ?? "";
+            },
+            textInputAction: TextInputAction.next,
+            keyboardType: TextInputType.number,
+            decoration: InputDecoration(
+              hintText: "Your first Source's ID",
+              filled: false,
+              border: const UnderlineInputBorder(),
+              prefixIcon: const Icon(Icons.source_outlined),
+            ),
+          ),
+          const SizedBox(height: 32),
           // Sign Up Button
           FilledButton(
             onPressed: () async {
               if (_formKey.currentState!.validate()) {
                 _formKey.currentState!.save();
                 context.read<UserBloc>().add(
-                  SignUpDetailsSubmitted(userModel, userEmail, userPassword),
+                  SignUpDetailsSubmitted(
+                    userModel,
+                    userEmail,
+                    userPassword,
+                    sourceId,
+                  ),
                 );
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -238,6 +259,7 @@ class _SignUpDetailsFormState extends State<SignUpDetailsForm> {
                 );
               }
             },
+
             style: FilledButton.styleFrom(
               minimumSize: const Size(double.infinity, 48),
               shape: RoundedRectangleBorder(

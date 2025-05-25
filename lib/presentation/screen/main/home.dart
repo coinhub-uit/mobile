@@ -1,9 +1,12 @@
+import "package:coinhub/core/bloc/user/user_logic.dart";
 import "package:coinhub/core/services/user_service.dart";
+import "package:coinhub/models/source_model.dart";
 import "package:coinhub/models/user_model.dart";
 import "package:coinhub/presentation/screen/main/profile_screen.dart";
 import "package:coinhub/presentation/screen/main/saving_screen.dart";
 import "package:flutter/material.dart";
 import "package:coinhub/core/services/auth_service.dart";
+import "package:flutter_bloc/flutter_bloc.dart";
 import "package:font_awesome_flutter/font_awesome_flutter.dart";
 import "package:coinhub/presentation/routes/routes.dart";
 import "package:go_router/go_router.dart";
@@ -68,7 +71,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-
+    // auth
     AuthService.authStateChanges.listen((data) async {
       final id = data.session?.user.id;
       final email = data.session?.user.email;
@@ -88,10 +91,13 @@ class _HomeScreenState extends State<HomeScreen> {
         setState(() {
           userModel = model;
         });
+        BlocProvider.of<UserBloc>(context).add(SourceFetching(userId));
       } else {
         debugPrint("User not logged in.");
       }
     });
+
+    // source
   }
 
   @override
@@ -239,75 +245,122 @@ class HomeScreenContent extends StatelessWidget {
   Widget _buildBalanceCard(BuildContext context, NumberFormat currencyFormat) {
     final theme = Theme.of(context);
 
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [theme.primaryColor, theme.primaryColor.withBlue(255)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: theme.primaryColor.withAlpha(77),
-            blurRadius: 10,
-            spreadRadius: 0,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            "Total Balance",
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: Colors.white.withAlpha(204),
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            currencyFormat.format(21987000),
-            style: theme.textTheme.headlineLarge?.copyWith(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 16),
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 6,
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.white.withAlpha(26),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Row(
-                  children: [
-                    const Icon(
-                      Icons.arrow_upward,
-                      color: Color(0xFF10B981),
-                      size: 14,
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      "+5.5% this month",
-                      style: theme.textTheme.labelSmall?.copyWith(
-                        color: Colors.white,
-                      ),
-                    ),
-                  ],
+    return BlocConsumer<UserBloc, UserState>(
+      listener: (context, state) {
+        if (state is SourceError) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(state.error)));
+        }
+      },
+      builder: (context, state) {
+        if (state is SourceLoading) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        if (state is SourceError) {
+          return Center(child: Text(state.error));
+        }
+        if (state is SourceFetchedSuccess) {
+          final List<SourceModel> sources = state.sources;
+          if (sources.isEmpty) {
+            return Center(
+              child: Text(
+                "No sources found.",
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: theme.colorScheme.onSurface.withAlpha(179),
                 ),
               ),
-            ],
-          ),
-        ],
-      ),
+            );
+          }
+          return SizedBox(
+            height: 200,
+            child: ListView.builder(
+              itemCount: sources.length,
+              scrollDirection: Axis.horizontal,
+              itemBuilder: (context, index) {
+                final source = sources[index];
+                return Center(
+                  child: Container(
+                    width: MediaQuery.of(context).size.width * 0.88,
+                    padding: const EdgeInsets.all(24),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          theme.primaryColor,
+                          theme.primaryColor.withBlue(255),
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(
+                          color: theme.primaryColor.withAlpha(77),
+                          blurRadius: 10,
+                          spreadRadius: 0,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Total Balance",
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: Colors.white.withAlpha(204),
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          currencyFormat.format(int.parse(source.balance!)),
+                          style: theme.textTheme.headlineLarge?.copyWith(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 6,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withAlpha(26),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Row(
+                                children: [
+                                  const Icon(
+                                    Icons.arrow_upward,
+                                    color: Color(0xFF10B981),
+                                    size: 14,
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    "+5.5% this month",
+                                    style: theme.textTheme.labelSmall?.copyWith(
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+          );
+        }
+        // Default return to satisfy non-nullable return type
+        return SizedBox.shrink();
+      },
     );
   }
 
