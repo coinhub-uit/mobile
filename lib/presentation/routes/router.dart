@@ -13,6 +13,7 @@ import "package:coinhub/presentation/screen/setting/advance_settings_screen.dart
 import "package:coinhub/presentation/screen/setting/privacy_screen.dart";
 import "package:coinhub/presentation/screen/setting/security_screen.dart";
 import "package:coinhub/presentation/screen/setting/theme_setting_screen.dart";
+import "package:coinhub/presentation/screen/transaction/add_source_screen.dart";
 import "package:coinhub/presentation/screen/transaction/deposit_screen.dart";
 import "package:coinhub/presentation/screen/transaction/saving_plan_screen.dart";
 import "package:coinhub/presentation/screen/transaction/withdraw_screen.dart";
@@ -133,6 +134,15 @@ class RouteRouter {
           // You can pass any required data through state.extra if needed
           final model = state.extra as UserModel;
           return SavingPlanScreen(model: model);
+        },
+      ),
+      GoRoute(
+        name: "add-source",
+        path: Routes.transaction.addSource,
+        builder: (context, state) {
+          // You can pass any required data through state.extra if needed
+          print("Navigated to AddSourceScreen!");
+          return const AddSourceScreen();
         },
       ),
       // Settings routes

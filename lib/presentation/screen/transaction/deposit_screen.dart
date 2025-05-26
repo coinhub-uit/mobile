@@ -1,7 +1,6 @@
 import "package:coinhub/models/user_model.dart";
 import "package:coinhub/presentation/components/transaction_card.dart";
 import "package:flutter/material.dart";
-import "package:flutter/services.dart";
 import "package:intl/intl.dart";
 import "package:go_router/go_router.dart";
 
@@ -175,7 +174,7 @@ class _DepositScreenState extends State<DepositScreen> {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: _processDeposit,
+                    onPressed: _processDeposit, // change this to validate later
                     style: ElevatedButton.styleFrom(
                       backgroundColor: theme.primaryColor,
                       foregroundColor: Colors.white,

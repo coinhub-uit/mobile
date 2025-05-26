@@ -263,11 +263,77 @@ class HomeScreenContent extends StatelessWidget {
         if (state is SourceFetchedSuccess) {
           final List<SourceModel> sources = state.sources;
           if (sources.isEmpty) {
-            return Center(
-              child: Text(
-                "No sources found.",
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.onSurface.withAlpha(179),
+            return GestureDetector(
+              onTap: () {
+                print(Routes.transaction.addSource);
+                context.push(Routes.transaction.addSource);
+              },
+              child: Center(
+                child: Container(
+                  width: MediaQuery.of(context).size.width * 0.88,
+                  padding: const EdgeInsets.all(24),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        theme.primaryColor,
+                        theme.primaryColor.withBlue(255),
+                      ],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: theme.primaryColor.withAlpha(77),
+                        blurRadius: 10,
+                        spreadRadius: 0,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Track your finances now by",
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: Colors.white.withAlpha(204),
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        "Add your first source!",
+                        style: theme.textTheme.headlineLarge?.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 6,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withAlpha(26),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Row(
+                              children: [
+                                const Icon(
+                                  Icons.add_circle_outlined,
+                                  color: Color(0xFF10B981),
+                                  size: 14,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
             );
@@ -389,12 +455,12 @@ class HomeScreenContent extends StatelessWidget {
             const SizedBox(width: 8),
             _buildActionButton(
               context,
-              icon: Icons.arrow_upward_rounded,
-              label: "Withdraw",
+              icon: Icons.add_card_rounded,
+              label: "Add New Source",
               color: theme.colorScheme.onSurface.withAlpha(153),
               width: (screenSize.width - 56) / 2,
               onTap: () {
-                context.push(Routes.transaction.withdraw, extra: model);
+                context.push(Routes.transaction.addSource);
               },
             ),
           ],

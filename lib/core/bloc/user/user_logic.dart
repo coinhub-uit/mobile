@@ -1,5 +1,4 @@
 import "package:coinhub/core/services/auth_service.dart";
-import "package:coinhub/core/services/source_service.dart";
 import "package:coinhub/core/services/user_service.dart";
 import "package:coinhub/models/source_model.dart";
 import "package:coinhub/models/user_model.dart";
@@ -20,13 +19,13 @@ class UserBloc extends Bloc<UserEvent, UserState> {
         );
 
         if (response.statusCode == 201) {
-          final sourceId = event.sourceId;
-          try {
-            await SourceService.createSource(sourceId);
-          } catch (e) {
-            // If source does not exist, create it
-            print("Source not found, creating new source: $sourceId");
-          }
+          // final sourceId = event.sourceId;
+          // try {
+          //   await SourceService.createSource(sourceId);
+          // } catch (e) {
+          //   // If source does not exist, create it
+          //   print("Source not found, creating new source: $sourceId");
+          // }
           emit(SignUpDetailsSuccess());
         } else {
           print("Failed to create user: ${response.statusCode}");
@@ -82,7 +81,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
           emit(SourceFetchedSuccess(response));
           print("Fetched sources: $response");
         } else {
-          emit(SourceError("No sources found for user ${event.userId}"));
+          emit(SourceFetchedSuccess(response));
         }
       } catch (e) {
         emit(SourceError(e.toString()));

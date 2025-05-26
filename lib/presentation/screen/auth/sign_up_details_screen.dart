@@ -42,11 +42,11 @@ class SignUpDetailsScreen extends StatelessWidget {
 
         if (state is SignUpDetailsError) {
           print("❌ Sign-up error: ${state.error}");
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(state.error), backgroundColor: Colors.red),
-            );
-          });
+          // WidgetsBinding.instance.addPostFrameCallback((_) {
+          //   ScaffoldMessenger.of(context).showSnackBar(
+          //     SnackBar(content: Text(state.error), backgroundColor: Colors.red),
+          //   );
+          // });
         }
       },
       builder: (context, state) {
@@ -228,21 +228,21 @@ class _SignUpDetailsFormState extends State<SignUpDetailsForm> {
             ),
           ),
 
-          const SizedBox(height: 16),
+          // const SizedBox(height: 16),
 
-          TextFormField(
-            onSaved: (value) {
-              sourceId = value ?? "";
-            },
-            textInputAction: TextInputAction.next,
-            keyboardType: TextInputType.number,
-            decoration: InputDecoration(
-              hintText: "Your first Source's ID",
-              filled: false,
-              border: const UnderlineInputBorder(),
-              prefixIcon: const Icon(Icons.source_outlined),
-            ),
-          ),
+          // TextFormField(
+          //   onSaved: (value) {
+          //     sourceId = value ?? "";
+          //   },
+          //   textInputAction: TextInputAction.next,
+          //   keyboardType: TextInputType.number,
+          //   decoration: InputDecoration(
+          //     hintText: "Your first Source's ID",
+          //     filled: false,
+          //     border: const UnderlineInputBorder(),
+          //     prefixIcon: const Icon(Icons.source_outlined),
+          //   ),
+          // ),
           const SizedBox(height: 32),
           // Sign Up Button
           FilledButton(
@@ -250,12 +250,7 @@ class _SignUpDetailsFormState extends State<SignUpDetailsForm> {
               if (_formKey.currentState!.validate()) {
                 _formKey.currentState!.save();
                 context.read<UserBloc>().add(
-                  SignUpDetailsSubmitted(
-                    userModel,
-                    userEmail,
-                    userPassword,
-                    sourceId,
-                  ),
+                  SignUpDetailsSubmitted(userModel, userEmail, userPassword),
                 );
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(

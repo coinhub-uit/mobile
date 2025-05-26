@@ -8,12 +8,10 @@ class SignUpDetailsSubmitted extends UserEvent {
   final UserModel userModel;
   final String userEmail;
   final String userPassword;
-  final String sourceId;
   const SignUpDetailsSubmitted(
     this.userModel,
     this.userEmail,
     this.userPassword,
-    this.sourceId,
   );
 }
 
