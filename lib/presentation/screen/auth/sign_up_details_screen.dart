@@ -28,15 +28,15 @@ class SignUpDetailsScreen extends StatelessWidget {
         }
 
         if (state is SignUpDetailsSuccess) {
-          print("✅ Sign-up success!");
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text("Sign up successfully"),
-                backgroundColor: Colors.green,
-              ),
-            );
-          });
+          // print("✅ Sign-up success!");
+          // WidgetsBinding.instance.addPostFrameCallback((_) {
+          //   ScaffoldMessenger.of(context).showSnackBar(
+          //     SnackBar(
+          //       content: Text("Sign up successfully"),
+          //       backgroundColor: Colors.green,
+          //     ),
+          //   );
+          // });
           context.go(Routes.auth.login);
         }
 
