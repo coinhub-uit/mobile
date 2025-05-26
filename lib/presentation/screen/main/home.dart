@@ -383,7 +383,7 @@ class HomeScreenContent extends StatelessWidget {
               color: const Color(0xFF10B981),
               width: (screenSize.width - 56) / 2,
               onTap: () {
-                context.push(Routes.transaction.deposit);
+                context.push(Routes.transaction.deposit, extra: model);
               },
             ),
             const SizedBox(width: 8),
@@ -394,7 +394,7 @@ class HomeScreenContent extends StatelessWidget {
               color: theme.colorScheme.onSurface.withAlpha(153),
               width: (screenSize.width - 56) / 2,
               onTap: () {
-                context.push(Routes.transaction.withdraw);
+                context.push(Routes.transaction.withdraw, extra: model);
               },
             ),
           ],

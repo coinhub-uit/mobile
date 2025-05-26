@@ -107,14 +107,16 @@ class RouteRouter {
         name: "deposit",
         path: Routes.transaction.deposit,
         builder: (context, state) {
-          return const DepositScreen();
+          final model = state.extra as UserModel;
+          return DepositScreen(model: model);
         },
       ),
       GoRoute(
         name: "withdraw",
         path: Routes.transaction.withdraw,
         builder: (context, state) {
-          return const WithdrawScreen();
+          final model = state.extra as UserModel;
+          return WithdrawScreen(model: model);
         },
       ),
       GoRoute(

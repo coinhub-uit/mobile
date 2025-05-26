@@ -1,3 +1,4 @@
+import "package:coinhub/models/user_model.dart";
 import "package:coinhub/presentation/components/transaction_card.dart";
 import "package:flutter/material.dart";
 import "package:flutter/services.dart";
@@ -5,7 +6,8 @@ import "package:intl/intl.dart";
 import "package:go_router/go_router.dart";
 
 class DepositScreen extends StatefulWidget {
-  const DepositScreen({super.key});
+  final UserModel model;
+  const DepositScreen({super.key, required this.model});
 
   @override
   State<DepositScreen> createState() => _DepositScreenState();
@@ -160,7 +162,12 @@ class _DepositScreenState extends State<DepositScreen> {
 
                 Column(
                   mainAxisAlignment: MainAxisAlignment.start,
-                  children: [TransactionCard(title: "Deposit into: ")],
+                  children: [
+                    TransactionCard(
+                      title: "Deposit into: ",
+                      userId: widget.model.id,
+                    ),
+                  ],
                 ),
 
                 const SizedBox(height: 24),
