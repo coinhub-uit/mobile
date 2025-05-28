@@ -48,6 +48,9 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       _selectedIndex = index;
     });
+    if (index == 0 && isUserLoaded) {
+      BlocProvider.of<UserBloc>(context).add(SourcesFetching(userId));
+    }
   }
 
   Future<UserModel?> getUserModel(String id) async {

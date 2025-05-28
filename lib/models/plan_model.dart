@@ -1,23 +1,41 @@
 class PlanModel {
-  final int planId;
+  final int id;
   final int days;
   final double rate;
+  final int? planHistoryId;
 
-  PlanModel({required this.planId, required this.days, required this.rate});
+  PlanModel({
+    required this.id,
+    required this.days,
+    required this.rate,
+    this.planHistoryId,
+  });
 
-  factory PlanModel.fromJson(Map<String, dynamic> json) {
-    print("[MODEL] Raw plan json: $json");
-
+  factory PlanModel.fromMap(Map<String, dynamic> map) {
     return PlanModel(
-      planId: json["planId"] ?? -1,
-      days: json["days"] ?? 0,
+      id: map['id'] ?? map['planId'] ?? -1,
+      days: map['days'] ?? 0,
       rate:
-          (json["rate"] is String)
-              ? double.tryParse(json["rate"]) ?? 0
-              : (json["rate"] as num).toDouble(),
+          (map['rate'] is String)
+              ? double.tryParse(map['rate']) ?? 0
+              : (map['rate'] as num?)?.toDouble() ?? 0,
+      planHistoryId: map['planHistoryId'],
     );
   }
 
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'days': days,
+      'rate': rate,
+      if (planHistoryId != null) 'planHistoryId': planHistoryId,
+    };
+  }
+
+  factory PlanModel.fromJson(Map<String, dynamic> json) =>
+      PlanModel.fromMap(json);
+
   @override
-  String toString() => "PlanModel(planId: $planId, days: $days, rate: $rate)";
+  String toString() =>
+      "PlanModel(id: $id, days: $days, rate: $rate, planHistoryId: $planHistoryId)";
 }

@@ -7,12 +7,12 @@ part "plan_state.dart";
 
 class PlanBloc extends Bloc<PlanEvent, PlanState> {
   PlanBloc() : super(PlanInitial()) {
-    on<PlanFetching>((event, emit) async {
+    on<PlansFetching>((event, emit) async {
       emit(PlanLoading());
       try {
         final response = await PlanService.fetchPlans();
         if (response.isNotEmpty) {
-          emit(PlanFetchedSuccess(response));
+          emit(PlansFetchedSuccess(response));
           print("Fetched plans: $response");
         } else {
           emit(PlanError("Failed to fetch plan"));
@@ -49,5 +49,20 @@ class PlanBloc extends Bloc<PlanEvent, PlanState> {
     //     emit(PlanError(e.toString()));
     //   }
     // });
+
+    on<PlanFetching>((event, emit) async {
+      emit(PlanLoading());
+      try {
+        final response = await PlanService.fetchPlan(event.planId);
+        if (response != null) {
+          emit(PlanFetchedSuccess(response));
+          print("Fetched plan: $response");
+        } else {
+          emit(PlanError("Failed to fetch plan"));
+        }
+      } catch (e) {
+        emit(PlanError(e.toString()));
+      }
+    });
   }
 }

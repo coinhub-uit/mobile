@@ -1,4 +1,6 @@
 import "package:coinhub/core/bloc/user/user_logic.dart";
+import "package:coinhub/core/services/plan_service.dart";
+import "package:coinhub/models/plan_model.dart";
 import "package:coinhub/models/ticket_model.dart";
 import "package:coinhub/models/user_model.dart";
 import "package:coinhub/presentation/routes/routes.dart";
@@ -16,12 +18,22 @@ class SavingsScreen extends StatefulWidget {
 
 class _SavingsScreenState extends State<SavingsScreen> {
   late List<TicketModel> tickets;
+  late List<PlanModel> plans = [];
+
+  Future<void> _fetchPlans() async {
+    final fetchedPlans = await PlanService.fetchPlans();
+    setState(() {
+      plans = fetchedPlans;
+    });
+  }
 
   @override
   void initState() {
     super.initState();
     // Fetch tickets when the screen is initialized
     context.read<UserBloc>().add(TicketsFetching(widget.model.id));
+    // Fetch plans when the screen is initialized
+    _fetchPlans();
   }
 
   @override
@@ -37,12 +49,12 @@ class _SavingsScreenState extends State<SavingsScreen> {
       listener: (context, state) {
         if (state is TicketFetchedSuccess) {
           // Handle avatar update success
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text("Ticket fetched successfully!"),
-              backgroundColor: Colors.green,
-            ),
-          );
+          // ScaffoldMessenger.of(context).showSnackBar(
+          //   SnackBar(
+          //     content: Text("Ticket fetched successfully!"),
+          //     backgroundColor: Colors.green,
+          //   ),
+          // );
         } else if (state is TicketError) {
           // Handle avatar update error
           ScaffoldMessenger.of(context).showSnackBar(
@@ -205,9 +217,23 @@ class _SavingsScreenState extends State<SavingsScreen> {
                   itemCount: tickets.length,
                   itemBuilder: (context, index) {
                     final start = tickets[index].openedAt!;
-                    final end = tickets[index].closedAt;
+                    final end =
+                        tickets[index].ticketHistory?.isNotEmpty == true
+                            ? tickets[index].ticketHistory![0].maturedAt
+                            : null;
                     final now = DateTime.now();
+                    final _planId = tickets[index].plan?.id;
+                    // print("Ticket: $tickets");
+                    // print("Matching planId: $_planId");
 
+                    // print(plans);
+                    final rate =
+                        plans
+                            .firstWhere(
+                              (p) => p.id == _planId,
+                              orElse: () => PlanModel(id: -1, days: 0, rate: 0),
+                            )
+                            .rate;
                     double progress =
                         end != null
                             ? now.isBefore(start)
@@ -220,15 +246,19 @@ class _SavingsScreenState extends State<SavingsScreen> {
                     return _buildSavingsPlanCard(
                       context,
                       index: index + 1,
-                      moneyInit: tickets[index].amount,
-                      profit: 30000,
-                      profitPercentage: 5.5,
+                      moneyInit:
+                          tickets[index].ticketHistory![0].principal?.toInt() ??
+                          0,
+                      profit:
+                          tickets[index].ticketHistory![0].interest?.toInt() ??
+                          0,
+                      profitPercentage: rate,
                       startDate:
                           tickets[index].openedAt.toString().split(" ")[0],
                       endDate:
-                          tickets[index].closedAt != null
-                              ? tickets[index].closedAt.toString().split(" ")[0]
-                              : "Ongoing",
+                          tickets[index].ticketHistory![0].maturedAt
+                              .toString()
+                              .split(" ")[0],
                       progress: progress.clamp(
                         0.0,
                         1.0,
@@ -240,15 +270,14 @@ class _SavingsScreenState extends State<SavingsScreen> {
             ],
           ),
           floatingActionButton: FloatingActionButton(
-            onPressed: () {
-              final reload = context.push(
+            onPressed: () async {
+              final reload = await context.push(
                 Routes.transaction.savingPlan,
                 extra: widget.model,
               );
               if (reload == true) {
-                reload.then((value) {
-                  // Handle any actions after returning from the saving plan creation
-                });
+                // ignore: use_build_context_synchronously
+                context.read<UserBloc>().add(TicketsFetching(widget.model.id));
               }
             },
             backgroundColor: theme.primaryColor,
@@ -416,7 +445,10 @@ class _SavingsScreenState extends State<SavingsScreen> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        Text("Profit", style: theme.textTheme.bodySmall),
+                        Text(
+                          "Expected Return",
+                          style: theme.textTheme.bodySmall,
+                        ),
                         Text(
                           currencyFormat.format(profit),
                           style: TextStyle(

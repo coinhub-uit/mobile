@@ -34,7 +34,7 @@ class SavingPlanCardState extends State<SavingPlanCard> {
   late List<PlanModel> plans;
   late List<SourceModel> sources;
   String get selectedSourceId => sources[selectedIndex].id;
-  int get selectedPlanId => plans[selectedIndexPlan].planId;
+  int get selectedPlanId => plans[selectedIndexPlan].planHistoryId!;
   String get selectedMethod =>
       selectedIndexMethod == 0
           ? "NR"
@@ -58,7 +58,7 @@ class SavingPlanCardState extends State<SavingPlanCard> {
     selectedIndexMethod = 0;
     selectedIndexPlan = 0;
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<PlanBloc>().add(PlanFetching());
+      context.read<PlanBloc>().add(PlansFetching());
     });
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<UserBloc>().add(SourcesFetching(widget.userId));
@@ -80,7 +80,7 @@ class SavingPlanCardState extends State<SavingPlanCard> {
 
     return BlocConsumer<PlanBloc, PlanState>(
       listener: (context, state) {
-        if (state is PlanFetchedSuccess) {
+        if (state is PlansFetchedSuccess) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text("Saving plan fetched successfully"),
@@ -95,7 +95,7 @@ class SavingPlanCardState extends State<SavingPlanCard> {
             selectedIndexPlan = 0;
           });
         }
-        if (state is PlanFetchedError) {
+        if (state is PlansFetchedError) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(state.message), backgroundColor: Colors.red),
           );
@@ -110,7 +110,7 @@ class SavingPlanCardState extends State<SavingPlanCard> {
             child: Text(state.message, style: TextStyle(color: Colors.red)),
           );
         }
-        if (state is PlanFetchedSuccess) {
+        if (state is PlansFetchedSuccess) {
           plans = state.plans;
         } else {
           plans = [];

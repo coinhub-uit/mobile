@@ -277,10 +277,8 @@ class UserService {
     if (response.statusCode == 200) {
       final List<dynamic> decoded = jsonDecode(response.body);
       print("Decoded tickets: $decoded");
-      print("Decoded tickets length: ${decoded.length}");
       return decoded.map((ticket) => TicketModel.fromMap(ticket)).toList();
     } else if (response.contentLength == 0) {
-      print("No tickets found for user $userId");
       return [];
     } else {
       throw Exception("Failed to fetch tickets: ${response.statusCode}");
