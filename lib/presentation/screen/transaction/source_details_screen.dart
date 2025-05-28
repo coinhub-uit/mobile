@@ -220,6 +220,14 @@ class _SourceDetailsScreenState extends State<SourceDetailsScreen> {
                         context.read<SourceBloc>().add(
                           SourceDeleting(widget.model.id),
                         );
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text("Deleting source..."),
+                            duration: Duration(seconds: 2),
+                            backgroundColor: Colors.blue,
+                          ),
+                        );
+                        context.pop(true);
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.red,

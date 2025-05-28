@@ -358,8 +358,8 @@ class HomeScreenContent extends StatelessWidget {
                     left: index == 0 ? 0 : 8,
                   ),
                   child: GestureDetector(
-                    onTap: () {
-                      final reload = context.push(
+                    onTap: () async {
+                      final reload = await context.push(
                         Routes.transaction.sourceDetails,
                         extra: source,
                       );
@@ -522,8 +522,13 @@ class HomeScreenContent extends StatelessWidget {
               label: "Add New Source",
               color: theme.colorScheme.onSurface.withAlpha(153),
               width: (screenSize.width - 56) / 2,
-              onTap: () {
-                context.push(Routes.transaction.addSource);
+              onTap: () async {
+                final reload = await context.push(Routes.transaction.addSource);
+                if (reload == true) {
+                  BlocProvider.of<UserBloc>(
+                    context,
+                  ).add(SourceFetching(model.id));
+                }
               },
             ),
           ],

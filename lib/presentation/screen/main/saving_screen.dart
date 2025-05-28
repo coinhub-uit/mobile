@@ -1,5 +1,7 @@
 import "package:coinhub/models/user_model.dart";
+import "package:coinhub/presentation/routes/routes.dart";
 import "package:flutter/material.dart";
+import "package:go_router/go_router.dart";
 import "package:intl/intl.dart";
 
 class SavingsScreen extends StatelessWidget {
@@ -166,7 +168,15 @@ class SavingsScreen extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // Add new savings plan
+          final reload = context.push(
+            Routes.transaction.savingPlan,
+            extra: model,
+          );
+          if (reload == true) {
+            reload.then((value) {
+              // Handle any actions after returning from the saving plan creation
+            });
+          }
         },
         backgroundColor: theme.primaryColor,
         elevation: 4,

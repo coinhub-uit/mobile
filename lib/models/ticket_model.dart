@@ -2,21 +2,23 @@
 import 'dart:convert';
 
 class TicketModel {
-  final String id;
+  final String? id;
   final DateTime? openedAt;
   final DateTime? closedAt;
-  final String status;
+  final String? status;
   final String method;
-  final int planId;
+  final int planHistoryId;
   final String sourceId;
+  final int amount;
   TicketModel({
-    required this.id,
+    this.id,
     this.openedAt,
     this.closedAt,
-    required this.status,
+    this.status,
     required this.method,
-    required this.planId,
+    required this.planHistoryId,
     required this.sourceId,
+    required this.amount,
   });
 
   TicketModel copyWith({
@@ -25,8 +27,9 @@ class TicketModel {
     DateTime? closedAt,
     String? status,
     String? method,
-    int? planId,
+    int? planHistoryId,
     String? sourceId,
+    int? amount,
   }) {
     return TicketModel(
       id: id ?? this.id,
@@ -34,8 +37,9 @@ class TicketModel {
       closedAt: closedAt ?? this.closedAt,
       status: status ?? this.status,
       method: method ?? this.method,
-      planId: planId ?? this.planId,
+      planHistoryId: planHistoryId ?? this.planHistoryId,
       sourceId: sourceId ?? this.sourceId,
+      amount: amount ?? this.amount,
     );
   }
 
@@ -46,14 +50,15 @@ class TicketModel {
       'closedAt': closedAt?.millisecondsSinceEpoch,
       'status': status,
       'method': method,
-      'planId': planId,
+      'planHistoryId': planHistoryId,
       'sourceId': sourceId,
+      'amount': amount,
     };
   }
 
   factory TicketModel.fromMap(Map<String, dynamic> map) {
     return TicketModel(
-      id: map['id'] as String,
+      id: map['id'] != null ? map['id'] as String : null,
       openedAt:
           map['openedAt'] != null
               ? DateTime.fromMillisecondsSinceEpoch(map['openedAt'] as int)
@@ -62,10 +67,11 @@ class TicketModel {
           map['closedAt'] != null
               ? DateTime.fromMillisecondsSinceEpoch(map['closedAt'] as int)
               : null,
-      status: map['status'] as String,
+      status: map['status'] != null ? map['status'] as String : null,
       method: map['method'] as String,
-      planId: map['planId'] as int,
+      planHistoryId: map['planHistoryId'] as int,
       sourceId: map['sourceId'] as String,
+      amount: map['amount'] as int,
     );
   }
 
@@ -76,7 +82,7 @@ class TicketModel {
 
   @override
   String toString() {
-    return 'TicketModel(id: $id, openedAt: $openedAt, closedAt: $closedAt, status: $status, method: $method, planId: $planId, sourceId: $sourceId)';
+    return 'TicketModel(id: $id, openedAt: $openedAt, closedAt: $closedAt, status: $status, method: $method, planHistoryId: $planHistoryId, sourceId: $sourceId, amount: $amount)';
   }
 
   @override
@@ -88,8 +94,9 @@ class TicketModel {
         other.closedAt == closedAt &&
         other.status == status &&
         other.method == method &&
-        other.planId == planId &&
-        other.sourceId == sourceId;
+        other.planHistoryId == planHistoryId &&
+        other.sourceId == sourceId &&
+        other.amount == amount;
   }
 
   @override
@@ -99,7 +106,8 @@ class TicketModel {
         closedAt.hashCode ^
         status.hashCode ^
         method.hashCode ^
-        planId.hashCode ^
-        sourceId.hashCode;
+        planHistoryId.hashCode ^
+        sourceId.hashCode ^
+        amount.hashCode;
   }
 }

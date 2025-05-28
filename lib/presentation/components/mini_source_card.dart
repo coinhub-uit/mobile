@@ -4,7 +4,6 @@ import "package:intl/intl.dart";
 class MiniSourceCard extends StatelessWidget {
   final String sourceId;
   final String moneyInit;
-  final bool abnormal;
   final IconData icon;
   final Color color;
 
@@ -13,7 +12,6 @@ class MiniSourceCard extends StatelessWidget {
     required this.sourceId,
     required this.icon,
     required this.color,
-    this.abnormal = false,
     super.key,
   });
 
@@ -39,97 +37,50 @@ class MiniSourceCard extends StatelessWidget {
 
     return Padding(
       padding: const EdgeInsets.only(right: 10.0),
-      child:
-          !abnormal
-              ? Container(
-                width: MediaQuery.of(context).size.width / 2 - 52,
-                height: 50,
-                decoration: BoxDecoration(
-                  color: color,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(left: 8.0),
-                      child: Row(
-                        children: [
-                          Icon(icon, size: 30, color: onSurface),
-                          const SizedBox(width: 8),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  sourceId,
-                                  style: TextStyle(
-                                    color: onSurface,
-                                    fontSize: 14,
-                                  ),
-                                ),
-                                Text(
-                                  formatMoney(moneyInit),
-                                  style: TextStyle(
-                                    color: onSurfaceWithOpacity,
-                                    fontSize: 10,
-                                  ),
-                                ),
-                              ],
-                            ),
+      child: Container(
+        constraints: BoxConstraints(
+          minWidth: MediaQuery.of(context).size.width / 2 - 52,
+        ),
+        height: 50,
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(left: 8.0),
+              child: Row(
+                children: [
+                  Icon(icon, size: 30, color: onSurface),
+                  const SizedBox(width: 8),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          sourceId,
+                          style: TextStyle(color: onSurface, fontSize: 14),
+                        ),
+                        Text(
+                          formatMoney(moneyInit),
+                          style: TextStyle(
+                            color: onSurfaceWithOpacity,
+                            fontSize: 10,
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-              )
-              : Container(
-                height: 50,
-                decoration: BoxDecoration(
-                  color: color,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(left: 8.0),
-                      child: Row(
-                        children: [
-                          Icon(icon, size: 30, color: onSurface),
-                          const SizedBox(width: 8),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  sourceId,
-                                  style: TextStyle(
-                                    color: onSurface,
-                                    fontSize: 14,
-                                  ),
-                                ),
-                                Text(
-                                  formatMoney(moneyInit),
-                                  style: TextStyle(
-                                    color: onSurfaceWithOpacity,
-                                    fontSize: 10,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

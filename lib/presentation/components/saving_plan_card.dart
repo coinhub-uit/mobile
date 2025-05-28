@@ -23,16 +23,35 @@ class SavingPlanCard extends StatefulWidget {
   });
 
   @override
-  State<SavingPlanCard> createState() => _SavingPlanCardState();
+  State<SavingPlanCard> createState() => SavingPlanCardState();
 }
 
-class _SavingPlanCardState extends State<SavingPlanCard> {
+class SavingPlanCardState extends State<SavingPlanCard> {
   late int selectedIndex;
   late int selectedIndexMethod;
   late int selectedIndexPlan;
   final TextEditingController _amountController = TextEditingController();
   late List<PlanModel> plans;
   late List<SourceModel> sources;
+  String get selectedSourceId => sources[selectedIndex].id;
+  int get selectedPlanId => plans[selectedIndexPlan].planId;
+  String get selectedMethod =>
+      selectedIndexMethod == 0
+          ? "NR"
+          : selectedIndexMethod == 1
+          ? "PR"
+          : "PIR";
+  int get selectedAmount => int.tryParse(_amountController.text) ?? 0;
+
+  Map<String, dynamic> getSelectedValues() {
+    return {
+      "sourceId": selectedSourceId,
+      "planHistoryId": selectedPlanId,
+      "method": selectedMethod,
+      "amount": selectedAmount,
+    };
+  }
+
   @override
   void initState() {
     selectedIndex = 0;
@@ -260,7 +279,6 @@ class _SavingPlanCardState extends State<SavingPlanCard> {
                                       : "For: ${(plans[index].days / 30).round().toString()} months",
                               icon: Icons.calendar_today_outlined,
                               color: cardColor,
-                              abnormal: true,
                             ),
                           );
                         },
@@ -308,7 +326,6 @@ class _SavingPlanCardState extends State<SavingPlanCard> {
                                       ? "PR"
                                       : "PIR",
                               color: cardColor,
-                              abnormal: true,
                             ),
                           );
                         },

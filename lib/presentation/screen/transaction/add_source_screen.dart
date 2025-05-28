@@ -221,6 +221,12 @@ class _AddSourceScreenState extends State<AddSourceScreen> {
                               SourceCreating(sourceId),
                             );
                             _sourceIdController.clear();
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text("Creating source..."),
+                                backgroundColor: Colors.blue,
+                              ),
+                            );
                             context.pop(true);
                           }
                         },
