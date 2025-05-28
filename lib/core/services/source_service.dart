@@ -69,7 +69,7 @@ class SourceService {
       },
     );
 
-    if (response.statusCode == 200) {
+    if (response.statusCode == 200 || response.statusCode == 409) {
       return response;
     } else {
       throw Exception("Failed to delete source: ${response.statusCode}");

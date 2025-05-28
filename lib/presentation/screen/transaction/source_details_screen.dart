@@ -4,6 +4,7 @@ import "package:flutter/material.dart";
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import "package:go_router/go_router.dart";
+import "package:intl/intl.dart";
 
 class SourceDetailsScreen extends StatefulWidget {
   final SourceModel model;
@@ -22,6 +23,12 @@ class _SourceDetailsScreenState extends State<SourceDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+
+    final currencyFormat = NumberFormat.currency(
+      locale: "vi_VN",
+      symbol: "đ",
+      decimalDigits: 0,
+    );
 
     return BlocConsumer<SourceBloc, SourceState>(
       listener: (context, state) {
@@ -202,7 +209,9 @@ class _SourceDetailsScreenState extends State<SourceDetailsScreen> {
                                 ),
                                 const SizedBox(width: 12),
                                 Text(
-                                  "${widget.model.balance} VNĐ",
+                                  currencyFormat.format(
+                                    int.parse(widget.model.balance!),
+                                  ),
                                   style: theme.textTheme.headlineSmall,
                                 ),
                               ],

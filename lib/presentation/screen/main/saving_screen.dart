@@ -1,12 +1,28 @@
+import "package:coinhub/core/bloc/user/user_logic.dart";
+import "package:coinhub/models/ticket_model.dart";
 import "package:coinhub/models/user_model.dart";
 import "package:coinhub/presentation/routes/routes.dart";
 import "package:flutter/material.dart";
+import "package:flutter_bloc/flutter_bloc.dart";
 import "package:go_router/go_router.dart";
 import "package:intl/intl.dart";
 
-class SavingsScreen extends StatelessWidget {
+class SavingsScreen extends StatefulWidget {
   final UserModel model;
   const SavingsScreen({super.key, required this.model});
+  @override
+  State<SavingsScreen> createState() => _SavingsScreenState();
+}
+
+class _SavingsScreenState extends State<SavingsScreen> {
+  late List<TicketModel> tickets;
+
+  @override
+  void initState() {
+    super.initState();
+    // Fetch tickets when the screen is initialized
+    context.read<UserBloc>().add(TicketsFetching(widget.model.id));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -17,171 +33,230 @@ class SavingsScreen extends StatelessWidget {
       decimalDigits: 0,
     );
 
-    return Scaffold(
-      backgroundColor: theme.colorScheme.surface,
-      appBar: AppBar(
-        title: Text("Savings", style: theme.textTheme.titleLarge),
-        centerTitle: true,
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-        iconTheme: IconThemeData(color: theme.colorScheme.onSurface),
-      ),
-      body: Column(
-        children: [
-          // Savings Summary Card
-          Container(
-            margin: const EdgeInsets.fromLTRB(24, 24, 24, 16),
-            padding: const EdgeInsets.all(24),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [theme.primaryColor, theme.primaryColor.withBlue(255)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              borderRadius: BorderRadius.circular(24),
-              boxShadow: [
-                BoxShadow(
-                  color: theme.primaryColor.withAlpha(51),
-                  blurRadius: 15,
-                  spreadRadius: 2,
-                  offset: const Offset(0, 6),
-                ),
-              ],
+    return BlocConsumer<UserBloc, UserState>(
+      listener: (context, state) {
+        if (state is TicketFetchedSuccess) {
+          // Handle avatar update success
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text("Ticket fetched successfully!"),
+              backgroundColor: Colors.green,
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
+          );
+        } else if (state is TicketError) {
+          // Handle avatar update error
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text("Error fetching: ${state.error}"),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      },
+      builder: (context, state) {
+        if (state is TicketLoading) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (state is TicketError) {
+          return Center(child: Text("Error: ${state.error}"));
+        }
+        if (state is TicketFetchedSuccess) {
+          tickets = state.tickets;
+        } else {
+          tickets = []; // Default to empty list if no tickets fetched
+        }
+        return Scaffold(
+          backgroundColor: theme.colorScheme.surface,
+          appBar: AppBar(
+            title: Text("Savings", style: theme.textTheme.titleLarge),
+            centerTitle: true,
+            elevation: 0,
+            backgroundColor: Colors.transparent,
+            iconTheme: IconThemeData(color: theme.colorScheme.onSurface),
+          ),
+          body: Column(
+            children: [
+              // Savings Summary Card
+              Container(
+                margin: const EdgeInsets.fromLTRB(24, 24, 24, 16),
+                padding: const EdgeInsets.all(24),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      theme.primaryColor,
+                      theme.primaryColor.withBlue(255),
+                    ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(24),
+                  boxShadow: [
+                    BoxShadow(
+                      color: theme.primaryColor.withAlpha(51),
+                      blurRadius: 15,
+                      spreadRadius: 2,
+                      offset: const Offset(0, 6),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "Total Savings",
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 6,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withAlpha(51),
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          child: Row(
+                            children: [
+                              const Icon(
+                                Icons.arrow_upward,
+                                color: Colors.white,
+                                size: 14,
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                "123.000đ",
+                                style: theme.textTheme.labelMedium?.copyWith(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      currencyFormat.format(21987000),
+                      style: theme.textTheme.headlineLarge?.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    Row(
+                      children: [
+                        _buildSummaryItem(
+                          context,
+                          icon: Icons.account_balance,
+                          label: "Active Plans",
+                          value: "5",
+                        ),
+                        const SizedBox(width: 24),
+                        _buildSummaryItem(
+                          context,
+                          icon: Icons.trending_up,
+                          label: "Avg. Interest",
+                          value: "5.5%",
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+
+              // Savings Plans List Header
+              Padding(
+                padding: const EdgeInsets.fromLTRB(24, 8, 24, 8),
+                child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      "Total Savings",
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w500,
-                      ),
+                      "Your Savings Plans",
+                      style: theme.textTheme.titleLarge,
                     ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 6,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withAlpha(51),
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: Row(
-                        children: [
-                          const Icon(
-                            Icons.arrow_upward,
-                            color: Colors.white,
-                            size: 14,
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            "123.000đ",
-                            style: theme.textTheme.labelMedium?.copyWith(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
+                    TextButton.icon(
+                      onPressed: () {
+                        // View all savings plans
+                      },
+                      icon: const Icon(Icons.sort, size: 18),
+                      label: const Text("Sort"),
+                      style: TextButton.styleFrom(
+                        foregroundColor: theme.primaryColor,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 8,
+                        ),
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 12),
-                Text(
-                  currencyFormat.format(21987000),
-                  style: theme.textTheme.headlineLarge?.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Row(
-                  children: [
-                    _buildSummaryItem(
-                      context,
-                      icon: Icons.account_balance,
-                      label: "Active Plans",
-                      value: "5",
-                    ),
-                    const SizedBox(width: 24),
-                    _buildSummaryItem(
-                      context,
-                      icon: Icons.trending_up,
-                      label: "Avg. Interest",
-                      value: "5.5%",
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
+              ),
 
-          // Savings Plans List Header
-          Padding(
-            padding: const EdgeInsets.fromLTRB(24, 8, 24, 8),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text("Your Savings Plans", style: theme.textTheme.titleLarge),
-                TextButton.icon(
-                  onPressed: () {
-                    // View all savings plans
+              // Savings Plans List
+              Expanded(
+                child: ListView.builder(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  itemCount: tickets.length,
+                  itemBuilder: (context, index) {
+                    final start = tickets[index].openedAt!;
+                    final end = tickets[index].closedAt;
+                    final now = DateTime.now();
+
+                    double progress =
+                        end != null
+                            ? now.isBefore(start)
+                                ? 0.0
+                                : now.isAfter(end)
+                                ? 1.0
+                                : now.difference(start).inMilliseconds /
+                                    end.difference(start).inMilliseconds
+                            : 1;
+                    return _buildSavingsPlanCard(
+                      context,
+                      index: index + 1,
+                      moneyInit: tickets[index].amount,
+                      profit: 30000,
+                      profitPercentage: 5.5,
+                      startDate:
+                          tickets[index].openedAt.toString().split(" ")[0],
+                      endDate:
+                          tickets[index].closedAt != null
+                              ? tickets[index].closedAt.toString().split(" ")[0]
+                              : "Ongoing",
+                      progress: progress.clamp(
+                        0.0,
+                        1.0,
+                      ), // Simulated progress values
+                    );
                   },
-                  icon: const Icon(Icons.sort, size: 18),
-                  label: const Text("Sort"),
-                  style: TextButton.styleFrom(
-                    foregroundColor: theme.primaryColor,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 8,
-                    ),
-                  ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-
-          // Savings Plans List
-          Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              itemCount: 5,
-              itemBuilder: (context, index) {
-                return _buildSavingsPlanCard(
-                  context,
-                  index: index + 1,
-                  moneyInit: 1234000,
-                  profit: 30000,
-                  profitPercentage: 5.5,
-                  startDate: "1/1/2025",
-                  endDate: "1/6/2025",
-                  progress: (index + 1) * 0.15, // Simulated progress values
-                );
-              },
-            ),
+          floatingActionButton: FloatingActionButton(
+            onPressed: () {
+              final reload = context.push(
+                Routes.transaction.savingPlan,
+                extra: widget.model,
+              );
+              if (reload == true) {
+                reload.then((value) {
+                  // Handle any actions after returning from the saving plan creation
+                });
+              }
+            },
+            backgroundColor: theme.primaryColor,
+            elevation: 4,
+            child: const Icon(Icons.add),
           ),
-        ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          final reload = context.push(
-            Routes.transaction.savingPlan,
-            extra: model,
-          );
-          if (reload == true) {
-            reload.then((value) {
-              // Handle any actions after returning from the saving plan creation
-            });
-          }
-        },
-        backgroundColor: theme.primaryColor,
-        elevation: 4,
-        child: const Icon(Icons.add),
-      ),
+        );
+      },
     );
   }
 
@@ -231,8 +306,8 @@ class SavingsScreen extends StatelessWidget {
   Widget _buildSavingsPlanCard(
     BuildContext context, {
     required int index,
-    required double moneyInit,
-    required double profit,
+    required int moneyInit,
+    required int profit,
     required double profitPercentage,
     required String startDate,
     required String endDate,

@@ -1,6 +1,7 @@
 import "package:coinhub/core/services/auth_service.dart";
 import "package:coinhub/core/services/user_service.dart";
 import "package:coinhub/models/source_model.dart";
+import "package:coinhub/models/ticket_model.dart";
 import "package:coinhub/models/user_model.dart";
 import "package:flutter_bloc/flutter_bloc.dart";
 
@@ -72,7 +73,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
         emit(DeleteAccountError(e.toString()));
       }
     });
-    on<SourceFetching>((event, emit) async {
+    on<SourcesFetching>((event, emit) async {
       emit(SourceLoading());
       try {
         print("Fetching sources for user: ${event.userId}");
@@ -85,6 +86,21 @@ class UserBloc extends Bloc<UserEvent, UserState> {
         }
       } catch (e) {
         emit(SourceError(e.toString()));
+      }
+    });
+    on<TicketsFetching>((event, emit) async {
+      emit(TicketLoading());
+      try {
+        print("Fetching tickets for user: ${event.userId}");
+        final response = await UserService.fetchTickets(event.userId);
+        if (response.isNotEmpty) {
+          emit(TicketFetchedSuccess(response));
+          print("Fetched tickets: $response");
+        } else {
+          emit(TicketFetchedSuccess(response));
+        }
+      } catch (e) {
+        emit(TicketError(e.toString()));
       }
     });
   }

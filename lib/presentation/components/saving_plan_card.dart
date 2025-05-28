@@ -61,7 +61,7 @@ class SavingPlanCardState extends State<SavingPlanCard> {
       context.read<PlanBloc>().add(PlanFetching());
     });
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<UserBloc>().add(SourceFetching(widget.userId));
+      context.read<UserBloc>().add(SourcesFetching(widget.userId));
     });
 
     super.initState();
@@ -117,7 +117,7 @@ class SavingPlanCardState extends State<SavingPlanCard> {
         }
         return BlocBuilder<UserBloc, UserState>(
           builder: (context, state) {
-            if (state is SourceFetching) {
+            if (state is SourcesFetching) {
               return const Center(child: CircularProgressIndicator());
             }
             if (state is SourceError) {

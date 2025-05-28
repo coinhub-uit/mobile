@@ -27,4 +27,19 @@ class TicketService {
       throw Exception("Failed to create source: ${response.statusCode}");
     }
   }
+
+  static Future<http.Response> fetchTicket(String ticketId) async {
+    final accessToken = await LocalStorageService().read("JWT");
+    if (accessToken == null) {
+      throw Exception("Session not found");
+    }
+
+    return ApiClient.client.get(
+      Uri.parse("${ApiClient.ticketEndpoint}/$ticketId"),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $accessToken",
+      },
+    );
+  }
 }

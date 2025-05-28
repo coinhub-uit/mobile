@@ -15,3 +15,9 @@ class TicketDeleting extends TicketEvent {
 
   const TicketDeleting(this.ticketId);
 }
+
+class TicketFetching extends TicketEvent {
+  final String ticketId;
+
+  const TicketFetching(this.ticketId);
+}

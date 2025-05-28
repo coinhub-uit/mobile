@@ -2,7 +2,7 @@
 import 'dart:convert';
 
 class TicketModel {
-  final String? id;
+  final int? id;
   final DateTime? openedAt;
   final DateTime? closedAt;
   final String? status;
@@ -22,7 +22,7 @@ class TicketModel {
   });
 
   TicketModel copyWith({
-    String? id,
+    int? id,
     DateTime? openedAt,
     DateTime? closedAt,
     String? status,
@@ -58,20 +58,19 @@ class TicketModel {
 
   factory TicketModel.fromMap(Map<String, dynamic> map) {
     return TicketModel(
-      id: map['id'] != null ? map['id'] as String : null,
+      id: map['id'] != null ? map['id'] as int : null,
       openedAt:
-          map['openedAt'] != null
-              ? DateTime.fromMillisecondsSinceEpoch(map['openedAt'] as int)
-              : null,
+          map['openedAt'] != null ? DateTime.parse(map['openedAt']) : null,
       closedAt:
-          map['closedAt'] != null
-              ? DateTime.fromMillisecondsSinceEpoch(map['closedAt'] as int)
-              : null,
+          map['closedAt'] != null ? DateTime.parse(map['closedAt']) : null,
       status: map['status'] != null ? map['status'] as String : null,
       method: map['method'] as String,
-      planHistoryId: map['planHistoryId'] as int,
-      sourceId: map['sourceId'] as String,
-      amount: map['amount'] as int,
+      planHistoryId:
+          map['planHistoryId'] != null ? map['planHistoryId'] as int : 0,
+
+      sourceId: map['sourceId']?.toString() ?? '',
+
+      amount: map['amount'] is int ? map['amount'] : 0,
     );
   }
 

@@ -29,3 +29,9 @@ class TicketError extends TicketState {
 
   const TicketError(this.message);
 }
+
+class TicketFetchedSuccess extends TicketState {
+  final TicketModel ticket; // Replace 'dynamic' with the actual type if known
+
+  const TicketFetchedSuccess(this.ticket);
+}

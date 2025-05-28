@@ -25,7 +25,7 @@ class _TransactionCardState extends State<TransactionCard> {
     selectedIndex = 0;
     selectedIndexProvider = 0;
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<UserBloc>().add(SourceFetching(widget.userId));
+      context.read<UserBloc>().add(SourcesFetching(widget.userId));
     });
     super.initState();
   }

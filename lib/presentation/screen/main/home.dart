@@ -91,7 +91,7 @@ class _HomeScreenState extends State<HomeScreen> {
         setState(() {
           userModel = model;
         });
-        BlocProvider.of<UserBloc>(context).add(SourceFetching(userId));
+        BlocProvider.of<UserBloc>(context).add(SourcesFetching(userId));
       } else {
         debugPrint("User not logged in.");
       }
@@ -269,7 +269,7 @@ class HomeScreenContent extends StatelessWidget {
                 if (reload == true) {
                   BlocProvider.of<UserBloc>(
                     context,
-                  ).add(SourceFetching(model.id));
+                  ).add(SourcesFetching(model.id));
                 }
               },
               child: SizedBox(
@@ -366,7 +366,7 @@ class HomeScreenContent extends StatelessWidget {
                       if (reload == true) {
                         BlocProvider.of<UserBloc>(
                           context,
-                        ).add(SourceFetching(model.id));
+                        ).add(SourcesFetching(model.id));
                       }
                     },
                     child: Container(
@@ -527,7 +527,7 @@ class HomeScreenContent extends StatelessWidget {
                 if (reload == true) {
                   BlocProvider.of<UserBloc>(
                     context,
-                  ).add(SourceFetching(model.id));
+                  ).add(SourcesFetching(model.id));
                 }
               },
             ),

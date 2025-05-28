@@ -74,3 +74,18 @@ class SourceError extends UserState {
 
   SourceError(this.error);
 }
+
+// get tickets states
+class TicketFetchedSuccess extends UserState {
+  final List<TicketModel> tickets;
+
+  TicketFetchedSuccess(this.tickets);
+}
+
+class TicketLoading extends UserState {}
+
+class TicketError extends UserState {
+  final String error;
+
+  TicketError(this.error);
+}

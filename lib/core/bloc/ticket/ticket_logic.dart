@@ -33,5 +33,21 @@ class TicketBloc extends Bloc<TicketEvent, TicketState> {
         emit(TicketError("Failed to delete ticket: ${e.toString()}"));
       }
     });
+
+    on<TicketFetching>((event, emit) async {
+      emit(TicketLoading());
+      try {
+        final response = await TicketService.fetchTicket(event.ticketId);
+        if (response.statusCode == 200) {
+          // Assuming the response body contains the ticket data
+          final fetchedTicket = TicketModel.fromJson(response.body);
+          emit(TicketFetchedSuccess(fetchedTicket));
+        } else {
+          emit(TicketError("Failed to fetch ticket: ${response.statusCode}"));
+        }
+      } catch (e) {
+        emit(TicketError("Failed to fetch ticket: ${e.toString()}"));
+      }
+    });
   }
 }
