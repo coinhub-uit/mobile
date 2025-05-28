@@ -36,6 +36,7 @@ class _Transaction {
   String get transfer => "$root/transfer";
   String get savingPlan => "$root/new-saving-plan";
   String get addSource => "$root/add-source";
+  String get sourceDetails => "$root/source-details";
 }
 
 class _Settings {

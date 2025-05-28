@@ -28,13 +28,21 @@ class _AddSourceScreenState extends State<AddSourceScreen> {
     return BlocConsumer<SourceBloc, SourceState>(
       listener: (context, state) {
         if (state is SourceCreatedSuccess) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("Created source successfully!")),
-          );
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text("Create source successfully"),
+                backgroundColor: Colors.green,
+              ),
+            );
+          });
         } else if (state is SourceError) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text(state.message)));
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.message),
+              backgroundColor: Colors.green,
+            ),
+          );
         }
       },
       builder: (context, state) {
@@ -112,7 +120,6 @@ class _AddSourceScreenState extends State<AddSourceScreen> {
 
                     const SizedBox(height: 24),
 
-                    // Withdraw Form
                     Card(
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
@@ -213,6 +220,8 @@ class _AddSourceScreenState extends State<AddSourceScreen> {
                             context.read<SourceBloc>().add(
                               SourceCreating(sourceId),
                             );
+                            _sourceIdController.clear();
+                            context.pop(true);
                           }
                         },
                         style: ElevatedButton.styleFrom(

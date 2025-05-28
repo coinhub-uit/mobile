@@ -54,4 +54,25 @@ class SourceService {
       throw Exception("Failed to create source: ${response.statusCode}");
     }
   }
+
+  static Future<http.Response> deleteSource(String sourceId) async {
+    final accessToken = await LocalStorageService().read("JWT");
+    if (accessToken == null) {
+      throw Exception("Session not found");
+    }
+
+    final response = await ApiClient.client.delete(
+      Uri.parse("${ApiClient.sourceEndpoint}/$sourceId"),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $accessToken",
+      },
+    );
+
+    if (response.statusCode == 200) {
+      return response;
+    } else {
+      throw Exception("Failed to delete source: ${response.statusCode}");
+    }
+  }
 }

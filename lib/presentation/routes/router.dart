@@ -1,3 +1,4 @@
+import "package:coinhub/models/source_model.dart";
 import "package:coinhub/models/user_model.dart";
 import "package:coinhub/presentation/screen/account/create_pin_screen.dart";
 import "package:coinhub/presentation/screen/auth/forgot_password_screen.dart";
@@ -16,6 +17,7 @@ import "package:coinhub/presentation/screen/setting/theme_setting_screen.dart";
 import "package:coinhub/presentation/screen/transaction/add_source_screen.dart";
 import "package:coinhub/presentation/screen/transaction/deposit_screen.dart";
 import "package:coinhub/presentation/screen/transaction/saving_plan_screen.dart";
+import "package:coinhub/presentation/screen/transaction/source_details_screen.dart";
 import "package:coinhub/presentation/screen/transaction/withdraw_screen.dart";
 import "package:coinhub/presentation/screen/transaction/transfer_screen.dart";
 import "package:flutter/material.dart";
@@ -143,6 +145,14 @@ class RouteRouter {
           // You can pass any required data through state.extra if needed
           print("Navigated to AddSourceScreen!");
           return const AddSourceScreen();
+        },
+      ),
+      GoRoute(
+        name: "source-details",
+        path: Routes.transaction.sourceDetails,
+        builder: (context, state) {
+          final model = state.extra as SourceModel;
+          return SourceDetailsScreen(model: model);
         },
       ),
       // Settings routes

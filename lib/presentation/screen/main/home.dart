@@ -264,88 +264,17 @@ class HomeScreenContent extends StatelessWidget {
           final List<SourceModel> sources = state.sources;
           if (sources.isEmpty) {
             return GestureDetector(
-              onTap: () {
-                print(Routes.transaction.addSource);
-                context.push(Routes.transaction.addSource);
+              onTap: () async {
+                final reload = await context.push(Routes.transaction.addSource);
+                if (reload == true) {
+                  BlocProvider.of<UserBloc>(
+                    context,
+                  ).add(SourceFetching(model.id));
+                }
               },
-              child: Center(
-                child: Container(
-                  width: MediaQuery.of(context).size.width * 0.88,
-                  padding: const EdgeInsets.all(24),
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        theme.primaryColor,
-                        theme.primaryColor.withBlue(255),
-                      ],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                    borderRadius: BorderRadius.circular(16),
-                    boxShadow: [
-                      BoxShadow(
-                        color: theme.primaryColor.withAlpha(77),
-                        blurRadius: 10,
-                        spreadRadius: 0,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Track your finances now by",
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          color: Colors.white.withAlpha(204),
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        "Add your first source!",
-                        style: theme.textTheme.headlineLarge?.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      Row(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 10,
-                              vertical: 6,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Colors.white.withAlpha(26),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Row(
-                              children: [
-                                const Icon(
-                                  Icons.add_circle_outlined,
-                                  color: Color(0xFF10B981),
-                                  size: 14,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            );
-          }
-          return SizedBox(
-            height: 200,
-            child: ListView.builder(
-              itemCount: sources.length,
-              scrollDirection: Axis.horizontal,
-              itemBuilder: (context, index) {
-                final source = sources[index];
-                return Center(
+              child: SizedBox(
+                height: 210,
+                child: Center(
                   child: Container(
                     width: MediaQuery.of(context).size.width * 0.88,
                     padding: const EdgeInsets.all(24),
@@ -372,14 +301,14 @@ class HomeScreenContent extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "Total Balance",
+                          "Track your finances now by",
                           style: theme.textTheme.bodyMedium?.copyWith(
                             color: Colors.white.withAlpha(204),
                           ),
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          currencyFormat.format(int.parse(source.balance!)),
+                          "Add your first source!",
                           style: theme.textTheme.headlineLarge?.copyWith(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
@@ -400,16 +329,9 @@ class HomeScreenContent extends StatelessWidget {
                               child: Row(
                                 children: [
                                   const Icon(
-                                    Icons.arrow_upward,
+                                    Icons.add_circle_outlined,
                                     color: Color(0xFF10B981),
                                     size: 14,
-                                  ),
-                                  const SizedBox(width: 4),
-                                  Text(
-                                    "+5.5% this month",
-                                    style: theme.textTheme.labelSmall?.copyWith(
-                                      color: Colors.white,
-                                    ),
                                   ),
                                 ],
                               ),
@@ -417,6 +339,147 @@ class HomeScreenContent extends StatelessWidget {
                           ],
                         ),
                       ],
+                    ),
+                  ),
+                ),
+              ),
+            );
+          }
+          return SizedBox(
+            height: 210,
+            child: ListView.builder(
+              itemCount: sources.length,
+              scrollDirection: Axis.horizontal,
+              itemBuilder: (context, index) {
+                final source = sources[index];
+                return Padding(
+                  padding: EdgeInsets.only(
+                    right: index == sources.length - 1 ? 0 : 8,
+                    left: index == 0 ? 0 : 8,
+                  ),
+                  child: GestureDetector(
+                    onTap: () {
+                      final reload = context.push(
+                        Routes.transaction.sourceDetails,
+                        extra: source,
+                      );
+                      if (reload == true) {
+                        BlocProvider.of<UserBloc>(
+                          context,
+                        ).add(SourceFetching(model.id));
+                      }
+                    },
+                    child: Container(
+                      width: MediaQuery.of(context).size.width * 0.88,
+                      padding: const EdgeInsets.all(24),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            theme.primaryColor,
+                            theme.primaryColor.withBlue(255),
+                          ],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        borderRadius: BorderRadius.circular(16),
+                        boxShadow: [
+                          BoxShadow(
+                            color: theme.primaryColor.withAlpha(77),
+                            blurRadius: 10,
+                            spreadRadius: 0,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                "Total Balance",
+                                style: theme.textTheme.bodyMedium?.copyWith(
+                                  color: Colors.white.withAlpha(204),
+                                ),
+                              ),
+                              Text(
+                                source.id,
+                                style: theme.textTheme.titleMedium?.copyWith(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 20,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            currencyFormat.format(int.parse(source.balance!)),
+                            style: theme.textTheme.headlineLarge?.copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 10,
+                                  vertical: 6,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withAlpha(26),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Row(
+                                  children: [
+                                    const Icon(
+                                      Icons.arrow_upward,
+                                      color: Color(0xFF10B981),
+                                      size: 14,
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      "+5.5% this month",
+                                      style: theme.textTheme.labelSmall
+                                          ?.copyWith(color: Colors.white),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  sources.length > 1 &&
+                                          index < sources.length - 1
+                                      ? Icons.arrow_right_rounded
+                                      : null,
+                                  color: Color(0xFF10B981),
+                                  size: 14,
+                                ),
+                                const SizedBox(width: 4),
+                                Text(
+                                  sources.length > 1 &&
+                                          index < sources.length - 1
+                                      ? "Swipe left to see other sources"
+                                      : "",
+                                  style: theme.textTheme.bodyMedium?.copyWith(
+                                    color: Colors.white.withAlpha(204),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 );

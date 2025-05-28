@@ -15,3 +15,9 @@ class SourceCreating extends SourceEvent {
 
   const SourceCreating(this.sourceId);
 }
+
+class SourceDeleting extends SourceEvent {
+  final String sourceId;
+
+  const SourceDeleting(this.sourceId);
+}
