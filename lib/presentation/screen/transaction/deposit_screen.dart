@@ -1,6 +1,6 @@
 import "package:coinhub/presentation/components/transaction_card.dart";
+import "package:coinhub/core/services/vnpay_service.dart";
 import "package:flutter/material.dart";
-import "package:flutter/services.dart";
 import "package:intl/intl.dart";
 import "package:go_router/go_router.dart";
 
@@ -15,6 +15,13 @@ class _DepositScreenState extends State<DepositScreen> {
   final TextEditingController _amountController = TextEditingController();
   final TextEditingController _noteController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  final VnpayService _vnpayService = VnpayService();
+
+  // Store values from TransactionCard
+  String _currentAmount = "";
+  int _selectedSourceIndex = 0;
+  int _selectedProviderIndex = 0;
+  bool _isProcessing = false;
 
   @override
   void dispose() {
@@ -23,59 +30,136 @@ class _DepositScreenState extends State<DepositScreen> {
     super.dispose();
   }
 
-  void _processDeposit() {
-    if (_formKey.currentState!.validate()) {
-      // Process deposit logic would go here
+  void _processDeposit() async {
+    if (_currentAmount.isEmpty || double.tryParse(_currentAmount) == null) {
+      _showErrorDialog("Please enter a valid amount");
+      return;
+    }
 
-      // Show success dialog
-      showDialog(
-        context: context,
-        builder: (context) {
-          final theme = Theme.of(context);
-          return AlertDialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
+    final amount = int.parse(_currentAmount);
+    if (amount <= 0) {
+      _showErrorDialog("Amount must be greater than zero");
+      return;
+    }
+
+    setState(() {
+      _isProcessing = true;
+    });
+
+    try {
+      // Use the selected source index as the source ID
+      final sourceId = _selectedSourceIndex.toString();
+
+      final success = await _vnpayService.processPayment(
+        amount: amount,
+        source: sourceId,
+      );
+
+      if (success) {
+        _showSuccessDialog();
+      } else {
+        _showErrorDialog("Failed to process payment. Please try again.");
+      }
+    } catch (e) {
+      _showErrorDialog("Error processing payment: $e");
+    } finally {
+      setState(() {
+        _isProcessing = false;
+      });
+    }
+  }
+
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        final theme = Theme.of(context);
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          title: Text(
+            "Error",
+            style: theme.textTheme.titleLarge?.copyWith(
+              fontWeight: FontWeight.bold,
             ),
-            title: Text(
-              "Deposit Successful",
-              style: theme.textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(
-                  Icons.check_circle_outline,
-                  color: Colors.green[600],
-                  size: 64,
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  "Your deposit of ${NumberFormat.currency(locale: 'vi_VN', symbol: 'đ', decimalDigits: 0).format(double.parse(_amountController.text))} has been processed successfully.",
-                  style: theme.textTheme.bodyMedium,
-                  textAlign: TextAlign.center,
-                ),
-              ],
-            ),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  context.pop();
-                  context.pop();
-                },
-                child: Text(
-                  "Done",
-                  style: theme.textTheme.labelLarge?.copyWith(
-                    color: theme.primaryColor,
-                  ),
-                ),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.error_outline, color: Colors.red[600], size: 64),
+              const SizedBox(height: 16),
+              Text(
+                message,
+                style: theme.textTheme.bodyMedium,
+                textAlign: TextAlign.center,
               ),
             ],
-          );
-        },
-      );
-    }
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => context.pop(),
+              child: Text(
+                "OK",
+                style: theme.textTheme.labelLarge?.copyWith(
+                  color: theme.primaryColor,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showSuccessDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        final theme = Theme.of(context);
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          title: Text(
+            "Payment Initiated",
+            style: theme.textTheme.titleLarge?.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                Icons.check_circle_outline,
+                color: Colors.green[600],
+                size: 64,
+              ),
+              const SizedBox(height: 16),
+              Text(
+                "Your payment of ${NumberFormat.currency(locale: 'vi_VN', symbol: 'đ', decimalDigits: 0).format(double.parse(_currentAmount))} has been initiated. Please complete the payment in the opened web view.",
+                style: theme.textTheme.bodyMedium,
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                context.pop();
+                context.pop();
+              },
+              child: Text(
+                "Done",
+                style: theme.textTheme.labelLarge?.copyWith(
+                  color: theme.primaryColor,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -160,7 +244,26 @@ class _DepositScreenState extends State<DepositScreen> {
 
                 Column(
                   mainAxisAlignment: MainAxisAlignment.start,
-                  children: [TransactionCard(title: "Deposit into: ")],
+                  children: [
+                    TransactionCard(
+                      title: "Deposit into: ",
+                      onAmountChanged: (amount) {
+                        setState(() {
+                          _currentAmount = amount;
+                        });
+                      },
+                      onSourceChanged: (sourceIndex) {
+                        setState(() {
+                          _selectedSourceIndex = sourceIndex;
+                        });
+                      },
+                      onProviderChanged: (providerIndex) {
+                        setState(() {
+                          _selectedProviderIndex = providerIndex;
+                        });
+                      },
+                    ),
+                  ],
                 ),
 
                 const SizedBox(height: 24),
@@ -168,7 +271,7 @@ class _DepositScreenState extends State<DepositScreen> {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: _processDeposit,
+                    onPressed: _isProcessing ? null : _processDeposit,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: theme.primaryColor,
                       foregroundColor: Colors.white,
@@ -178,13 +281,25 @@ class _DepositScreenState extends State<DepositScreen> {
                       ),
                       elevation: 0,
                     ),
-                    child: Text(
-                      "Deposit",
-                      style: theme.textTheme.labelLarge?.copyWith(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                    child:
+                        _isProcessing
+                            ? const SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  Colors.white,
+                                ),
+                              ),
+                            )
+                            : Text(
+                              "Deposit",
+                              style: theme.textTheme.labelLarge?.copyWith(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                   ),
                 ),
               ],

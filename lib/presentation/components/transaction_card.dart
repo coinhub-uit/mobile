@@ -5,7 +5,17 @@ import "package:flutter/services.dart";
 
 class TransactionCard extends StatefulWidget {
   final String title;
-  const TransactionCard({super.key, required this.title});
+  final Function(String amount)? onAmountChanged;
+  final Function(int sourceIndex)? onSourceChanged;
+  final Function(int providerIndex)? onProviderChanged;
+
+  const TransactionCard({
+    super.key,
+    required this.title,
+    this.onAmountChanged,
+    this.onSourceChanged,
+    this.onProviderChanged,
+  });
 
   @override
   State<TransactionCard> createState() => _TransactionCardState();
@@ -30,6 +40,12 @@ class _TransactionCardState extends State<TransactionCard> {
     super.dispose();
   }
 
+  // Add getter methods for accessing values
+  String get amount => _amountController.text;
+  int get selectedSourceIndex => selectedIndex;
+  int get selectedProviderIndex => selectedIndexProvider;
+
+  @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final theme = Theme.of(context);
@@ -65,6 +81,7 @@ class _TransactionCardState extends State<TransactionCard> {
                       setState(() {
                         selectedIndex = index;
                       });
+                      widget.onSourceChanged?.call(index);
                     },
                     child: MiniSourceCard(
                       icon: Icons.account_balance_wallet,
@@ -82,6 +99,9 @@ class _TransactionCardState extends State<TransactionCard> {
               keyboardType: TextInputType.number,
               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
               style: theme.textTheme.headlineSmall,
+              onChanged: (value) {
+                widget.onAmountChanged?.call(value);
+              },
               decoration: InputDecoration(
                 labelText: "Amount",
                 labelStyle: TextStyle(color: theme.primaryColor, fontSize: 14),
@@ -155,6 +175,7 @@ class _TransactionCardState extends State<TransactionCard> {
                       setState(() {
                         selectedIndexProvider = index;
                       });
+                      widget.onProviderChanged?.call(index);
                     },
                     child: ProviderCard(
                       color: cardColor,
