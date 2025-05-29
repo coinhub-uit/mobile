@@ -81,13 +81,13 @@ class SavingPlanCardState extends State<SavingPlanCard> {
     return BlocConsumer<PlanBloc, PlanState>(
       listener: (context, state) {
         if (state is PlansFetchedSuccess) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text("Saving plan fetched successfully"),
-              backgroundColor: Colors.green,
-              duration: Duration(seconds: 2),
-            ),
-          );
+          // ScaffoldMessenger.of(context).showSnackBar(
+          //   const SnackBar(
+          //     content: Text("Saving plan fetched successfully"),
+          //     backgroundColor: Colors.green,
+          //     duration: Duration(seconds: 2),
+          //   ),
+          // );
           _amountController.clear();
           setState(() {
             selectedIndex = 0;

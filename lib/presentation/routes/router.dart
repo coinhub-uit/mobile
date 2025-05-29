@@ -146,7 +146,6 @@ class RouteRouter {
         path: Routes.transaction.addSource,
         builder: (context, state) {
           // You can pass any required data through state.extra if needed
-          print("Navigated to AddSourceScreen!");
           return const AddSourceScreen();
         },
       ),

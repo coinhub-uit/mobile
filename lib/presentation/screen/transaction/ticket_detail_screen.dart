@@ -539,6 +539,9 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
                           await TicketService.withdrawTicket(
                             widget.ticketModel.id!,
                           );
+                          await TicketService.exportTicketAsPdf(
+                            widget.ticketModel,
+                          );
                         } catch (e) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(

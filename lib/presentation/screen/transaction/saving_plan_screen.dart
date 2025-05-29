@@ -4,6 +4,7 @@ import "package:coinhub/models/user_model.dart";
 import "package:coinhub/presentation/components/saving_plan_card.dart";
 import "package:flutter/material.dart";
 import "package:flutter_bloc/flutter_bloc.dart";
+import "package:go_router/go_router.dart";
 
 class SavingPlanScreen extends StatefulWidget {
   final UserModel model; // Replace 'dynamic' with the actual type if known
@@ -57,14 +58,14 @@ class _SavingPlanScreenState extends State<SavingPlanScreen> {
           ),
         ),
       );
-      // This is where you would typically call your backend API
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text("Saving plan created successfully!"),
-          backgroundColor: Colors.green,
+          content: Text("Ticket creating..."),
+          duration: Duration(seconds: 2),
+          backgroundColor: Colors.blue,
         ),
       );
-      Navigator.of(context).pop(); // Close the screen after creation
+      context.pop(true);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -89,9 +90,12 @@ class _SavingPlanScreenState extends State<SavingPlanScreen> {
       listener: (context, state) {
         if (state is TicketCreatedSuccess) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("Saving plan created successfully!")),
+            SnackBar(
+              content: Text("Ticket created successfully!"),
+              duration: Duration(seconds: 2),
+            ),
           );
-          Navigator.of(context).pop(); // Close the screen after creation
+          context.pop(true);
         } else if (state is TicketError) {
           ScaffoldMessenger.of(
             context,
@@ -117,7 +121,7 @@ class _SavingPlanScreenState extends State<SavingPlanScreen> {
             iconTheme: IconThemeData(color: theme.colorScheme.onSurface),
             leading: IconButton(
               icon: const Icon(Icons.arrow_back),
-              onPressed: () => Navigator.of(context).pop(),
+              onPressed: () => context.pop(),
             ),
           ),
           body: SingleChildScrollView(

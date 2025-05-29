@@ -368,67 +368,83 @@ class _SavingsScreenState extends State<SavingsScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text("Your Tickets", style: theme.textTheme.titleLarge),
-                    TextButton.icon(
-                      onPressed: () {
-                        showModalBottomSheet(
-                          context: context,
-                          shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.vertical(
-                              top: Radius.circular(16),
-                            ),
-                          ),
-                          builder: (context) {
-                            return Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                ListTile(
-                                  leading: const Icon(Icons.access_time),
-                                  title: const Text("Sort by Creation Time"),
-                                  onTap: () {
-                                    Navigator.pop(context);
-                                    _sortByTime();
-                                  },
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        TextButton.icon(
+                          onPressed: () {
+                            showModalBottomSheet(
+                              context: context,
+                              shape: const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.vertical(
+                                  top: Radius.circular(16),
                                 ),
-                                const Divider(),
-                                ...sources.map((source) {
-                                  return ListTile(
-                                    leading: const Icon(
-                                      Icons.account_balance_wallet,
+                              ),
+                              builder: (context) {
+                                return Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    ListTile(
+                                      leading: const Icon(Icons.access_time),
+                                      title: const Text(
+                                        "Sort by Creation Time",
+                                      ),
+                                      onTap: () {
+                                        Navigator.pop(context);
+                                        _sortByTime();
+                                      },
                                     ),
-                                    title: Text(
-                                      "Filter by Source: ${source.id}",
+                                    const Divider(),
+                                    ...sources.map((source) {
+                                      return ListTile(
+                                        leading: const Icon(
+                                          Icons.account_balance_wallet,
+                                        ),
+                                        title: Text(
+                                          "Filter by Source: ${source.id}",
+                                        ),
+                                        onTap: () {
+                                          Navigator.pop(context);
+                                          _filterBySource(source.id);
+                                        },
+                                      );
+                                    }),
+                                    ListTile(
+                                      leading: const Icon(Icons.clear),
+                                      title: const Text("Show All Tickets"),
+                                      onTap: () {
+                                        Navigator.pop(context);
+                                        setState(() {
+                                          tickets = List.from(allTickets);
+                                        });
+                                      },
                                     ),
-                                    onTap: () {
-                                      Navigator.pop(context);
-                                      _filterBySource(source.id);
-                                    },
-                                  );
-                                }),
-                                ListTile(
-                                  leading: const Icon(Icons.clear),
-                                  title: const Text("Show All Tickets"),
-                                  onTap: () {
-                                    Navigator.pop(context);
-                                    setState(() {
-                                      tickets = List.from(allTickets);
-                                    });
-                                  },
-                                ),
-                              ],
+                                  ],
+                                );
+                              },
                             );
                           },
-                        );
-                      },
 
-                      icon: const Icon(Icons.sort, size: 18),
-                      label: const Text("Sort"),
-                      style: TextButton.styleFrom(
-                        foregroundColor: theme.primaryColor,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 8,
+                          icon: const Icon(Icons.sort, size: 18),
+                          label: const Text("Sort"),
+                          style: TextButton.styleFrom(
+                            foregroundColor: theme.primaryColor,
+                            padding: const EdgeInsets.only(top: 8, bottom: 8),
+                          ),
                         ),
-                      ),
+                        IconButton(
+                          onPressed:
+                              () =>
+                                  context.read<UserBloc>()
+                                    ..add(TicketsFetching(widget.model.id))
+                                    ..add(SourcesFetching(widget.model.id)),
+                          icon: const Icon(Icons.refresh, size: 20),
+                          style: TextButton.styleFrom(
+                            foregroundColor: theme.primaryColor,
+                            padding: const EdgeInsets.only(top: 8, bottom: 8),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -438,9 +454,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
               Expanded(
                 child: BlocConsumer<UserBloc, UserState>(
                   listener: (context, state) {
-                    if (state is TicketFetchedSuccess) {
-                      tickets = state.tickets;
-                    } else if (state is TicketError) {
+                    if (state is TicketError) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text(
@@ -628,8 +642,8 @@ class _SavingsScreenState extends State<SavingsScreen> {
         borderRadius: BorderRadius.circular(16),
         child: InkWell(
           borderRadius: BorderRadius.circular(16),
-          onTap: () {
-            final reload = context.push(
+          onTap: () async {
+            final reload = await context.push(
               Routes.transaction.ticketDetail,
               extra: {"ticket": ticket, "plan": plan},
             );
