@@ -65,7 +65,6 @@ class _SavingPlanScreenState extends State<SavingPlanScreen> {
           backgroundColor: Colors.blue,
         ),
       );
-      context.pop(true);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(

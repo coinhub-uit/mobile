@@ -43,7 +43,10 @@ class _SavingsScreenState extends State<SavingsScreen> {
 
   void _sortByTime() {
     setState(() {
-      tickets.sort((a, b) => a.openedAt!.compareTo(b.openedAt!));
+      tickets.sort((a, b) {
+        if (a.openedAt == null || b.openedAt == null) return 0;
+        return a.openedAt!.compareTo(b.openedAt!);
+      });
     });
   }
 
@@ -109,10 +112,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
                 : ((totalInterest / totalPrincipal) * 100).round();
         final overAllPrincipal = totalPrincipal;
 
-        if (state is TicketLoading) {
-          return Expanded(child: Center(child: CircularProgressIndicator()));
-        }
-        if (state is SourcesLoading) {
+        if (state is TicketLoading || state is SourcesLoading) {
           return const Center(child: CircularProgressIndicator());
         } else if (state is TicketError) {
           return Center(child: Text("Error: ${state.error}"));
@@ -452,92 +452,69 @@ class _SavingsScreenState extends State<SavingsScreen> {
 
               // Savings Plans List
               Expanded(
-                child: BlocConsumer<UserBloc, UserState>(
-                  listener: (context, state) {
-                    if (state is TicketError) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(
-                            "Error fetching tickets: ${state.error}",
-                          ),
-                          backgroundColor: Colors.red,
-                        ),
-                      );
-                    }
-                  },
-                  builder: (context, state) {
-                    if (state is TicketLoading) {
-                      return const Center(child: CircularProgressIndicator());
-                    } else if (state is TicketError) {
-                      return Center(child: Text("Error: ${state.error}"));
-                    }
-                    return ListView.builder(
-                      padding: const EdgeInsets.symmetric(horizontal: 24),
-                      itemCount: tickets.length,
-                      itemBuilder: (context, index) {
-                        final start = tickets[index].openedAt!;
-                        final end =
-                            tickets[index].ticketHistory?.isNotEmpty == true
-                                ? tickets[index].ticketHistory![0].maturedAt
-                                : null;
-                        final now = DateTime.now();
-                        final _planId = tickets[index].plan?.id;
-                        // print("Ticket: $tickets");
-                        // print("Matching planId: $_planId");
-
-                        // print(plans);
-                        final plan = plans.firstWhere(
-                          (p) => p.id == _planId,
-                          orElse: () => PlanModel(id: -1, days: 0, rate: 0),
-                        );
-                        final rate = plan.rate;
-
-                        double progress =
-                            end != null
-                                ? now.isBefore(start)
-                                    ? 0.0
-                                    : now.isAfter(end)
-                                    ? 1.0
-                                    : now.difference(start).inMilliseconds /
-                                        end.difference(start).inMilliseconds
-                                : 1;
-                        return tickets[index].status == "active"
-                            ? _buildSavingsPlanCard(
-                              context,
-                              index: index + 1,
-                              moneyInit:
-                                  tickets[index].ticketHistory![0].principal
-                                      ?.toInt() ??
-                                  0,
-                              profit:
-                                  tickets[index].ticketHistory![0].interest
-                                      ?.toInt() ??
-                                  0,
-                              profitPercentage: rate,
-                              startDate: DateFormat(
-                                "dd/MM/yyyy",
-                              ).format(tickets[index].openedAt!),
-                              endDate:
-                                  tickets[index].ticketHistory![0].maturedAt
-                                              .toString()
-                                              .split(" ")[0] ==
-                                          "9999-12-31"
-                                      ? "Ongoing"
-                                      : DateFormat("dd/MM/yyyy").format(
-                                        tickets[index]
-                                            .ticketHistory![0]
-                                            .maturedAt!,
-                                      ),
-                              progress: progress.clamp(
-                                0.0,
-                                1.0,
-                              ), // Simulated progress values
-                              ticket: tickets[index],
-                              plan: plan,
-                            )
+                child: ListView.builder(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  itemCount: tickets.length,
+                  itemBuilder: (context, index) {
+                    final start = tickets[index].openedAt!;
+                    final end =
+                        tickets[index].ticketHistory?.isNotEmpty == true
+                            ? tickets[index].ticketHistory![0].maturedAt
                             : null;
-                      },
+                    final now = DateTime.now();
+                    final _planId = tickets[index].plan?.id;
+                    // print("Ticket: $tickets");
+                    // print("Matching planId: $_planId");
+
+                    // print(plans);
+                    final plan = plans.firstWhere(
+                      (p) => p.id == _planId,
+                      orElse: () => PlanModel(id: -1, days: 0, rate: 0),
                     );
+                    final rate = plan.rate;
+
+                    double progress =
+                        end != null
+                            ? now.isBefore(start)
+                                ? 0.0
+                                : now.isAfter(end)
+                                ? 1.0
+                                : now.difference(start).inMilliseconds /
+                                    end.difference(start).inMilliseconds
+                            : 1;
+                    return tickets[index].status == "active"
+                        ? _buildSavingsPlanCard(
+                          context,
+                          index: index + 1,
+                          moneyInit:
+                              tickets[index].ticketHistory![0].principal
+                                  ?.toInt() ??
+                              0,
+                          profit:
+                              tickets[index].ticketHistory![0].interest
+                                  ?.toInt() ??
+                              0,
+                          profitPercentage: rate,
+                          startDate: DateFormat(
+                            "dd/MM/yyyy",
+                          ).format(tickets[index].openedAt!),
+                          endDate:
+                              tickets[index].ticketHistory![0].maturedAt
+                                          .toString()
+                                          .split(" ")[0] ==
+                                      "9999-12-31"
+                                  ? "Ongoing"
+                                  : DateFormat("dd/MM/yyyy").format(
+                                    tickets[index].ticketHistory![0].maturedAt!,
+                                  ),
+                          progress: progress.clamp(
+                            0.0,
+                            1.0,
+                          ), // Simulated progress values
+                          ticket: tickets[index],
+                          plan: plan,
+                        )
+                        : null;
                   },
                 ),
               ),
