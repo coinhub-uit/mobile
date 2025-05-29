@@ -21,8 +21,6 @@ class _SavingsScreenState extends State<SavingsScreen> {
   late List<TicketModel> tickets = [];
   late List<PlanModel> plans = [];
   late List<SourceModel> sources = [];
-  late int overAllRate = 0;
-  late int overAllPrincipal = 0;
 
   Future<void> _fetchPlans() async {
     final fetchedPlans = await PlanService.fetchPlans();
@@ -77,6 +75,24 @@ class _SavingsScreenState extends State<SavingsScreen> {
         print("Current ticket: $tickets");
         print("Current sources: $sources");
 
+        int totalInterest = 0;
+        int totalPrincipal = 0;
+
+        for (var ticket in tickets) {
+          if (ticket.status != "active" &&
+              ticket.ticketHistory != null &&
+              ticket.ticketHistory!.isNotEmpty) {
+            totalInterest += ticket.ticketHistory![0].interest?.toInt() ?? 0;
+            totalPrincipal += ticket.ticketHistory![0].principal?.toInt() ?? 0;
+          }
+        }
+
+        final overAllRate =
+            totalPrincipal == 0
+                ? 0
+                : ((totalInterest / totalPrincipal) * 100).round();
+        final overAllPrincipal = totalPrincipal;
+
         if (state is TicketLoading) {
           return Expanded(child: Center(child: CircularProgressIndicator()));
         }
@@ -91,13 +107,14 @@ class _SavingsScreenState extends State<SavingsScreen> {
         if (state is SourcesFetchedSuccess) {
           sources = state.sources;
         }
-        if (tickets.isEmpty || sources.isEmpty) {
-          return const Center(child: CircularProgressIndicator());
-        }
+        // if (tickets.isEmpty && sources.isNotEmpty ||
+        //     sources.isEmpty && tickets.isNotEmpty) {
+        //   return const Center(child: CircularProgressIndicator());
+        // }
         return Scaffold(
           backgroundColor: theme.colorScheme.surface,
           appBar: AppBar(
-            title: Text("Savings", style: theme.textTheme.titleLarge),
+            title: Text("Tickets", style: theme.textTheme.titleLarge),
             centerTitle: true,
             elevation: 0,
             backgroundColor: Colors.transparent,
@@ -317,10 +334,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      "Your Savings Plans",
-                      style: theme.textTheme.titleLarge,
-                    ),
+                    Text("Your Tickets", style: theme.textTheme.titleLarge),
                     TextButton.icon(
                       onPressed: () {
                         // View all savings plans
@@ -380,26 +394,12 @@ class _SavingsScreenState extends State<SavingsScreen> {
                         // print("Matching planId: $_planId");
 
                         // print(plans);
-                        final rate =
-                            plans
-                                .firstWhere(
-                                  (p) => p.id == _planId,
-                                  orElse:
-                                      () => PlanModel(id: -1, days: 0, rate: 0),
-                                )
-                                .rate;
-                        overAllRate +=
-                            tickets[index].status != "active"
-                                ? tickets[index].ticketHistory![0].interest
-                                        ?.toInt() ??
-                                    0
-                                : 0;
-                        overAllPrincipal +=
-                            tickets[index].status != "active"
-                                ? tickets[index].ticketHistory![0].principal
-                                        ?.toInt() ??
-                                    0
-                                : 0;
+                        final plan = plans.firstWhere(
+                          (p) => p.id == _planId,
+                          orElse: () => PlanModel(id: -1, days: 0, rate: 0),
+                        );
+                        final rate = plan.rate;
+
                         double progress =
                             end != null
                                 ? now.isBefore(start)
@@ -422,18 +422,26 @@ class _SavingsScreenState extends State<SavingsScreen> {
                                       ?.toInt() ??
                                   0,
                               profitPercentage: rate,
-                              startDate:
-                                  tickets[index].openedAt.toString().split(
-                                    " ",
-                                  )[0],
+                              startDate: DateFormat(
+                                "dd/MM/yyyy",
+                              ).format(tickets[index].openedAt!),
                               endDate:
                                   tickets[index].ticketHistory![0].maturedAt
-                                      .toString()
-                                      .split(" ")[0],
+                                              .toString()
+                                              .split(" ")[0] ==
+                                          "9999-12-31"
+                                      ? "Ongoing"
+                                      : DateFormat("dd/MM/yyyy").format(
+                                        tickets[index]
+                                            .ticketHistory![0]
+                                            .maturedAt!,
+                                      ),
                               progress: progress.clamp(
                                 0.0,
                                 1.0,
                               ), // Simulated progress values
+                              ticket: tickets[index],
+                              plan: plan,
                             )
                             : null;
                       },
@@ -514,6 +522,8 @@ class _SavingsScreenState extends State<SavingsScreen> {
     required String startDate,
     required String endDate,
     required double progress,
+    required TicketModel ticket,
+    required PlanModel plan,
   }) {
     final theme = Theme.of(context);
     final currencyFormat = NumberFormat.currency(
@@ -541,7 +551,14 @@ class _SavingsScreenState extends State<SavingsScreen> {
         child: InkWell(
           borderRadius: BorderRadius.circular(16),
           onTap: () {
-            // View savings plan details
+            final reload = context.push(
+              Routes.transaction.ticketDetail,
+              extra: {"ticket": ticket, "plan": plan},
+            );
+            if (reload == true) {
+              // ignore: use_build_context_synchronously
+              context.read<UserBloc>().add(TicketsFetching(widget.model.id));
+            }
           },
           child: Padding(
             padding: const EdgeInsets.all(16),
@@ -561,7 +578,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(
-                        "Plan #$index",
+                        "Ticket #$index",
                         style: theme.textTheme.labelMedium?.copyWith(
                           color: theme.primaryColor,
                           fontWeight: FontWeight.bold,

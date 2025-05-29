@@ -1,4 +1,6 @@
+import "package:coinhub/models/plan_model.dart";
 import "package:coinhub/models/source_model.dart";
+import "package:coinhub/models/ticket_model.dart";
 import "package:coinhub/models/user_model.dart";
 import "package:coinhub/presentation/screen/account/create_pin_screen.dart";
 import "package:coinhub/presentation/screen/auth/forgot_password_screen.dart";
@@ -18,6 +20,7 @@ import "package:coinhub/presentation/screen/transaction/add_source_screen.dart";
 import "package:coinhub/presentation/screen/transaction/deposit_screen.dart";
 import "package:coinhub/presentation/screen/transaction/saving_plan_screen.dart";
 import "package:coinhub/presentation/screen/transaction/source_details_screen.dart";
+import "package:coinhub/presentation/screen/transaction/ticket_detail_screen.dart";
 import "package:coinhub/presentation/screen/transaction/withdraw_screen.dart";
 import "package:coinhub/presentation/screen/transaction/transfer_screen.dart";
 import "package:flutter/material.dart";
@@ -153,6 +156,16 @@ class RouteRouter {
         builder: (context, state) {
           final model = state.extra as SourceModel;
           return SourceDetailsScreen(model: model);
+        },
+      ),
+      GoRoute(
+        name: "ticket-detail",
+        path: Routes.transaction.ticketDetail,
+        builder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>;
+          final ticket = extra["ticket"] as TicketModel;
+          final plan = extra["plan"] as PlanModel;
+          return TicketDetailsScreen(ticketModel: ticket, planModel: plan);
         },
       ),
       // Settings routes

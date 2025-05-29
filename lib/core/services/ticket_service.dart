@@ -42,4 +42,31 @@ class TicketService {
       },
     );
   }
+
+  static Future<http.Response> withdrawTicket(int ticketId) async {
+    final accessToken = await LocalStorageService().read("JWT");
+    if (accessToken == null) {
+      throw Exception("Session not found");
+    }
+
+    try {
+      final response = await ApiClient.client.get(
+        Uri.parse("${ApiClient.ticketEndpoint}/$ticketId/withdraw"),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $accessToken",
+        },
+      );
+      print("Response status: ${response.statusCode}");
+      print("Response body: ${response.body}");
+      if (response.statusCode == 200) {
+        return response;
+      } else {
+        throw Exception("Failed to withdraw ticket: ${response.statusCode}");
+      }
+    } catch (e) {
+      print("Error withdrawing ticket: $e");
+      return Future.error("Failed to withdraw ticket: $e");
+    }
+  }
 }

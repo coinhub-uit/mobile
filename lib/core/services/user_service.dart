@@ -273,6 +273,7 @@ class UserService {
         "Authorization": "Bearer $accessToken",
       },
     );
+    print("response: ${response.body}");
 
     if (response.statusCode == 200) {
       final List<dynamic> decoded = jsonDecode(response.body);
