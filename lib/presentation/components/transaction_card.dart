@@ -44,7 +44,7 @@ class _TransactionCardState extends State<TransactionCard> {
 
     return BlocBuilder<UserBloc, UserState>(
       builder: (context, state) {
-        if (state is SourceError) {
+        if (state is SourcesError) {
           return Center(
             child: Text(
               "Error loading sources",
@@ -52,10 +52,10 @@ class _TransactionCardState extends State<TransactionCard> {
             ),
           );
         }
-        if (state is SourceLoading) {
+        if (state is SourcesLoading) {
           return const Center(child: CircularProgressIndicator());
         }
-        if (state is SourceFetchedSuccess) {
+        if (state is SourcesFetchedSuccess) {
           sources = state.sources;
           if (sources.isEmpty) {
             return Center(

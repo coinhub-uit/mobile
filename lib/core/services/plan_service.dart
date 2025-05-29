@@ -24,7 +24,8 @@ class PlanService {
       print("Decoded plans length: ${decoded.length}");
       return decoded.map((plan) => PlanModel.fromJson(plan)).toList();
     } else {
-      throw Exception("Failed to fetch plans: ${response.statusCode}");
+      //throw Exception("Failed to fetch plans: ${response.statusCode}");
+      return [];
     }
   }
 

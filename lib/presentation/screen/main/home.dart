@@ -250,20 +250,20 @@ class HomeScreenContent extends StatelessWidget {
 
     return BlocConsumer<UserBloc, UserState>(
       listener: (context, state) {
-        if (state is SourceError) {
+        if (state is SourcesError) {
           ScaffoldMessenger.of(
             context,
           ).showSnackBar(SnackBar(content: Text(state.error)));
         }
       },
       builder: (context, state) {
-        if (state is SourceLoading) {
+        if (state is SourcesLoading) {
           return const Center(child: CircularProgressIndicator());
         }
-        if (state is SourceError) {
+        if (state is SourcesError) {
           return Center(child: Text(state.error));
         }
-        if (state is SourceFetchedSuccess) {
+        if (state is SourcesFetchedSuccess) {
           final List<SourceModel> sources = state.sources;
           if (sources.isEmpty) {
             return GestureDetector(
@@ -397,6 +397,14 @@ class HomeScreenContent extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          Text(
+                            source.id,
+                            style: theme.textTheme.titleMedium?.copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20,
+                            ),
+                          ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -404,14 +412,6 @@ class HomeScreenContent extends StatelessWidget {
                                 "Total Balance",
                                 style: theme.textTheme.bodyMedium?.copyWith(
                                   color: Colors.white.withAlpha(204),
-                                ),
-                              ),
-                              Text(
-                                source.id,
-                                style: theme.textTheme.titleMedium?.copyWith(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 20,
                                 ),
                               ),
                             ],
@@ -454,7 +454,6 @@ class HomeScreenContent extends StatelessWidget {
                               ),
                             ],
                           ),
-                          const SizedBox(height: 16),
                           Align(
                             alignment: Alignment.centerRight,
                             child: Row(

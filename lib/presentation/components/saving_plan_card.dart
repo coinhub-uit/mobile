@@ -120,12 +120,12 @@ class SavingPlanCardState extends State<SavingPlanCard> {
             if (state is SourcesFetching) {
               return const Center(child: CircularProgressIndicator());
             }
-            if (state is SourceError) {
+            if (state is SourcesError) {
               return Center(
                 child: Text(state.error, style: TextStyle(color: Colors.red)),
               );
             }
-            if (state is SourceFetchedSuccess) {
+            if (state is SourcesFetchedSuccess) {
               sources = state.sources;
             } else {
               sources = [];

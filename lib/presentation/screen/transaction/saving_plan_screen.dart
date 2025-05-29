@@ -59,12 +59,18 @@ class _SavingPlanScreenState extends State<SavingPlanScreen> {
       );
       // This is where you would typically call your backend API
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Saving plan created successfully!")),
+        const SnackBar(
+          content: Text("Saving plan created successfully!"),
+          backgroundColor: Colors.green,
+        ),
       );
       Navigator.of(context).pop(); // Close the screen after creation
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Please fill in all fields correctly.")),
+        const SnackBar(
+          content: Text("Please fill in all fields correctly."),
+          backgroundColor: Colors.red,
+        ),
       );
     }
   }

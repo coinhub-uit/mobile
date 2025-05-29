@@ -74,18 +74,18 @@ class UserBloc extends Bloc<UserEvent, UserState> {
       }
     });
     on<SourcesFetching>((event, emit) async {
-      emit(SourceLoading());
+      emit(SourcesLoading());
       try {
         print("Fetching sources for user: ${event.userId}");
         final response = await UserService.fetchSources(event.userId);
         if (response.isNotEmpty) {
-          emit(SourceFetchedSuccess(response));
+          emit(SourcesFetchedSuccess(response));
           print("Fetched sources: $response");
         } else {
-          emit(SourceFetchedSuccess(response));
+          emit(SourcesFetchedSuccess(response));
         }
       } catch (e) {
-        emit(SourceError(e.toString()));
+        emit(SourcesError(e.toString()));
       }
     });
     on<TicketsFetching>((event, emit) async {
