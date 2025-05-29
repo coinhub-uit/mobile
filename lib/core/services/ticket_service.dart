@@ -69,4 +69,29 @@ class TicketService {
       return Future.error("Failed to withdraw ticket: $e");
     }
   }
+
+  static Future<http.Response> getSourceId(int ticketId) async {
+    final accessToken = await LocalStorageService().read("JWT");
+    if (accessToken == null) {
+      throw Exception("Session not found");
+    }
+
+    try {
+      final response = await ApiClient.client.post(
+        Uri.parse("${ApiClient.ticketEndpoint}/$ticketId/sources"),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $accessToken",
+        },
+      );
+      if (response.statusCode == 201) {
+        return response;
+      } else {
+        throw Exception("Failed to fetch source ID: ${response.statusCode}");
+      }
+    } catch (e) {
+      print("Error fetching source ID: $e");
+      return Future.error("Failed to fetch source ID: $e");
+    }
+  }
 }

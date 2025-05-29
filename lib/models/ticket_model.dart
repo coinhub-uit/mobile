@@ -9,7 +9,7 @@ class TicketModel {
   final String? status;
   final String method;
   final int planHistoryId;
-  final String sourceId;
+  String sourceId;
   final int amount;
   final List<TicketHistoryModel>? ticketHistory;
   final PlanModel? plan;

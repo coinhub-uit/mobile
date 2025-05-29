@@ -19,6 +19,8 @@ class SavingsScreen extends StatefulWidget {
 
 class _SavingsScreenState extends State<SavingsScreen> {
   late List<TicketModel> tickets = [];
+  late List<TicketModel> allTickets = [];
+
   late List<PlanModel> plans = [];
   late List<SourceModel> sources = [];
 
@@ -39,6 +41,19 @@ class _SavingsScreenState extends State<SavingsScreen> {
     _fetchPlans();
   }
 
+  void _sortByTime() {
+    setState(() {
+      tickets.sort((a, b) => a.openedAt!.compareTo(b.openedAt!));
+    });
+  }
+
+  void _filterBySource(String sourceId) {
+    setState(() {
+      tickets =
+          allTickets.where((ticket) => ticket.sourceId == sourceId).toList();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -53,7 +68,8 @@ class _SavingsScreenState extends State<SavingsScreen> {
         if (state is TicketFetchedSuccess) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             setState(() {
-              tickets = state.tickets;
+              allTickets = List.from(state.tickets);
+              tickets = List.from(state.tickets);
             });
           });
         } else if (state is SourcesFetchedSuccess) {
@@ -72,8 +88,8 @@ class _SavingsScreenState extends State<SavingsScreen> {
         }
       },
       builder: (context, state) {
-        print("Current ticket: $tickets");
-        print("Current sources: $sources");
+        // print("Current ticket: $tickets");
+        // print("Current sources: $sources");
 
         int totalInterest = 0;
         int totalPrincipal = 0;
@@ -101,12 +117,6 @@ class _SavingsScreenState extends State<SavingsScreen> {
         } else if (state is TicketError) {
           return Center(child: Text("Error: ${state.error}"));
         }
-        if (state is TicketFetchedSuccess) {
-          tickets = state.tickets;
-        }
-        if (state is SourcesFetchedSuccess) {
-          sources = state.sources;
-        }
         // if (tickets.isEmpty && sources.isNotEmpty ||
         //     sources.isEmpty && tickets.isNotEmpty) {
         //   return const Center(child: CircularProgressIndicator());
@@ -132,113 +142,136 @@ class _SavingsScreenState extends State<SavingsScreen> {
                       itemCount: sources.length,
 
                       itemBuilder: (context, index) {
-                        return Container(
-                          width: MediaQuery.of(context).size.width - 48,
-                          margin: const EdgeInsets.fromLTRB(24, 24, 24, 16),
-                          padding: const EdgeInsets.all(24),
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [
-                                theme.primaryColor,
-                                theme.primaryColor.withBlue(255),
+                        final activePlans =
+                            tickets
+                                .where(
+                                  (ticket) =>
+                                      ticket.sourceId == sources[index].id,
+                                )
+                                .toList();
+                        return GestureDetector(
+                          onTap: () async {
+                            final reload = await context.push(
+                              Routes.transaction.sourceDetails,
+                              extra: sources[index],
+                            );
+                            if (reload == true) {
+                              // ignore: use_build_context_synchronously
+                              context.read<UserBloc>().add(
+                                TicketsFetching(widget.model.id),
+                              );
+                            }
+                          },
+                          child: Container(
+                            width: MediaQuery.of(context).size.width - 48,
+                            margin: const EdgeInsets.fromLTRB(24, 24, 24, 16),
+                            padding: const EdgeInsets.all(24),
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [
+                                  theme.primaryColor,
+                                  theme.primaryColor.withBlue(255),
+                                ],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                              ),
+                              borderRadius: BorderRadius.circular(24),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: theme.primaryColor.withAlpha(51),
+                                  blurRadius: 15,
+                                  spreadRadius: 2,
+                                  offset: const Offset(0, 6),
+                                ),
                               ],
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
                             ),
-                            borderRadius: BorderRadius.circular(24),
-                            boxShadow: [
-                              BoxShadow(
-                                color: theme.primaryColor.withAlpha(51),
-                                blurRadius: 15,
-                                spreadRadius: 2,
-                                offset: const Offset(0, 6),
-                              ),
-                            ],
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                sources[index].id,
-                                style: theme.textTheme.titleMedium?.copyWith(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 20,
-                                ),
-                              ),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    "Total Savings:",
-                                    style: theme.textTheme.bodyMedium?.copyWith(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w500,
-                                    ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  sources[index].id,
+                                  style: theme.textTheme.titleMedium?.copyWith(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 20,
                                   ),
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 12,
-                                      vertical: 6,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white.withAlpha(51),
-                                      borderRadius: BorderRadius.circular(16),
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        const Icon(
-                                          Icons.arrow_upward,
-                                          color: Colors.white,
-                                          size: 14,
-                                        ),
-                                        const SizedBox(width: 4),
-                                        Text(
-                                          currencyFormat.format(
-                                            overAllPrincipal,
+                                ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      "Total Savings:",
+                                      style: theme.textTheme.bodyMedium
+                                          ?.copyWith(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w500,
                                           ),
-                                          style: theme.textTheme.labelMedium
-                                              ?.copyWith(
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                        ),
-                                      ],
                                     ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 6),
-                              Text(
-                                currencyFormat.format(
-                                  int.parse(sources[index].balance ?? "0"),
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 12,
+                                        vertical: 6,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white.withAlpha(51),
+                                        borderRadius: BorderRadius.circular(16),
+                                      ),
+                                      child: Row(
+                                        children: [
+                                          const Icon(
+                                            Icons.arrow_upward,
+                                            color: Colors.white,
+                                            size: 14,
+                                          ),
+                                          const SizedBox(width: 4),
+                                          Text(
+                                            currencyFormat.format(
+                                              overAllPrincipal,
+                                            ),
+                                            style: theme.textTheme.labelMedium
+                                                ?.copyWith(
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                                style: theme.textTheme.headlineLarge?.copyWith(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
+                                const SizedBox(height: 6),
+                                Text(
+                                  currencyFormat.format(
+                                    int.parse(sources[index].balance ?? "0"),
+                                  ),
+                                  style: theme.textTheme.headlineLarge
+                                      ?.copyWith(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                 ),
-                              ),
-                              const SizedBox(height: 16),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  _buildSummaryItem(
-                                    context,
-                                    icon: Icons.account_balance,
-                                    label: "Active Plans",
-                                    value: "${tickets.length}",
-                                  ),
-                                  _buildSummaryItem(
-                                    context,
-                                    icon: Icons.trending_up,
-                                    label: "Avg. Interest",
-                                    value: "$overAllRate%",
-                                  ),
-                                ],
-                              ),
-                            ],
+                                const SizedBox(height: 16),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    _buildSummaryItem(
+                                      context,
+                                      icon: Icons.account_balance,
+                                      label: "Active Plans",
+                                      value: "${activePlans.length}",
+                                    ),
+                                    _buildSummaryItem(
+                                      context,
+                                      icon: Icons.trending_up,
+                                      label: "Avg. Interest",
+                                      value: "$overAllRate%",
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
                           ),
                         );
                       },
@@ -337,8 +370,56 @@ class _SavingsScreenState extends State<SavingsScreen> {
                     Text("Your Tickets", style: theme.textTheme.titleLarge),
                     TextButton.icon(
                       onPressed: () {
-                        // View all savings plans
+                        showModalBottomSheet(
+                          context: context,
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.vertical(
+                              top: Radius.circular(16),
+                            ),
+                          ),
+                          builder: (context) {
+                            return Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                ListTile(
+                                  leading: const Icon(Icons.access_time),
+                                  title: const Text("Sort by Creation Time"),
+                                  onTap: () {
+                                    Navigator.pop(context);
+                                    _sortByTime();
+                                  },
+                                ),
+                                const Divider(),
+                                ...sources.map((source) {
+                                  return ListTile(
+                                    leading: const Icon(
+                                      Icons.account_balance_wallet,
+                                    ),
+                                    title: Text(
+                                      "Filter by Source: ${source.id}",
+                                    ),
+                                    onTap: () {
+                                      Navigator.pop(context);
+                                      _filterBySource(source.id);
+                                    },
+                                  );
+                                }),
+                                ListTile(
+                                  leading: const Icon(Icons.clear),
+                                  title: const Text("Show All Tickets"),
+                                  onTap: () {
+                                    Navigator.pop(context);
+                                    setState(() {
+                                      tickets = List.from(allTickets);
+                                    });
+                                  },
+                                ),
+                              ],
+                            );
+                          },
+                        );
                       },
+
                       icon: const Icon(Icons.sort, size: 18),
                       label: const Text("Sort"),
                       style: TextButton.styleFrom(
@@ -375,10 +456,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
                       return const Center(child: CircularProgressIndicator());
                     } else if (state is TicketError) {
                       return Center(child: Text("Error: ${state.error}"));
-                    } else if (state is TicketFetchedSuccess) {
-                      tickets = state.tickets;
                     }
-
                     return ListView.builder(
                       padding: const EdgeInsets.symmetric(horizontal: 24),
                       itemCount: tickets.length,

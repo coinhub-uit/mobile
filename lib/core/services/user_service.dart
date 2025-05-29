@@ -3,6 +3,7 @@ import "dart:io";
 
 import "package:coinhub/core/constants/api_client.dart";
 import "package:coinhub/core/services/local_storage.dart";
+import "package:coinhub/core/services/ticket_service.dart";
 import "package:coinhub/models/source_model.dart";
 import "package:coinhub/models/ticket_model.dart";
 import "package:coinhub/models/user_model.dart";
@@ -278,7 +279,15 @@ class UserService {
     if (response.statusCode == 200) {
       final List<dynamic> decoded = jsonDecode(response.body);
       print("Decoded tickets: $decoded");
-      return decoded.map((ticket) => TicketModel.fromMap(ticket)).toList();
+      final ticketsList =
+          decoded.map((ticket) => TicketModel.fromMap(ticket)).toList();
+      for (final ticket in ticketsList) {
+        print("Ticket ID: ${ticket.id}");
+        final fetchedSourceId = await TicketService.getSourceId(ticket.id!);
+        print("Fetched source ID: ${fetchedSourceId.body}");
+        ticket.sourceId = fetchedSourceId.body;
+      }
+      return ticketsList;
     } else if (response.contentLength == 0) {
       return [];
     } else {
