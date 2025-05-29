@@ -1,5 +1,6 @@
 import "package:coinhub/core/bloc/user/user_logic.dart";
 import "package:coinhub/models/user_model.dart";
+import "package:coinhub/presentation/routes/routes.dart";
 import "package:flutter/material.dart";
 import "package:flutter_bloc/flutter_bloc.dart";
 import "package:intl/intl.dart";
@@ -286,9 +287,22 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
                         _buildTextField(
                           controller: controllerAddress,
                           label: "Address",
-                          icon: Icons.location_on_outlined,
+                          icon: Icons.home_outlined,
+                          readOnly: false, // allow typing
                           onSaved: (value) {
                             newUserModel.address = value ?? "";
+                          },
+                          onMapPick: () async {
+                            final result = await context.push(
+                              Routes.common.locationPicker,
+                            );
+                            if (result != null && result is Map) {
+                              final String address = result["address"];
+                              setState(() {
+                                controllerAddress.text = address;
+                                newUserModel.address = address;
+                              });
+                            }
                           },
                         ),
 
@@ -344,6 +358,8 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
     TextInputType? keyboardType,
     String? Function(String?)? validator,
     void Function(String?)? onSaved,
+    bool readOnly = false,
+    Future<void> Function()? onMapPick, // <-- optional handler
   }) {
     final theme = Theme.of(context);
 
@@ -351,12 +367,22 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
       controller: controller,
       validator: validator,
       onSaved: onSaved,
+      readOnly: readOnly,
+      onTap: readOnly && onMapPick != null ? () => onMapPick() : null,
       keyboardType: keyboardType,
       style: theme.textTheme.bodyLarge,
       decoration: InputDecoration(
         labelText: label,
         labelStyle: TextStyle(color: theme.primaryColor, fontSize: 14),
         prefixIcon: Icon(icon, color: theme.primaryColor),
+        suffixIcon:
+            onMapPick != null
+                ? IconButton(
+                  icon: const Icon(Icons.location_on_outlined),
+                  tooltip: "Pick from map",
+                  onPressed: () => onMapPick(),
+                )
+                : null,
         filled: true,
         fillColor: theme.colorScheme.surface,
         enabledBorder: OutlineInputBorder(

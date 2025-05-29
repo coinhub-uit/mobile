@@ -5,6 +5,7 @@ class Routes {
   static const account = _Account();
   static const transaction = _Transaction();
   static const settings = _Settings();
+  static const common = _Common();
 }
 
 class _Auth {
@@ -49,4 +50,11 @@ class _Settings {
   String get privacy => "$root/privacy";
   String get accountDetails => "$root/account-details";
   String get advanced => "$root/advanced";
+}
+
+class _Common {
+  final String root = "/common";
+  const _Common();
+
+  String get locationPicker => "$root/location-picker";
 }
