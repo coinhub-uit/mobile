@@ -35,6 +35,9 @@ class _Transaction {
   String get withdraw => "$root/withdraw";
   String get transfer => "$root/transfer";
   String get savingPlan => "$root/new-saving-plan";
+  String get addSource => "$root/add-source";
+  String get sourceDetails => "$root/source-details";
+  String get ticketDetail => "$root/ticket-detail";
 }
 
 class _Settings {

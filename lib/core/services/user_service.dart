@@ -3,7 +3,9 @@ import "dart:io";
 
 import "package:coinhub/core/constants/api_client.dart";
 import "package:coinhub/core/services/local_storage.dart";
+import "package:coinhub/core/services/ticket_service.dart";
 import "package:coinhub/models/source_model.dart";
+import "package:coinhub/models/ticket_model.dart";
 import "package:coinhub/models/user_model.dart";
 import "package:flutter/foundation.dart";
 import "package:http/http.dart" as http;
@@ -57,6 +59,8 @@ class UserService {
     if (accessToken == null) {
       throw Exception("Access token not found");
     }
+    print("Access token: $accessToken");
+
     final user = supabaseResponse.user; // gotta get the id
     if (user == null) {
       throw Exception("User not found");
@@ -70,6 +74,8 @@ class UserService {
       citizenId: userModel.citizenId,
       address: userModel.address,
     );
+    print(jsonEncode(newUser.toJsonForRequest()));
+
     final response = await ApiClient.client.post(
       Uri.parse("${ApiClient.userEndpoint}"),
       headers: {
@@ -251,6 +257,41 @@ class UserService {
       return [];
     } else {
       throw Exception("Failed to fetch sources: ${response.statusCode}");
+    }
+  }
+
+  static Future<List<TicketModel>> fetchTickets(String userId) async {
+    final accessToken = await LocalStorageService().read("JWT");
+    if (accessToken == null) {
+      throw Exception("Session not found");
+    }
+    print("Access token: $accessToken");
+
+    final response = await ApiClient.client.get(
+      Uri.parse("${ApiClient.userEndpoint}/${userId}/tickets"),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $accessToken",
+      },
+    );
+    print("response: ${response.body}");
+
+    if (response.statusCode == 200) {
+      final List<dynamic> decoded = jsonDecode(response.body);
+      print("Decoded tickets: $decoded");
+      final ticketsList =
+          decoded.map((ticket) => TicketModel.fromMap(ticket)).toList();
+      for (final ticket in ticketsList) {
+        print("Ticket ID: ${ticket.id}");
+        final fetchedSourceId = await TicketService.getSourceId(ticket.id!);
+        print("Fetched source ID: ${fetchedSourceId.body}");
+        ticket.sourceId = fetchedSourceId.body;
+      }
+      return ticketsList;
+    } else if (response.contentLength == 0) {
+      return [];
+    } else {
+      throw Exception("Failed to fetch tickets: ${response.statusCode}");
     }
   }
 }

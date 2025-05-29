@@ -1,3 +1,6 @@
+import "package:coinhub/models/plan_model.dart";
+import "package:coinhub/models/source_model.dart";
+import "package:coinhub/models/ticket_model.dart";
 import "package:coinhub/models/user_model.dart";
 import "package:coinhub/presentation/screen/account/create_pin_screen.dart";
 import "package:coinhub/presentation/screen/auth/forgot_password_screen.dart";
@@ -13,8 +16,11 @@ import "package:coinhub/presentation/screen/setting/advance_settings_screen.dart
 import "package:coinhub/presentation/screen/setting/privacy_screen.dart";
 import "package:coinhub/presentation/screen/setting/security_screen.dart";
 import "package:coinhub/presentation/screen/setting/theme_setting_screen.dart";
+import "package:coinhub/presentation/screen/transaction/add_source_screen.dart";
 import "package:coinhub/presentation/screen/transaction/deposit_screen.dart";
 import "package:coinhub/presentation/screen/transaction/saving_plan_screen.dart";
+import "package:coinhub/presentation/screen/transaction/source_details_screen.dart";
+import "package:coinhub/presentation/screen/transaction/ticket_detail_screen.dart";
 import "package:coinhub/presentation/screen/transaction/withdraw_screen.dart";
 import "package:coinhub/presentation/screen/transaction/transfer_screen.dart";
 import "package:flutter/material.dart";
@@ -107,14 +113,16 @@ class RouteRouter {
         name: "deposit",
         path: Routes.transaction.deposit,
         builder: (context, state) {
-          return const DepositScreen();
+          final model = state.extra as UserModel;
+          return DepositScreen(model: model);
         },
       ),
       GoRoute(
         name: "withdraw",
         path: Routes.transaction.withdraw,
         builder: (context, state) {
-          return const WithdrawScreen();
+          final model = state.extra as UserModel;
+          return WithdrawScreen(model: model);
         },
       ),
       GoRoute(
@@ -128,7 +136,35 @@ class RouteRouter {
         name: "new-saving-plan",
         path: Routes.transaction.savingPlan,
         builder: (context, state) {
-          return const SavingPlanScreen();
+          // You can pass any required data through state.extra if needed
+          final model = state.extra as UserModel;
+          return SavingPlanScreen(model: model);
+        },
+      ),
+      GoRoute(
+        name: "add-source",
+        path: Routes.transaction.addSource,
+        builder: (context, state) {
+          // You can pass any required data through state.extra if needed
+          return const AddSourceScreen();
+        },
+      ),
+      GoRoute(
+        name: "source-details",
+        path: Routes.transaction.sourceDetails,
+        builder: (context, state) {
+          final model = state.extra as SourceModel;
+          return SourceDetailsScreen(model: model);
+        },
+      ),
+      GoRoute(
+        name: "ticket-detail",
+        path: Routes.transaction.ticketDetail,
+        builder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>;
+          final ticket = extra["ticket"] as TicketModel;
+          final plan = extra["plan"] as PlanModel;
+          return TicketDetailsScreen(ticketModel: ticket, planModel: plan);
         },
       ),
       // Settings routes

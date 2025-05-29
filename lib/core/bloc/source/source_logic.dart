@@ -33,5 +33,25 @@ class SourceBloc extends Bloc<SourceEvent, SourceState> {
         emit(SourceError(e.toString()));
       }
     });
+
+    on<SourceDeleting>((event, emit) async {
+      emit(SourceLoading());
+      try {
+        final response = await SourceService.deleteSource(event.sourceId);
+        if (response.statusCode == 200) {
+          emit(SourceDeletedSuccess(event.sourceId));
+        } else if (response.statusCode == 409) {
+          emit(
+            SourceError(
+              "Please make sure the source does not have any money in it.",
+            ),
+          );
+        } else {
+          emit(SourceError("Please make sure the source is not in use."));
+        }
+      } catch (e) {
+        emit(SourceError(e.toString()));
+      }
+    });
   }
 }

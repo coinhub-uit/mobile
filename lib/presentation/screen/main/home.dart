@@ -48,6 +48,9 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       _selectedIndex = index;
     });
+    if (index == 0 && isUserLoaded) {
+      BlocProvider.of<UserBloc>(context).add(SourcesFetching(userId));
+    }
   }
 
   Future<UserModel?> getUserModel(String id) async {
@@ -91,7 +94,7 @@ class _HomeScreenState extends State<HomeScreen> {
         setState(() {
           userModel = model;
         });
-        BlocProvider.of<UserBloc>(context).add(SourceFetching(userId));
+        BlocProvider.of<UserBloc>(context).add(SourcesFetching(userId));
       } else {
         debugPrint("User not logged in.");
       }
@@ -247,39 +250,34 @@ class HomeScreenContent extends StatelessWidget {
 
     return BlocConsumer<UserBloc, UserState>(
       listener: (context, state) {
-        if (state is SourceError) {
+        if (state is SourcesError) {
           ScaffoldMessenger.of(
             context,
           ).showSnackBar(SnackBar(content: Text(state.error)));
         }
       },
       builder: (context, state) {
-        if (state is SourceLoading) {
+        if (state is SourcesLoading) {
           return const Center(child: CircularProgressIndicator());
         }
-        if (state is SourceError) {
+        if (state is SourcesError) {
           return Center(child: Text(state.error));
         }
-        if (state is SourceFetchedSuccess) {
+        if (state is SourcesFetchedSuccess) {
           final List<SourceModel> sources = state.sources;
           if (sources.isEmpty) {
-            return Center(
-              child: Text(
-                "No sources found.",
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.onSurface.withAlpha(179),
-                ),
-              ),
-            );
-          }
-          return SizedBox(
-            height: 200,
-            child: ListView.builder(
-              itemCount: sources.length,
-              scrollDirection: Axis.horizontal,
-              itemBuilder: (context, index) {
-                final source = sources[index];
-                return Center(
+            return GestureDetector(
+              onTap: () async {
+                final reload = await context.push(Routes.transaction.addSource);
+                if (reload == true) {
+                  BlocProvider.of<UserBloc>(
+                    context,
+                  ).add(SourcesFetching(model.id));
+                }
+              },
+              child: SizedBox(
+                height: 210,
+                child: Center(
                   child: Container(
                     width: MediaQuery.of(context).size.width * 0.88,
                     padding: const EdgeInsets.all(24),
@@ -306,14 +304,14 @@ class HomeScreenContent extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "Total Balance",
+                          "Track your finances now by",
                           style: theme.textTheme.bodyMedium?.copyWith(
                             color: Colors.white.withAlpha(204),
                           ),
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          currencyFormat.format(int.parse(source.balance!)),
+                          "Add your first source!",
                           style: theme.textTheme.headlineLarge?.copyWith(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
@@ -334,16 +332,9 @@ class HomeScreenContent extends StatelessWidget {
                               child: Row(
                                 children: [
                                   const Icon(
-                                    Icons.arrow_upward,
+                                    Icons.add_circle_outlined,
                                     color: Color(0xFF10B981),
                                     size: 14,
-                                  ),
-                                  const SizedBox(width: 4),
-                                  Text(
-                                    "+5.5% this month",
-                                    style: theme.textTheme.labelSmall?.copyWith(
-                                      color: Colors.white,
-                                    ),
                                   ),
                                 ],
                               ),
@@ -351,6 +342,146 @@ class HomeScreenContent extends StatelessWidget {
                           ],
                         ),
                       ],
+                    ),
+                  ),
+                ),
+              ),
+            );
+          }
+          return SizedBox(
+            height: 210,
+            child: ListView.builder(
+              itemCount: sources.length,
+              scrollDirection: Axis.horizontal,
+              itemBuilder: (context, index) {
+                final source = sources[index];
+                return Padding(
+                  padding: EdgeInsets.only(
+                    right: index == sources.length - 1 ? 0 : 8,
+                    left: index == 0 ? 0 : 8,
+                  ),
+                  child: GestureDetector(
+                    onTap: () async {
+                      final reload = await context.push(
+                        Routes.transaction.sourceDetails,
+                        extra: source,
+                      );
+                      if (reload == true) {
+                        BlocProvider.of<UserBloc>(
+                          context,
+                        ).add(SourcesFetching(model.id));
+                      }
+                    },
+                    child: Container(
+                      width: MediaQuery.of(context).size.width * 0.88,
+                      padding: const EdgeInsets.all(24),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            theme.primaryColor,
+                            theme.primaryColor.withBlue(255),
+                          ],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        borderRadius: BorderRadius.circular(16),
+                        boxShadow: [
+                          BoxShadow(
+                            color: theme.primaryColor.withAlpha(77),
+                            blurRadius: 10,
+                            spreadRadius: 0,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            source.id,
+                            style: theme.textTheme.titleMedium?.copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20,
+                            ),
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                "Total Balance",
+                                style: theme.textTheme.bodyMedium?.copyWith(
+                                  color: Colors.white.withAlpha(204),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            currencyFormat.format(int.parse(source.balance!)),
+                            style: theme.textTheme.headlineLarge?.copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 10,
+                                  vertical: 6,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withAlpha(26),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Row(
+                                  children: [
+                                    const Icon(
+                                      Icons.arrow_upward,
+                                      color: Color(0xFF10B981),
+                                      size: 14,
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      "+5.5% this month",
+                                      style: theme.textTheme.labelSmall
+                                          ?.copyWith(color: Colors.white),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  sources.length > 1 &&
+                                          index < sources.length - 1
+                                      ? Icons.arrow_right_rounded
+                                      : null,
+                                  color: Color(0xFF10B981),
+                                  size: 14,
+                                ),
+                                const SizedBox(width: 4),
+                                Text(
+                                  sources.length > 1 &&
+                                          index < sources.length - 1
+                                      ? "Swipe left to see other sources"
+                                      : "",
+                                  style: theme.textTheme.bodyMedium?.copyWith(
+                                    color: Colors.white.withAlpha(204),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 );
@@ -383,18 +514,23 @@ class HomeScreenContent extends StatelessWidget {
               color: const Color(0xFF10B981),
               width: (screenSize.width - 56) / 2,
               onTap: () {
-                context.push(Routes.transaction.deposit);
+                context.push(Routes.transaction.deposit, extra: model);
               },
             ),
             const SizedBox(width: 8),
             _buildActionButton(
               context,
-              icon: Icons.arrow_upward_rounded,
-              label: "Withdraw",
+              icon: Icons.add_card_rounded,
+              label: "Add New Source",
               color: theme.colorScheme.onSurface.withAlpha(153),
               width: (screenSize.width - 56) / 2,
-              onTap: () {
-                context.push(Routes.transaction.withdraw);
+              onTap: () async {
+                final reload = await context.push(Routes.transaction.addSource);
+                if (reload == true) {
+                  BlocProvider.of<UserBloc>(
+                    context,
+                  ).add(SourcesFetching(model.id));
+                }
               },
             ),
           ],
@@ -412,7 +548,7 @@ class HomeScreenContent extends StatelessWidget {
               color: const Color(0xFF8B5CF6),
               width: (screenSize.width - 48),
               onTap: () {
-                context.push(Routes.transaction.savingPlan);
+                context.push(Routes.transaction.savingPlan, extra: model);
               },
             ),
           ],

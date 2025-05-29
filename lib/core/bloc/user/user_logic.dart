@@ -1,7 +1,7 @@
 import "package:coinhub/core/services/auth_service.dart";
-import "package:coinhub/core/services/source_service.dart";
 import "package:coinhub/core/services/user_service.dart";
 import "package:coinhub/models/source_model.dart";
+import "package:coinhub/models/ticket_model.dart";
 import "package:coinhub/models/user_model.dart";
 import "package:flutter_bloc/flutter_bloc.dart";
 
@@ -20,18 +20,20 @@ class UserBloc extends Bloc<UserEvent, UserState> {
         );
 
         if (response.statusCode == 201) {
-          final sourceId = event.sourceId;
-          try {
-            await SourceService.createSource(sourceId);
-          } catch (e) {
-            // If source does not exist, create it
-            print("Source not found, creating new source: $sourceId");
-          }
+          // final sourceId = event.sourceId;
+          // try {
+          //   await SourceService.createSource(sourceId);
+          // } catch (e) {
+          //   // If source does not exist, create it
+          //   print("Source not found, creating new source: $sourceId");
+          // }
           emit(SignUpDetailsSuccess());
         } else {
+          print("Failed to create user: ${response.statusCode}");
           emit(SignUpDetailsError("Failed to create user"));
         }
       } catch (e) {
+        print("Error during sign up details submission: $e");
         emit(SignUpDetailsError(e.toString()));
       }
     });
@@ -71,19 +73,34 @@ class UserBloc extends Bloc<UserEvent, UserState> {
         emit(DeleteAccountError(e.toString()));
       }
     });
-    on<SourceFetching>((event, emit) async {
-      emit(SourceLoading());
+    on<SourcesFetching>((event, emit) async {
+      emit(SourcesLoading());
       try {
         print("Fetching sources for user: ${event.userId}");
         final response = await UserService.fetchSources(event.userId);
         if (response.isNotEmpty) {
-          emit(SourceFetchedSuccess(response));
+          emit(SourcesFetchedSuccess(response));
           print("Fetched sources: $response");
         } else {
-          emit(SourceError("No sources found for user ${event.userId}"));
+          emit(SourcesFetchedSuccess(response));
         }
       } catch (e) {
-        emit(SourceError(e.toString()));
+        emit(SourcesError(e.toString()));
+      }
+    });
+    on<TicketsFetching>((event, emit) async {
+      emit(TicketLoading());
+      try {
+        print("Fetching tickets for user: ${event.userId}");
+        final response = await UserService.fetchTickets(event.userId);
+        if (response.isNotEmpty) {
+          emit(TicketFetchedSuccess(response));
+          print("Fetched tickets: $response");
+        } else {
+          emit(TicketFetchedSuccess(response));
+        }
+      } catch (e) {
+        emit(TicketError(e.toString()));
       }
     });
   }

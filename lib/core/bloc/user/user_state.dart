@@ -61,16 +61,31 @@ class DeleteAccountError extends UserState {
 class DeleteAccountSuccess extends UserState {}
 
 // get sources states
-class SourceFetchedSuccess extends UserState {
+class SourcesFetchedSuccess extends UserState {
   final List<SourceModel> sources;
 
-  SourceFetchedSuccess(this.sources);
+  SourcesFetchedSuccess(this.sources);
 }
 
-class SourceLoading extends UserState {}
+class SourcesLoading extends UserState {}
 
-class SourceError extends UserState {
+class SourcesError extends UserState {
   final String error;
 
-  SourceError(this.error);
+  SourcesError(this.error);
+}
+
+// get tickets states
+class TicketFetchedSuccess extends UserState {
+  final List<TicketModel> tickets;
+
+  TicketFetchedSuccess(this.tickets);
+}
+
+class TicketLoading extends UserState {}
+
+class TicketError extends UserState {
+  final String error;
+
+  TicketError(this.error);
 }

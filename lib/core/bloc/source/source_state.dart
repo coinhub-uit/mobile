@@ -19,3 +19,9 @@ class SourceCreatedSuccess extends SourceState {
 
   SourceCreatedSuccess(this.sourceId);
 }
+
+class SourceDeletedSuccess extends SourceState {
+  final String sourceId;
+
+  SourceDeletedSuccess(this.sourceId);
+}

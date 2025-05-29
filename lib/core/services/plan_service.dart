@@ -24,7 +24,38 @@ class PlanService {
       print("Decoded plans length: ${decoded.length}");
       return decoded.map((plan) => PlanModel.fromJson(plan)).toList();
     } else {
-      throw Exception("Failed to fetch plans: ${response.statusCode}");
+      //throw Exception("Failed to fetch plans: ${response.statusCode}");
+      return [];
+    }
+  }
+
+  static Future<PlanModel?> fetchPlan(int planId) async {
+    final accessToken = await LocalStorageService().read("JWT");
+    if (accessToken == null) {
+      throw Exception("Session not found");
+    }
+
+    final uri = Uri.parse(
+      "${ApiClient.planEndpoint}/$planId",
+    ).replace(queryParameters: {'allHistories': 'false'});
+
+    final response = await ApiClient.client.get(
+      uri,
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $accessToken",
+      },
+    );
+
+    print("Fetching plan with ID: $planId");
+    print("Response status code: ${response.statusCode}");
+    print("Response body: ${response.body}");
+
+    if (response.statusCode == 200) {
+      final decoded = jsonDecode(response.body);
+      return PlanModel.fromJson(decoded);
+    } else {
+      throw Exception("Failed to fetch plan: ${response.statusCode}");
     }
   }
 }

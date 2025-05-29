@@ -4,4 +4,10 @@ abstract class PlanEvent {
   const PlanEvent();
 }
 
-class PlanFetching extends PlanEvent {}
+class PlansFetching extends PlanEvent {}
+
+class PlanFetching extends PlanEvent {
+  final int planId;
+
+  const PlanFetching(this.planId);
+}

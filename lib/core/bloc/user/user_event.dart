@@ -8,12 +8,10 @@ class SignUpDetailsSubmitted extends UserEvent {
   final UserModel userModel;
   final String userEmail;
   final String userPassword;
-  final String sourceId;
   const SignUpDetailsSubmitted(
     this.userModel,
     this.userEmail,
     this.userPassword,
-    this.sourceId,
   );
 }
 
@@ -32,7 +30,12 @@ class DeleteAccountRequested extends UserEvent {
   const DeleteAccountRequested(this.userId);
 }
 
-class SourceFetching extends UserEvent {
+class SourcesFetching extends UserEvent {
   final String userId;
-  const SourceFetching(this.userId);
+  const SourcesFetching(this.userId);
+}
+
+class TicketsFetching extends UserEvent {
+  final String userId;
+  const TicketsFetching(this.userId);
 }

@@ -12,10 +12,10 @@ class PlanError extends PlanState {
   PlanError(this.message);
 }
 
-class PlanFetchedSuccess extends PlanState {
+class PlansFetchedSuccess extends PlanState {
   final List<PlanModel> plans;
 
-  PlanFetchedSuccess(this.plans);
+  PlansFetchedSuccess(this.plans);
 }
 
 class PlanUpdatedSuccess extends PlanState {
@@ -24,10 +24,16 @@ class PlanUpdatedSuccess extends PlanState {
   PlanUpdatedSuccess(this.updatedPlan);
 }
 
-class PlanFetchedError extends PlanState {
+class PlansFetchedError extends PlanState {
   final String message;
 
-  PlanFetchedError(this.message);
+  PlansFetchedError(this.message);
 }
 
-class PlanFetchingLoading extends PlanState {}
+class PlansFetchedLoading extends PlanState {}
+
+class PlanFetchedSuccess extends PlanState {
+  final PlanModel plan;
+
+  PlanFetchedSuccess(this.plan);
+}
