@@ -130,7 +130,8 @@ class RouteRouter {
         name: "transfer",
         path: Routes.transaction.transfer,
         builder: (context, state) {
-          return const TransferScreen();
+          final model = state.extra as UserModel;
+          return TransferScreen(model: model);
         },
       ),
       GoRoute(

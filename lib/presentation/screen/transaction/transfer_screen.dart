@@ -1,10 +1,12 @@
+import "package:coinhub/models/user_model.dart";
+import "package:coinhub/presentation/components/transfer_card.dart";
 import "package:flutter/material.dart";
-import "package:flutter/services.dart";
 import "package:intl/intl.dart";
 import "package:go_router/go_router.dart";
 
 class TransferScreen extends StatefulWidget {
-  const TransferScreen({super.key});
+  final UserModel model;
+  const TransferScreen({super.key, required this.model});
 
   @override
   State<TransferScreen> createState() => _TransferScreenState();
@@ -12,24 +14,19 @@ class TransferScreen extends StatefulWidget {
 
 class _TransferScreenState extends State<TransferScreen> {
   final TextEditingController _amountController = TextEditingController();
-  final TextEditingController _recipientController = TextEditingController();
   final TextEditingController _noteController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-
-  // Mock balance for demonstration
-  final double _balance = 21987000;
 
   @override
   void dispose() {
     _amountController.dispose();
-    _recipientController.dispose();
     _noteController.dispose();
     super.dispose();
   }
 
   void _processTransfer() {
     if (_formKey.currentState!.validate()) {
-      // Process transfer logic would go here
+      // Process deposit logic would go here
 
       // Show success dialog
       showDialog(
@@ -56,7 +53,7 @@ class _TransferScreenState extends State<TransferScreen> {
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  "Your transfer of ${NumberFormat.currency(locale: 'vi_VN', symbol: 'đ', decimalDigits: 0).format(double.parse(_amountController.text))} to ${_recipientController.text} has been processed successfully.",
+                  "Your transfer of ${NumberFormat.currency(locale: 'vi_VN', symbol: 'đ', decimalDigits: 0).format(double.parse(_amountController.text))} has been processed successfully.",
                   style: theme.textTheme.bodyMedium,
                   textAlign: TextAlign.center,
                 ),
@@ -85,17 +82,12 @@ class _TransferScreenState extends State<TransferScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final currencyFormat = NumberFormat.currency(
-      locale: "vi_VN",
-      symbol: "đ",
-      decimalDigits: 0,
-    );
 
     return Scaffold(
       backgroundColor: theme.colorScheme.surface,
       appBar: AppBar(
         title: Text(
-          "Transfer",
+          "Transfer Funds",
           style: theme.textTheme.titleLarge?.copyWith(
             fontWeight: FontWeight.bold,
           ),
@@ -117,44 +109,48 @@ class _TransferScreenState extends State<TransferScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Balance Card
+                // Deposit Header
                 Container(
-                  width: double.infinity,
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        theme.primaryColor,
-                        theme.primaryColor.withBlue(255),
-                      ],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
+                    color: theme.primaryColor.withAlpha(26),
                     borderRadius: BorderRadius.circular(16),
-                    boxShadow: [
-                      BoxShadow(
-                        color: theme.primaryColor.withAlpha(77),
-                        blurRadius: 10,
-                        spreadRadius: 0,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  child: Row(
                     children: [
-                      Text(
-                        "Available Balance",
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          color: Colors.white.withAlpha(204),
+                      Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: theme.primaryColor.withAlpha(51),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Icon(
+                          Icons.swap_horiz,
+                          color: theme.primaryColor,
+                          size: 24,
                         ),
                       ),
-                      const SizedBox(height: 8),
-                      Text(
-                        currencyFormat.format(_balance),
-                        style: theme.textTheme.headlineMedium?.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Transfer Funds",
+                              style: theme.textTheme.titleMedium?.copyWith(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              "Transfer funds to your pals",
+                              style: theme.textTheme.bodyMedium?.copyWith(
+                                color: theme.colorScheme.onSurface.withAlpha(
+                                  179,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],
@@ -163,221 +159,36 @@ class _TransferScreenState extends State<TransferScreen> {
 
                 const SizedBox(height: 24),
 
-                // Transfer Form
-                Container(
-                  padding: const EdgeInsets.all(24),
-                  decoration: BoxDecoration(
-                    color: theme.colorScheme.surface,
-                    borderRadius: BorderRadius.circular(20),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withAlpha(8),
-                        blurRadius: 10,
-                        offset: const Offset(0, 2),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    TransferCard(title: "Transfer to", userId: widget.model.id),
+                  ],
+                ),
+
+                const SizedBox(height: 24),
+
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed:
+                        _processTransfer, // change this to validate later
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: theme.primaryColor,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
                       ),
-                    ],
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Recipient Field
-                      TextFormField(
-                        controller: _recipientController,
-                        style: theme.textTheme.bodyLarge,
-                        decoration: InputDecoration(
-                          labelText: "Recipient",
-                          labelStyle: TextStyle(
-                            color: theme.primaryColor,
-                            fontSize: 14,
-                          ),
-                          prefixIcon: Icon(
-                            Icons.person_outline,
-                            color: theme.primaryColor,
-                          ),
-                          filled: true,
-                          fillColor: theme.colorScheme.surface,
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide(
-                              color: theme.dividerTheme.color!,
-                              width: 1.5,
-                            ),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide(
-                              color: theme.primaryColor,
-                              width: 2,
-                            ),
-                          ),
-                          errorBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: const BorderSide(
-                              color: Colors.red,
-                              width: 1,
-                            ),
-                          ),
-                          focusedErrorBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: const BorderSide(
-                              color: Colors.red,
-                              width: 2,
-                            ),
-                          ),
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 16,
-                          ),
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return "Please enter recipient name or account";
-                          }
-                          return null;
-                        },
+                      elevation: 0,
+                    ),
+                    child: Text(
+                      "Transfer",
+                      style: theme.textTheme.labelLarge?.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
                       ),
-
-                      const SizedBox(height: 20),
-
-                      // Amount Field
-                      TextFormField(
-                        controller: _amountController,
-                        keyboardType: TextInputType.number,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly,
-                        ],
-                        style: theme.textTheme.headlineSmall,
-                        decoration: InputDecoration(
-                          labelText: "Amount",
-                          labelStyle: TextStyle(
-                            color: theme.primaryColor,
-                            fontSize: 14,
-                          ),
-                          prefixIcon: Icon(
-                            Icons.attach_money_outlined,
-                            color: theme.primaryColor,
-                          ),
-                          prefixText: "đ ",
-                          prefixStyle: theme.textTheme.headlineSmall,
-                          filled: true,
-                          fillColor: theme.colorScheme.surface,
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide(
-                              color: theme.dividerTheme.color!,
-                              width: 1.5,
-                            ),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide(
-                              color: theme.primaryColor,
-                              width: 2,
-                            ),
-                          ),
-                          errorBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: const BorderSide(
-                              color: Colors.red,
-                              width: 1,
-                            ),
-                          ),
-                          focusedErrorBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: const BorderSide(
-                              color: Colors.red,
-                              width: 2,
-                            ),
-                          ),
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 16,
-                          ),
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return "Please enter an amount";
-                          }
-                          if (double.tryParse(value) == null) {
-                            return "Please enter a valid amount";
-                          }
-                          final amount = double.parse(value);
-                          if (amount <= 0) {
-                            return "Amount must be greater than zero";
-                          }
-                          if (amount > _balance) {
-                            return "Amount exceeds available balance";
-                          }
-                          return null;
-                        },
-                      ),
-
-                      const SizedBox(height: 20),
-
-                      // Note Field
-                      TextFormField(
-                        controller: _noteController,
-                        style: theme.textTheme.bodyLarge,
-                        maxLines: 3,
-                        decoration: InputDecoration(
-                          labelText: "Note (Optional)",
-                          labelStyle: TextStyle(
-                            color: theme.primaryColor,
-                            fontSize: 14,
-                          ),
-                          prefixIcon: Icon(
-                            Icons.note_outlined,
-                            color: theme.primaryColor,
-                          ),
-                          filled: true,
-                          fillColor: theme.colorScheme.surface,
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide(
-                              color: theme.dividerTheme.color!,
-                              width: 1.5,
-                            ),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide(
-                              color: theme.primaryColor,
-                              width: 2,
-                            ),
-                          ),
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 16,
-                          ),
-                        ),
-                      ),
-
-                      const SizedBox(height: 24),
-
-                      // Transfer Button
-                      SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          onPressed: _processTransfer,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: theme.primaryColor,
-                            foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            elevation: 0,
-                          ),
-                          child: Text(
-                            "Transfer",
-                            style: theme.textTheme.labelLarge?.copyWith(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
                 ),
               ],
