@@ -129,6 +129,7 @@ class _SignUpDetailsFormState extends State<SignUpDetailsForm> {
   late String userPassword = widget.password;
   late UserModel userModel;
   late String sourceId;
+  final TextEditingController _addressController = TextEditingController();
 
   @override
   void initState() {
@@ -142,6 +143,12 @@ class _SignUpDetailsFormState extends State<SignUpDetailsForm> {
       createdAt: DateTime.now(),
     );
     sourceId = "";
+  }
+
+  @override
+  void dispose() {
+    _addressController.dispose();
+    super.dispose();
   }
 
   @override
@@ -215,17 +222,35 @@ class _SignUpDetailsFormState extends State<SignUpDetailsForm> {
           const SizedBox(height: 16),
           // address Field
           TextFormField(
-            onSaved: (value) {
-              userModel.address = value ?? "";
-            },
-            textInputAction: TextInputAction.next,
-            keyboardType: TextInputType.streetAddress,
+            controller: _addressController,
+            readOnly: false,
+            onTap: () {},
             decoration: InputDecoration(
-              hintText: "Address",
-              filled: false,
+              hintText: "Enter address or use map",
               border: const UnderlineInputBorder(),
-              prefixIcon: const Icon(Icons.location_on_outlined),
+              prefixIcon: const Icon(Icons.home_outlined),
+              suffixIcon: IconButton(
+                icon: const Icon(Icons.location_on_outlined),
+                tooltip: "Pick from map",
+                onPressed: () async {
+                  final result = await context.push(
+                    Routes.common.locationPicker,
+                  );
+                  if (result != null && result is Map) {
+                    //final LatLng location = result["location"];
+                    final String address = result["address"];
+
+                    setState(() {
+                      _addressController.text = address;
+                      userModel.address = address;
+                    });
+                  }
+                },
+              ),
             ),
+            onSaved: (value) {
+              userModel.address = value?.trim() ?? "";
+            },
           ),
 
           // const SizedBox(height: 16),

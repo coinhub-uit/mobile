@@ -27,10 +27,14 @@ class SourceBloc extends Bloc<SourceEvent, SourceState> {
         if (response.statusCode == 201) {
           emit(SourceCreatedSuccess(response.body));
         } else {
-          emit(SourceError("Failed to create source"));
+          emit(
+            SourceCreatedError(
+              "Failed to create source: ${response.statusCode}",
+            ),
+          );
         }
       } catch (e) {
-        emit(SourceError(e.toString()));
+        emit(SourceCreatedError(e.toString()));
       }
     });
 
@@ -42,15 +46,17 @@ class SourceBloc extends Bloc<SourceEvent, SourceState> {
           emit(SourceDeletedSuccess(event.sourceId));
         } else if (response.statusCode == 409) {
           emit(
-            SourceError(
+            SourceDeletedError(
               "Please make sure the source does not have any money in it.",
             ),
           );
         } else {
-          emit(SourceError("Please make sure the source is not in use."));
+          emit(
+            SourceDeletedError("Please make sure the source is not in use."),
+          );
         }
       } catch (e) {
-        emit(SourceError(e.toString()));
+        emit(SourceDeletedError(e.toString()));
       }
     });
   }

@@ -14,6 +14,12 @@ class SourceError extends SourceState {
   SourceError(this.message);
 }
 
+class SourceCreatedError extends SourceState {
+  final String message;
+
+  SourceCreatedError(this.message);
+}
+
 class SourceCreatedSuccess extends SourceState {
   final String sourceId;
 
@@ -24,4 +30,10 @@ class SourceDeletedSuccess extends SourceState {
   final String sourceId;
 
   SourceDeletedSuccess(this.sourceId);
+}
+
+class SourceDeletedError extends SourceState {
+  final String message;
+
+  SourceDeletedError(this.message);
 }

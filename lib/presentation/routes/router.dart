@@ -9,6 +9,7 @@ import "package:coinhub/presentation/screen/auth/reset_password_screen.dart";
 import "package:coinhub/presentation/screen/auth/sign_up_details_screen.dart";
 import "package:coinhub/presentation/screen/auth/sign_up_screen.dart";
 import "package:coinhub/presentation/screen/auth/verify_screen.dart";
+import "package:coinhub/presentation/screen/common/location_picker_screen.dart";
 import "package:coinhub/presentation/screen/main/home.dart";
 import "package:coinhub/presentation/screen/setting/pin_screen.dart";
 import "package:coinhub/presentation/screen/setting/account_detail_screen.dart";
@@ -129,7 +130,8 @@ class RouteRouter {
         name: "transfer",
         path: Routes.transaction.transfer,
         builder: (context, state) {
-          return const TransferScreen();
+          final model = state.extra as UserModel;
+          return TransferScreen(model: model);
         },
       ),
       GoRoute(
@@ -216,6 +218,14 @@ class RouteRouter {
             userId: userId,
             onDeleteAccount: onDeleteAccount,
           );
+        },
+      ),
+      // location picker route
+      GoRoute(
+        name: "location-picker",
+        path: Routes.common.locationPicker,
+        builder: (context, state) {
+          return const LocationPickerScreen();
         },
       ),
     ],

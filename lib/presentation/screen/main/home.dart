@@ -1,4 +1,5 @@
 import "package:coinhub/core/bloc/user/user_logic.dart";
+import "package:coinhub/core/constants/theme.dart";
 import "package:coinhub/core/services/user_service.dart";
 import "package:coinhub/models/source_model.dart";
 import "package:coinhub/models/user_model.dart";
@@ -546,9 +547,20 @@ class HomeScreenContent extends StatelessWidget {
               icon: Icons.savings_outlined,
               label: "New Saving Plan",
               color: const Color(0xFF8B5CF6),
-              width: (screenSize.width - 48),
+              width: (screenSize.width - 56) / 2,
               onTap: () {
                 context.push(Routes.transaction.savingPlan, extra: model);
+              },
+            ),
+            const SizedBox(width: 8),
+            _buildActionButton(
+              context,
+              icon: Icons.swap_horiz_rounded,
+              label: "Transfer",
+              color: AppTheme.accentCopper,
+              width: (screenSize.width - 56) / 2,
+              onTap: () {
+                context.push(Routes.transaction.transfer, extra: model);
               },
             ),
           ],

@@ -206,7 +206,17 @@ class AuthService {
       throw "User not found";
     }
     final userId = user.id;
-    await supabaseClient.auth.admin.deleteUser(userId);
+    try {
+      final response = await UserService.deleteUserAccount(userId);
+      if (response.statusCode != 204) {
+        throw "Failed to delete user account";
+      }
+    } catch (e) {
+      throw Exception("Error deleting user: $e");
+    }
+    await supabaseClient.auth.signOut();
+
+    //await supabaseClient.auth.admin.deleteUser(userId);
     await LocalStorageService().delete("JWT");
   }
 
