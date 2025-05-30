@@ -27,21 +27,24 @@ class _AddSourceScreenState extends State<AddSourceScreen> {
 
     return BlocConsumer<SourceBloc, SourceState>(
       listener: (context, state) {
+        print("🔥 BlocConsumer listener fired: $state");
+
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
         if (state is SourceCreatedSuccess) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text("Create source successfully"),
-                backgroundColor: Colors.green,
-              ),
-            );
-          });
-        } else if (state is SourceError) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.message),
+            const SnackBar(
+              content: Text("Create source successfully"),
               backgroundColor: Colors.green,
             ),
+          );
+          context.pop(true); // Pop AFTER snackbar, not inside addPostFrame
+        } else if (state is SourceCreatedError) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(state.message), backgroundColor: Colors.red),
+          );
+        } else if (state is SourceError) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(state.message), backgroundColor: Colors.red),
           );
         }
       },
@@ -227,7 +230,6 @@ class _AddSourceScreenState extends State<AddSourceScreen> {
                                 backgroundColor: Colors.blue,
                               ),
                             );
-                            context.pop(true);
                           }
                         },
                         style: ElevatedButton.styleFrom(

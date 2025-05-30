@@ -5,8 +5,10 @@ import "package:coinhub/core/services/local_storage.dart";
 import "package:coinhub/core/services/user_service.dart";
 import "package:coinhub/models/source_model.dart";
 import "package:http/http.dart" as http;
+import "package:supabase_flutter/supabase_flutter.dart";
 
 class SourceService {
+  static final supabaseClient = Supabase.instance.client;
   // static Future<List<SourceModel>> fetchSources(String userId) async {
   //   final accessToken = await LocalStorageService().read("JWT");
   //   if (accessToken == null) {
@@ -58,24 +60,39 @@ class SourceService {
   }
 
   static Future<http.Response> createSource(String sourceId) async {
+    final user = supabaseClient.auth.currentUser;
+    if (user == null || user.id == null) {
+      throw Exception("User not found");
+    }
+    final List<SourceModel> sources = await UserService.fetchSources(user.id);
+    if (sources.any((source) => source.id == sourceId)) {
+      throw Exception("You already have source with ID $sourceId!");
+    }
     final accessToken = await LocalStorageService().read("JWT");
     if (accessToken == null) {
       throw Exception("Session not found");
     }
 
-    final response = await ApiClient.client.post(
-      Uri.parse("${ApiClient.sourceEndpoint}"),
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer $accessToken",
-      },
-      body: jsonEncode({"id": sourceId}),
-    );
+    try {
+      final response = await ApiClient.client.post(
+        Uri.parse("${ApiClient.sourceEndpoint}"),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $accessToken",
+        },
+        body: jsonEncode({"id": sourceId}),
+      );
+      print("response status code: ${response.statusCode}");
+      print("response body: ${response.body}");
 
-    if (response.statusCode == 201) {
-      return response;
-    } else {
-      throw Exception("Failed to create source: ${response.statusCode}");
+      if (response.statusCode == 201) {
+        return response;
+      } else {
+        throw Exception("Failed to create source: ${response.statusCode}");
+      }
+    } catch (e) {
+      print("Error during POST: $e");
+      rethrow;
     }
   }
 
