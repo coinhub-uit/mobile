@@ -2,6 +2,8 @@ import "dart:convert";
 
 import "package:coinhub/core/constants/api_client.dart";
 import "package:coinhub/core/services/local_storage.dart";
+import "package:coinhub/core/services/user_service.dart";
+import "package:coinhub/models/source_model.dart";
 import "package:http/http.dart" as http;
 
 class SourceService {
@@ -32,6 +34,28 @@ class SourceService {
   //     throw Exception("Failed to fetch sources: ${response.statusCode}");
   //   }
   // }
+  static Future<SourceModel> fetchSource(String sourceId) async {
+    final accessToken = await LocalStorageService().read("JWT");
+    if (accessToken == null) {
+      throw Exception("Session not found");
+    }
+
+    final response = await ApiClient.client.get(
+      Uri.parse("${ApiClient.sourceEndpoint}/$sourceId"),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $accessToken",
+      },
+    );
+    print("response status code: ${response.statusCode}");
+    print("response body: ${response.body}");
+    if (response.statusCode == 200) {
+      final decoded = jsonDecode(response.body);
+      return SourceModel.fromJson(decoded);
+    } else {
+      throw Exception("Failed to fetch sources: ${response.statusCode}");
+    }
+  }
 
   static Future<http.Response> createSource(String sourceId) async {
     final accessToken = await LocalStorageService().read("JWT");
@@ -56,6 +80,13 @@ class SourceService {
   }
 
   static Future<http.Response> deleteSource(String sourceId) async {
+    final source = await fetchSource(sourceId);
+    if (int.parse(source.balance!) != 0) {
+      throw Exception(
+        "Please make sure the source is empty before deleting it.",
+      );
+    }
+
     final accessToken = await LocalStorageService().read("JWT");
     if (accessToken == null) {
       throw Exception("Session not found");
@@ -73,6 +104,20 @@ class SourceService {
       return response;
     } else {
       throw Exception("Failed to delete source: ${response.statusCode}");
+    }
+  }
+
+  static Future<bool> checkAllSourcesIsEmpty(String userId) async {
+    final sources = await UserService.fetchSources(userId);
+    if (sources.isEmpty) {
+      return true;
+    } else {
+      for (final source in sources) {
+        if (int.parse(source.balance!) != 0) {
+          return false;
+        }
+      }
+      return true;
     }
   }
 }

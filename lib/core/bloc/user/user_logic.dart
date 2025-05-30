@@ -1,4 +1,3 @@
-import "package:coinhub/core/services/auth_service.dart";
 import "package:coinhub/core/services/user_service.dart";
 import "package:coinhub/models/source_model.dart";
 import "package:coinhub/models/ticket_model.dart";
@@ -65,7 +64,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
         final response = await UserService.deleteUserAccount(event.userId);
         if (response.statusCode == 200) {
           emit(DeleteAccountSuccess());
-          AuthService.deleteUser();
+          //AuthService.deleteUser();
         } else {
           emit(DeleteAccountError("Failed to delete account"));
         }

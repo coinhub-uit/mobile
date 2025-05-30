@@ -3,6 +3,7 @@ import "dart:io";
 
 import "package:coinhub/core/constants/api_client.dart";
 import "package:coinhub/core/services/local_storage.dart";
+import "package:coinhub/core/services/source_service.dart";
 import "package:coinhub/core/services/ticket_service.dart";
 import "package:coinhub/models/source_model.dart";
 import "package:coinhub/models/ticket_model.dart";
@@ -203,6 +204,15 @@ class UserService {
   }
 
   static Future<http.Response> deleteUserAccount(String userId) async {
+    final isAllSourcesEmpty = await SourceService.checkAllSourcesIsEmpty(
+      userId,
+    );
+    if (!isAllSourcesEmpty) {
+      throw Exception(
+        "Please empty or delete all sources before deleting your account.",
+      );
+    }
+
     final accessToken = await LocalStorageService().read("JWT");
     if (accessToken == null) {
       throw Exception("Session not found");
