@@ -20,7 +20,7 @@ class AuthResult {
 class AuthService {
   static final supabaseClient = Supabase.instance.client;
 
-  static Future<User?> signInWithGoogle() async {
+  static Future<AuthResponse> signInWithGoogle() async {
     final GoogleSignIn googleSignIn = GoogleSignIn(
       clientId: Env.oauthGoogleIosClientId,
       serverClientId: Env.oauthGoogleWebClientId,
@@ -55,7 +55,7 @@ class AuthService {
       response.session!.accessToken,
     );
 
-    return response.user;
+    return response;
   }
 
   static Future<AuthResult> signInWithEmailandPassword(
@@ -63,21 +63,34 @@ class AuthService {
     String password,
   ) async {
     try {
-      bool foundInDb = true;
       final response = await Supabase.instance.client.auth.signInWithPassword(
         email: email,
         password: password,
       );
+
       final userId = response.user?.id;
       if (userId == null) {
-        foundInDb = false;
+        return AuthResult(user: null, session: null, success: false);
       }
-      final dbResult = await UserService.getUser(userId!);
-      if (dbResult == null) {
-        foundInDb = false;
-      } else {
+
+      // Store JWT token since Supabase authentication was successful
+      if (response.session?.accessToken != null) {
         await LocalStorageService().write("JWT", response.session!.accessToken);
       }
+
+      // Try to get user from app database
+      bool foundInDb = true;
+      try {
+        final dbResult = await UserService.getUser(userId);
+        if (dbResult == null) {
+          foundInDb = false;
+        }
+      } catch (e) {
+        // User doesn't exist in app database but Supabase auth succeeded
+        foundInDb = false;
+      }
+
+      // Return success if Supabase authentication succeeded, regardless of app database
       return AuthResult(
         user: response.user,
         session: response.session,
@@ -90,6 +103,8 @@ class AuthService {
 
   static Future<void> signOut() async {
     await supabaseClient.auth.signOut();
+    // Clear local storage
+    await LocalStorageService().delete("JWT");
   }
 
   static Future<void> signUpWithEmailandPassword(

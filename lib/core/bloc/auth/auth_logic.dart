@@ -114,7 +114,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           return;
         }
 
-        emit(LoginSuccess("Login successful."));
+        emit(LoginSuccess(response.session?.accessToken ?? ""));
       } catch (error) {
         if (error is supabase.AuthException &&
             error.message.contains("Email not confirmed")) {
@@ -166,9 +166,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<SignUpWithGooglePressed>((event, emit) async {
       emit(SignUpWithGoogleLoading());
       try {
-        final user = await AuthService.signInWithGoogle();
-        if (user != null) {
-          emit(SignUpWithGoogleSuccess("Google sign-in successful."));
+        final response = await AuthService.signInWithGoogle();
+        if (response.user != null) {
+          emit(SignUpWithGoogleSuccess(response.session?.accessToken ?? ""));
         } else {
           emit(SignUpWithGoogleError("Google sign-in failed."));
         }
