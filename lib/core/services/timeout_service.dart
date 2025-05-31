@@ -25,7 +25,6 @@ class TimeoutService extends ChangeNotifier with WidgetsBindingObserver {
     WidgetsBinding.instance.addObserver(this);
     _lastActivityTime = DateTime.now();
     _isInitialized = true;
-    debugPrint("TimeoutService initialized");
   }
 
   @override
@@ -55,7 +54,6 @@ class TimeoutService extends ChangeNotifier with WidgetsBindingObserver {
     if (!_isInitialized) return;
 
     _lastActivityTime = DateTime.now();
-    debugPrint("Activity recorded at: $_lastActivityTime");
 
     // Unlock if currently locked due to user activity
     if (_isLocked) {
@@ -79,9 +77,6 @@ class TimeoutService extends ChangeNotifier with WidgetsBindingObserver {
     final elapsed = DateTime.now().difference(_lastActivityTime!);
     final shouldLock = elapsed > Duration(minutes: timeoutMinutes);
 
-    debugPrint(
-      "TimeoutService: Elapsed ${elapsed.inMinutes}min, timeout ${timeoutMinutes}min, shouldLock: $shouldLock",
-    );
     return shouldLock;
   }
 
@@ -93,13 +88,11 @@ class TimeoutService extends ChangeNotifier with WidgetsBindingObserver {
   }
 
   void _triggerLock() {
-    debugPrint("TimeoutService: Triggering lock");
     _isLocked = true;
     notifyListeners();
   }
 
   void _unlock() {
-    debugPrint("TimeoutService: Unlocking");
     _isLocked = false;
     _lastActivityTime = DateTime.now();
     notifyListeners();
@@ -119,14 +112,12 @@ class TimeoutService extends ChangeNotifier with WidgetsBindingObserver {
       final result = pinEnabled || fingerprintEnabled || faceIdEnabled;
       return result;
     } catch (e) {
-      debugPrint("Error checking authentication enabled: $e");
       return false;
     }
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    debugPrint("TimeoutService: App lifecycle state changed to $state");
     switch (state) {
       case AppLifecycleState.resumed:
         // Check if we should lock when app resumes
@@ -144,13 +135,8 @@ class TimeoutService extends ChangeNotifier with WidgetsBindingObserver {
   // Force lock for testing
   Future<void> forceLock() async {
     if (await _isAuthenticationEnabled()) {
-      debugPrint("TimeoutService: Force lock triggered");
       _triggerLock();
-    } else {
-      debugPrint(
-        "TimeoutService: Force lock ignored - no authentication method enabled",
-      );
-    }
+    } else {}
   }
 
   // Get remaining time until timeout
