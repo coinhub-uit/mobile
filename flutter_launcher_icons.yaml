@@ -1,0 +1,24 @@
+# flutter pub run flutter_launcher_icons
+flutter_launcher_icons:
+  # Global image path (fallback)
+  image_path: "assets/images/CoinHub_SS.png"
+
+  # Android Configuration
+  android: "launcher_icon"
+  image_path_android: "assets/images/CoinHub_SS.png"
+  min_sdk_android: 21 # android min sdk min:16, default 21
+  
+  # Adaptive Icons for Android (recommended for modern Android)
+  adaptive_icon_background: "#ffffff"  # or use an image: "assets/images/background.png"
+  adaptive_icon_foreground: "assets/images/CoinHub_SS.png"
+  # adaptive_icon_monochrome: "assets/images/CoinHub_SS.png" # Optional: for themed icons (Android 13+)
+
+  # iOS Configuration
+  ios: true
+  image_path_ios: "assets/images/CoinHub_SS.png"
+  remove_alpha_channel_ios: true
+  
+  # Optional: Dark mode support for iOS
+  # image_path_ios_dark_transparent: "assets/images/CoinHub_SS.png"
+  # image_path_ios_tinted_grayscale: "assets/images/CoinHub_SS.png"
+  # desaturate_tinted_to_grayscale_ios: true
