@@ -1,6 +1,6 @@
 import "package:flutter/material.dart";
 import "package:flutter/services.dart";
-import "package:shared_preferences/shared_preferences.dart";
+import "package:coinhub/core/services/local_storage.dart";
 import "package:go_router/go_router.dart";
 import "package:coinhub/presentation/routes/routes.dart";
 
@@ -14,6 +14,7 @@ class CreatePinScreen extends StatefulWidget {
 class _CreatePinScreenState extends State<CreatePinScreen> {
   final TextEditingController _pinController = TextEditingController();
   final TextEditingController _confirmPinController = TextEditingController();
+  final LocalStorageService _storage = LocalStorageService();
   String _errorText = "";
   bool _obscurePin = true;
   bool _obscureConfirmPin = true;
@@ -47,25 +48,32 @@ class _CreatePinScreenState extends State<CreatePinScreen> {
       return;
     }
 
-    // Save PIN to SharedPreferences (in a real app, use secure storage)
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString("app_pin", _pinController.text);
-    await prefs.setBool("pin_enabled", true);
+    try {
+      // Save PIN to secure storage
+      await _storage.write("app_pin", _pinController.text);
+      await _storage.write("pin_enabled", "true");
 
-    // Return to home screen
-    // ignore: use_build_context_synchronously
-    context.go(Routes.home);
+      // Return to home screen
+      if (mounted) context.go(Routes.home);
 
-    // Show success message
-    // ignore: use_build_context_synchronously
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: const Text("PIN created successfully"),
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        margin: const EdgeInsets.all(16),
-      ),
-    );
+      // Show success message
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text("PIN created successfully"),
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            margin: const EdgeInsets.all(16),
+          ),
+        );
+      }
+    } catch (e) {
+      setState(() {
+        _errorText = "Failed to save PIN. Please try again.";
+      });
+    }
   }
 
   @override
@@ -230,7 +238,7 @@ class _CreatePinScreenState extends State<CreatePinScreen> {
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                           borderSide: BorderSide(
-                            color: theme.dividerTheme.color!,
+                            color: theme.dividerTheme.color ?? Colors.grey,
                             width: 1.5,
                           ),
                         ),
@@ -309,7 +317,7 @@ class _CreatePinScreenState extends State<CreatePinScreen> {
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                           borderSide: BorderSide(
-                            color: theme.dividerTheme.color!,
+                            color: theme.dividerTheme.color ?? Colors.grey,
                             width: 1.5,
                           ),
                         ),

@@ -351,7 +351,7 @@ class HomeScreenContent extends StatelessWidget {
           }
           return SizedBox(
             height: 210,
-            child: ListView.builder(
+            child: PageView.builder(
               itemCount: sources.length,
               scrollDirection: Axis.horizontal,
               itemBuilder: (context, index) {

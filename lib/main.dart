@@ -7,6 +7,8 @@ import "package:coinhub/core/bloc/user/user_logic.dart";
 import "package:coinhub/core/constants/theme.dart";
 import "package:coinhub/core/constants/theme_provider.dart";
 import "package:coinhub/core/util/notification.dart";
+import "package:coinhub/core/util/timeout.dart";
+import "package:coinhub/core/services/timeout_service.dart";
 import "package:coinhub/firebase_options.dart";
 import "package:coinhub/presentation/routes/router.dart";
 import "package:firebase_core/firebase_core.dart";
@@ -29,9 +31,17 @@ void main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   NotificationService.instance.initialize();
   NotificationService.instance.getDeviceToken();
+
+  // Initialize timeout service
+  final timeoutService = TimeoutService();
+  await timeoutService.initialize();
+
   runApp(
-    ChangeNotifierProvider(
-      create: (_) => ThemeProvider(),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => ThemeProvider()),
+        ChangeNotifierProvider.value(value: timeoutService),
+      ],
       child: const MyApp(),
     ),
   );
@@ -119,12 +129,14 @@ class _MyAppState extends State<MyApp> {
         BlocProvider(create: (context) => SourceBloc()),
         BlocProvider(create: (context) => TicketBloc()),
       ],
-      child: MaterialApp.router(
-        theme: AppTheme.lightTheme(),
-        darkTheme: AppTheme.darkTheme(),
-        themeMode: themeProvider.themeMode,
-        debugShowCheckedModeBanner: false,
-        routerConfig: goRouter,
+      child: Timeout(
+        child: MaterialApp.router(
+          theme: AppTheme.lightTheme(),
+          darkTheme: AppTheme.darkTheme(),
+          themeMode: themeProvider.themeMode,
+          debugShowCheckedModeBanner: false,
+          routerConfig: goRouter,
+        ),
       ),
     );
   }
