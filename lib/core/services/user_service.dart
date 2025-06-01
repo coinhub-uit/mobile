@@ -2,7 +2,6 @@ import "dart:convert";
 import "dart:io";
 
 import "package:coinhub/core/constants/api_client.dart";
-import "package:coinhub/core/services/local_storage.dart";
 import "package:coinhub/core/services/source_service.dart";
 import "package:coinhub/core/services/ticket_service.dart";
 import "package:coinhub/models/source_model.dart";
@@ -95,7 +94,9 @@ class UserService {
 
   static Future<UserModel?> getUser(String id) async {
     final user = supabaseClient.auth.currentUser;
-    final accessToken = await LocalStorageService().read("JWT");
+    // Use Supabase's current session instead of manual storage
+    final session = supabaseClient.auth.currentSession;
+    final accessToken = session?.accessToken;
     if (accessToken == null) {
       throw Exception("Session not found");
     }
@@ -118,7 +119,9 @@ class UserService {
   }
 
   static Future<http.Response> updateUserDetails(UserModel userModel) async {
-    final accessToken = await LocalStorageService().read("JWT");
+    // Use Supabase's current session instead of manual storage
+    final session = supabaseClient.auth.currentSession;
+    final accessToken = session?.accessToken;
     if (accessToken == null) {
       throw Exception("Session not found");
     }
@@ -167,7 +170,9 @@ class UserService {
   }
 
   static Future<void> updateAvatarUrl(String userId, String avatarUrl) async {
-    final accessToken = await LocalStorageService().read("JWT");
+    // Use Supabase's current session instead of manual storage
+    final session = supabaseClient.auth.currentSession;
+    final accessToken = session?.accessToken;
     if (accessToken == null) {
       throw Exception("Session not found");
     }
@@ -213,7 +218,9 @@ class UserService {
       );
     }
 
-    final accessToken = await LocalStorageService().read("JWT");
+    // Use Supabase's current session instead of manual storage
+    final session = supabaseClient.auth.currentSession;
+    final accessToken = session?.accessToken;
     if (accessToken == null) {
       throw Exception("Session not found");
     }
@@ -231,8 +238,8 @@ class UserService {
       // } catch (e) {
       //   print("Error deleting user from Supabase auth: $e");
       // }
-      // Clear the local storage5
-      await LocalStorageService().delete("JWT");
+      // Remove manual JWT clearing - Supabase handles session cleanup automatically
+      // await LocalStorageService().delete("JWT");
 
       return response;
     } else {
@@ -243,14 +250,16 @@ class UserService {
   // source
 
   static Future<List<SourceModel>> fetchSources(String userId) async {
-    final accessToken = await LocalStorageService().read("JWT");
+    // Use Supabase's current session instead of manual storage
+    final session = supabaseClient.auth.currentSession;
+    final accessToken = session?.accessToken;
     if (accessToken == null) {
       throw Exception("Session not found");
     }
     print("Access token: $accessToken");
 
     final response = await ApiClient.client.get(
-      Uri.parse("${ApiClient.userEndpoint}/${userId}/sources"),
+      Uri.parse("${ApiClient.userEndpoint}/$userId/sources"),
       headers: {
         "Content-Type": "application/json",
         "Authorization": "Bearer $accessToken",
@@ -271,14 +280,16 @@ class UserService {
   }
 
   static Future<List<TicketModel>> fetchTickets(String userId) async {
-    final accessToken = await LocalStorageService().read("JWT");
+    // Use Supabase's current session instead of manual storage
+    final session = supabaseClient.auth.currentSession;
+    final accessToken = session?.accessToken;
     if (accessToken == null) {
       throw Exception("Session not found");
     }
     print("Access token: $accessToken");
 
     final response = await ApiClient.client.get(
-      Uri.parse("${ApiClient.userEndpoint}/${userId}/tickets"),
+      Uri.parse("${ApiClient.userEndpoint}/$userId/tickets"),
       headers: {
         "Content-Type": "application/json",
         "Authorization": "Bearer $accessToken",

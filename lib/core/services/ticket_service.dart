@@ -1,15 +1,18 @@
 import "package:coinhub/core/constants/api_client.dart";
-import "package:coinhub/core/services/local_storage.dart";
 import "package:coinhub/models/ticket_model.dart";
 import "package:http/http.dart" as http;
 import "package:intl/intl.dart";
 import "package:pdf/pdf.dart";
 import "package:pdf/widgets.dart" as pw;
 import "package:printing/printing.dart";
+import "package:supabase_flutter/supabase_flutter.dart";
 
 class TicketService {
+  static final supabaseClient = Supabase.instance.client;
+
   static Future<http.Response> createTicket(TicketModel ticketModel) async {
-    final accessToken = await LocalStorageService().read("JWT");
+    final session = supabaseClient.auth.currentSession;
+    final accessToken = session?.accessToken;
     if (accessToken == null) {
       throw Exception("Session not found");
     }
@@ -33,7 +36,8 @@ class TicketService {
   }
 
   static Future<http.Response> fetchTicket(String ticketId) async {
-    final accessToken = await LocalStorageService().read("JWT");
+    final session = supabaseClient.auth.currentSession;
+    final accessToken = session?.accessToken;
     if (accessToken == null) {
       throw Exception("Session not found");
     }
@@ -48,7 +52,8 @@ class TicketService {
   }
 
   static Future<http.Response> withdrawTicket(int ticketId) async {
-    final accessToken = await LocalStorageService().read("JWT");
+    final session = supabaseClient.auth.currentSession;
+    final accessToken = session?.accessToken;
     if (accessToken == null) {
       throw Exception("Session not found");
     }
@@ -75,7 +80,8 @@ class TicketService {
   }
 
   static Future<http.Response> getSourceId(int ticketId) async {
-    final accessToken = await LocalStorageService().read("JWT");
+    final session = supabaseClient.auth.currentSession;
+    final accessToken = session?.accessToken;
     if (accessToken == null) {
       throw Exception("Session not found");
     }

@@ -1,7 +1,6 @@
 import "dart:convert";
 
 import "package:coinhub/core/constants/api_client.dart";
-import "package:coinhub/core/services/local_storage.dart";
 import "package:coinhub/core/services/user_service.dart";
 import "package:coinhub/models/source_model.dart";
 import "package:http/http.dart" as http;
@@ -10,7 +9,8 @@ import "package:supabase_flutter/supabase_flutter.dart";
 class SourceService {
   static final supabaseClient = Supabase.instance.client;
   // static Future<List<SourceModel>> fetchSources(String userId) async {
-  //   final accessToken = await LocalStorageService().read("JWT");
+  //   final session = supabaseClient.auth.currentSession;
+  //   final accessToken = session?.accessToken;
   //   if (accessToken == null) {
   //     throw Exception("Session not found");
   //   }
@@ -37,7 +37,9 @@ class SourceService {
   //   }
   // }
   static Future<SourceModel> fetchSource(String sourceId) async {
-    final accessToken = await LocalStorageService().read("JWT");
+    // Use Supabase's current session instead of manual storage
+    final session = supabaseClient.auth.currentSession;
+    final accessToken = session?.accessToken;
     if (accessToken == null) {
       throw Exception("Session not found");
     }
@@ -61,14 +63,16 @@ class SourceService {
 
   static Future<http.Response> createSource(String sourceId) async {
     final user = supabaseClient.auth.currentUser;
-    if (user == null || user.id == null) {
+    if (user == null) {
       throw Exception("User not found");
     }
     final List<SourceModel> sources = await UserService.fetchSources(user.id);
     if (sources.any((source) => source.id == sourceId)) {
       throw Exception("You already have source with ID $sourceId!");
     }
-    final accessToken = await LocalStorageService().read("JWT");
+    // Use Supabase's current session instead of manual storage
+    final session = supabaseClient.auth.currentSession;
+    final accessToken = session?.accessToken;
     if (accessToken == null) {
       throw Exception("Session not found");
     }
@@ -104,7 +108,9 @@ class SourceService {
       );
     }
 
-    final accessToken = await LocalStorageService().read("JWT");
+    // Use Supabase's current session instead of manual storage
+    final session = supabaseClient.auth.currentSession;
+    final accessToken = session?.accessToken;
     if (accessToken == null) {
       throw Exception("Session not found");
     }

@@ -116,3 +116,13 @@ class UpdatePasswordSubmitted extends AuthEvent {
   final String newPassword;
   const UpdatePasswordSubmitted(this.email, this.oldPassword, this.newPassword);
 }
+
+/// Event to initialize and check current session on app start
+class InitializeSession extends AuthEvent {
+  const InitializeSession();
+}
+
+/// Event to check current session status
+class CheckCurrentSession extends AuthEvent {
+  const CheckCurrentSession();
+}

@@ -1,4 +1,3 @@
-import "package:coinhub/core/services/local_storage.dart";
 import "package:coinhub/core/services/user_service.dart";
 import "package:coinhub/core/util/device_register.dart";
 import "package:google_sign_in/google_sign_in.dart";
@@ -19,6 +18,28 @@ class AuthResult {
 
 class AuthService {
   static final supabaseClient = Supabase.instance.client;
+
+  /// Initialize session on app startup
+  /// This method checks for existing session and returns it if valid
+  static Future<Session?> initializeSession() async {
+    try {
+      final session = supabaseClient.auth.currentSession;
+      if (session != null) {
+        // Optionally verify if the user exists in your app database
+        try {
+          await UserService.getUser(session.user.id);
+        } catch (e) {
+          // User not found in app database, but session is valid
+          // You can decide how to handle this case
+          return session;
+        }
+        return session;
+      }
+      return null;
+    } catch (e) {
+      return null;
+    }
+  }
 
   static Future<AuthResponse> signInWithGoogle() async {
     final GoogleSignIn googleSignIn = GoogleSignIn(
@@ -43,7 +64,10 @@ class AuthService {
       idToken: idToken,
       accessToken: accessToken,
     );
-    LocalStorageService().write("JWT", response.session!.accessToken);
+
+    // Remove manual JWT storage - Supabase handles this automatically
+    // await LocalStorageService().write("JWT", response.session!.accessToken);
+
     if (response.user?.id == null) {
       throw "Something went wrong. User not found";
     }
@@ -73,11 +97,6 @@ class AuthService {
         return AuthResult(user: null, session: null, success: false);
       }
 
-      // Store JWT token since Supabase authentication was successful
-      if (response.session?.accessToken != null) {
-        await LocalStorageService().write("JWT", response.session!.accessToken);
-      }
-
       // Try to get user from app database
       bool foundInDb = true;
       try {
@@ -103,8 +122,6 @@ class AuthService {
 
   static Future<void> signOut() async {
     await supabaseClient.auth.signOut();
-    // Clear local storage
-    await LocalStorageService().delete("JWT");
   }
 
   static Future<void> signUpWithEmailandPassword(
@@ -113,13 +130,6 @@ class AuthService {
   ) async {
     try {
       await supabaseClient.auth.signUp(email: email, password: password);
-      //await LocalStorageService().write("JWT", response.session!.accessToken);
-      // print("${response.session?.accessToken} token is here");
-
-      // final user = response.user;
-      // if (user == null) {
-      //   throw "User not found";
-      // }
     } on AuthException catch (e) {
       if (e.message == "User already registered") {
         throw "User already registered";
@@ -155,8 +165,17 @@ class AuthService {
       supabaseClient.auth.onAuthStateChange;
 
   static Future<bool> isUserLoggedIn() async {
-    final session = await LocalStorageService().read("JWT");
+    final session = supabaseClient.auth.currentSession;
     return session != null;
+  }
+
+  static Future<Session?> getCurrentSession() async {
+    return supabaseClient.auth.currentSession;
+  }
+
+  static Future<String?> getCurrentAccessToken() async {
+    final session = supabaseClient.auth.currentSession;
+    return session?.accessToken;
   }
 
   static Future<bool> isUserVerified(String email, String password) async {
@@ -169,7 +188,6 @@ class AuthService {
       if (session == null) {
         return false;
       }
-      await LocalStorageService().write("JWT", session.accessToken);
 
       final user = response.user;
       if (user == null) {
@@ -200,7 +218,6 @@ class AuthService {
       if (session == null) {
         return false;
       }
-      await LocalStorageService().write("JWT", session.accessToken);
 
       await supabaseClient.auth.updateUser(
         UserAttributes(password: newPassword),
@@ -231,8 +248,8 @@ class AuthService {
     }
     await supabaseClient.auth.signOut();
 
-    //await supabaseClient.auth.admin.deleteUser(userId);
-    await LocalStorageService().delete("JWT");
+    // Remove manual JWT clearing - Supabase handles session cleanup automatically
+    // await LocalStorageService().delete("JWT");
   }
 
   static User? get currentUser => supabaseClient.auth.currentUser;

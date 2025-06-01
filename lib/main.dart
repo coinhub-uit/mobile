@@ -1,5 +1,7 @@
 import "dart:async";
 import "package:coinhub/core/bloc/auth/auth_logic.dart";
+import "package:coinhub/core/bloc/auth/auth_event.dart";
+import "package:coinhub/core/bloc/auth/auth_state.dart" as auth_bloc;
 import "package:coinhub/core/bloc/plan/plan_logic.dart";
 import "package:coinhub/core/bloc/source/source_logic.dart";
 import "package:coinhub/core/bloc/ticket/ticket_logic.dart";
@@ -11,6 +13,7 @@ import "package:coinhub/core/util/timeout.dart";
 import "package:coinhub/core/services/timeout_service.dart";
 import "package:coinhub/firebase_options.dart";
 import "package:coinhub/presentation/routes/router.dart";
+import "package:coinhub/presentation/routes/routes.dart";
 import "package:firebase_core/firebase_core.dart";
 import "package:flutter/material.dart";
 import "package:provider/provider.dart";
@@ -77,7 +80,7 @@ class _MyAppState extends State<MyApp> {
       }
     } catch (e) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        goRouter.go("/auth/login");
+        goRouter.go(Routes.auth.login);
       });
     }
   }
@@ -102,11 +105,11 @@ class _MyAppState extends State<MyApp> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (host == "auth" && path == "/reset-password" && code != null) {
-        goRouter.go("/auth/reset-password?code=$code");
+        goRouter.go("${Routes.auth.resetPassword}?code=$code");
       } else if (host == "auth" && path == "/verify") {
-        goRouter.go("/");
+        goRouter.go(Routes.home);
       } else {
-        goRouter.go("/auth/login");
+        goRouter.go(Routes.auth.login);
       }
     });
   }
@@ -129,14 +132,88 @@ class _MyAppState extends State<MyApp> {
         BlocProvider(create: (context) => SourceBloc()),
         BlocProvider(create: (context) => TicketBloc()),
       ],
-      child: Timeout(
-        child: MaterialApp.router(
-          theme: AppTheme.lightTheme(),
-          darkTheme: AppTheme.darkTheme(),
-          themeMode: themeProvider.themeMode,
-          debugShowCheckedModeBanner: false,
-          routerConfig: goRouter,
-        ),
+      child: SessionAwareApp(themeProvider: themeProvider),
+    );
+  }
+}
+
+/// Wrapper widget that handles session initialization and navigation
+class SessionAwareApp extends StatefulWidget {
+  final ThemeProvider themeProvider;
+
+  const SessionAwareApp({super.key, required this.themeProvider});
+
+  @override
+  State<SessionAwareApp> createState() => _SessionAwareAppState();
+}
+
+class _SessionAwareAppState extends State<SessionAwareApp> {
+  @override
+  void initState() {
+    super.initState();
+    // Initialize session on app startup
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<AuthBloc>().add(const InitializeSession());
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocListener<AuthBloc, auth_bloc.AuthState>(
+      listener: (context, state) {
+        if (state is auth_bloc.SessionRestored) {
+          // User has an active session, navigate to home
+          debugPrint("Session restored for user: ${state.userId}");
+          goRouter.go(Routes.home);
+        } else if (state is auth_bloc.SessionNotFound) {
+          // No session found, navigate to login
+          debugPrint("No session found, redirecting to login");
+          goRouter.go(Routes.auth.login);
+        } else if (state is auth_bloc.LoginSuccess) {
+          // User just logged in successfully, navigate to home
+          debugPrint("Login successful, redirecting to home");
+          goRouter.go(Routes.home);
+        } else if (state is auth_bloc.SignUpWithGoogleSuccess) {
+          // User signed up with Google successfully, navigate to home
+          debugPrint("Google sign up successful, redirecting to home");
+          goRouter.go(Routes.home);
+        }
+      },
+      child: BlocBuilder<AuthBloc, auth_bloc.AuthState>(
+        builder: (context, state) {
+          // Show loading screen while initializing session
+          if (state is auth_bloc.SessionInitializing) {
+            return MaterialApp(
+              theme: AppTheme.lightTheme(),
+              darkTheme: AppTheme.darkTheme(),
+              themeMode: widget.themeProvider.themeMode,
+              debugShowCheckedModeBanner: false,
+              home: const Scaffold(
+                body: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      CircularProgressIndicator(),
+                      SizedBox(height: 16),
+                      Text("Initializing..."),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          }
+
+          // Return the main app after session initialization
+          return Timeout(
+            child: MaterialApp.router(
+              theme: AppTheme.lightTheme(),
+              darkTheme: AppTheme.darkTheme(),
+              themeMode: widget.themeProvider.themeMode,
+              debugShowCheckedModeBanner: false,
+              routerConfig: goRouter,
+            ),
+          );
+        },
       ),
     );
   }

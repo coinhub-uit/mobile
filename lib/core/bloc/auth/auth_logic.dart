@@ -7,6 +7,34 @@ import "package:supabase_flutter/supabase_flutter.dart" as supabase;
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   AuthBloc() : super(LoginInitial("", "")) {
+    // Session Initialization Events
+    on<InitializeSession>((event, emit) async {
+      emit(SessionInitializing());
+      try {
+        final session = await AuthService.getCurrentSession();
+        if (session != null) {
+          emit(SessionRestored(session.accessToken, session.user.id));
+        } else {
+          emit(SessionNotFound());
+        }
+      } catch (e) {
+        emit(SessionNotFound());
+      }
+    });
+
+    on<CheckCurrentSession>((event, emit) async {
+      try {
+        final session = await AuthService.getCurrentSession();
+        if (session != null) {
+          emit(SessionRestored(session.accessToken, session.user.id));
+        } else {
+          emit(LoginInitial("", ""));
+        }
+      } catch (e) {
+        emit(LoginInitial("", ""));
+      }
+    });
+
     // Navigation Events
     on<ShowLogin>((event, emit) {
       emit(LoginInitial("", ""));

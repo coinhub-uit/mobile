@@ -2,6 +2,18 @@
 
 abstract class AuthState {}
 
+// --- Session Initialization States ---
+class SessionInitializing extends AuthState {}
+
+class SessionRestored extends AuthState {
+  final String jwt;
+  final String userId;
+
+  SessionRestored(this.jwt, this.userId);
+}
+
+class SessionNotFound extends AuthState {}
+
 // --- Login States ---
 class LoginInitial extends AuthState {
   final String username;
