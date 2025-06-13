@@ -126,7 +126,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           password,
         );
         final user = response.user;
-        if (response.success == false) {
+        if (response.session?.accessToken == null) {
           emit(
             LoginError(
               "Please check you login credentials and try again.",
