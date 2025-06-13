@@ -16,6 +16,7 @@ class _TransferScreenState extends State<TransferScreen> {
   final TextEditingController _amountController = TextEditingController();
   final TextEditingController _noteController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  String _currentAmount = "";
 
   @override
   void dispose() {
@@ -25,8 +26,20 @@ class _TransferScreenState extends State<TransferScreen> {
   }
 
   void _processTransfer() {
-    if (_formKey.currentState!.validate()) {
-      // Process deposit logic would go here
+    if (_formKey.currentState!.validate() && _currentAmount.isNotEmpty) {
+      final double? amount = double.tryParse(_currentAmount);
+
+      if (amount == null || amount <= 0) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Please enter a valid amount"),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
+
+      // Process transfer logic would go here
 
       // Show success dialog
       showDialog(
@@ -53,7 +66,7 @@ class _TransferScreenState extends State<TransferScreen> {
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  "Your transfer of ${NumberFormat.currency(locale: 'vi_VN', symbol: 'đ', decimalDigits: 0).format(double.parse(_amountController.text))} has been processed successfully.",
+                  "Your transfer of ${NumberFormat.currency(locale: 'vi_VN', symbol: 'đ', decimalDigits: 0).format(amount)} has been processed successfully.",
                   style: theme.textTheme.bodyMedium,
                   textAlign: TextAlign.center,
                 ),
@@ -75,6 +88,13 @@ class _TransferScreenState extends State<TransferScreen> {
             ],
           );
         },
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Please fill in all required fields"),
+          backgroundColor: Colors.red,
+        ),
       );
     }
   }
@@ -162,7 +182,16 @@ class _TransferScreenState extends State<TransferScreen> {
                 Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    TransferCard(title: "Transfer to", userId: widget.model.id),
+                    TransferCard(
+                      title: "Transfer to",
+                      userId: widget.model.id,
+                      formKey: _formKey,
+                      onAmountChanged: (value) {
+                        setState(() {
+                          _currentAmount = value;
+                        });
+                      },
+                    ),
                   ],
                 ),
 

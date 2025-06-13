@@ -16,6 +16,7 @@ class _DepositScreenState extends State<DepositScreen> {
   final TextEditingController _amountController = TextEditingController();
   final TextEditingController _noteController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  String _currentAmount = "";
 
   @override
   void dispose() {
@@ -25,7 +26,19 @@ class _DepositScreenState extends State<DepositScreen> {
   }
 
   void _processDeposit() {
-    if (_formKey.currentState!.validate()) {
+    if (_formKey.currentState!.validate() && _currentAmount.isNotEmpty) {
+      final double? amount = double.tryParse(_currentAmount);
+
+      if (amount == null || amount <= 0) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Please enter a valid amount"),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
+
       // Process deposit logic would go here
 
       // Show success dialog
@@ -53,7 +66,7 @@ class _DepositScreenState extends State<DepositScreen> {
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  "Your deposit of ${NumberFormat.currency(locale: 'vi_VN', symbol: 'đ', decimalDigits: 0).format(double.parse(_amountController.text))} has been processed successfully.",
+                  "Your deposit of ${NumberFormat.currency(locale: 'vi_VN', symbol: 'đ', decimalDigits: 0).format(amount)} has been processed successfully.",
                   style: theme.textTheme.bodyMedium,
                   textAlign: TextAlign.center,
                 ),
@@ -75,6 +88,13 @@ class _DepositScreenState extends State<DepositScreen> {
             ],
           );
         },
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Please fill in all required fields"),
+          backgroundColor: Colors.red,
+        ),
       );
     }
   }
@@ -165,6 +185,12 @@ class _DepositScreenState extends State<DepositScreen> {
                     TransactionCard(
                       title: "Deposit into: ",
                       userId: widget.model.id,
+                      formKey: _formKey,
+                      onAmountChanged: (value) {
+                        setState(() {
+                          _currentAmount = value;
+                        });
+                      },
                     ),
                   ],
                 ),

@@ -9,7 +9,16 @@ import "package:flutter_bloc/flutter_bloc.dart";
 class TransactionCard extends StatefulWidget {
   final String title;
   final String userId;
-  const TransactionCard({super.key, required this.title, required this.userId});
+  final Function(String)? onAmountChanged;
+  final GlobalKey<FormState>? formKey;
+
+  const TransactionCard({
+    super.key,
+    required this.title,
+    required this.userId,
+    this.onAmountChanged,
+    this.formKey,
+  });
 
   @override
   State<TransactionCard> createState() => _TransactionCardState();
@@ -38,6 +47,18 @@ class _TransactionCardState extends State<TransactionCard> {
     super.dispose();
   }
 
+  String get amountValue => _amountController.text;
+
+  bool validateForm() {
+    if (widget.formKey != null) {
+      return widget.formKey!.currentState?.validate() ?? false;
+    }
+    return _amountController.text.isNotEmpty &&
+        double.tryParse(_amountController.text) != null &&
+        double.parse(_amountController.text) > 0;
+  }
+
+  @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final theme = Theme.of(context);
@@ -122,6 +143,9 @@ class _TransactionCardState extends State<TransactionCard> {
                   keyboardType: TextInputType.number,
                   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                   style: theme.textTheme.headlineSmall,
+                  onChanged: (value) {
+                    widget.onAmountChanged?.call(value);
+                  },
                   decoration: InputDecoration(
                     labelText: "Amount",
                     labelStyle: TextStyle(

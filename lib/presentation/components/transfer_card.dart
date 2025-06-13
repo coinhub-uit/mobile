@@ -8,13 +8,24 @@ import "package:flutter_bloc/flutter_bloc.dart";
 class TransferCard extends StatefulWidget {
   final String title;
   final String userId;
-  const TransferCard({super.key, required this.title, required this.userId});
+  final Function(String)? onAmountChanged;
+  final GlobalKey<FormState>? formKey;
+
+  const TransferCard({
+    super.key,
+    required this.title,
+    required this.userId,
+    this.onAmountChanged,
+    this.formKey,
+  });
+
   @override
   State<TransferCard> createState() => _TransferCardState();
 }
 
 class _TransferCardState extends State<TransferCard> {
-  final TextEditingController amountController = TextEditingController();
+  final TextEditingController _amountController = TextEditingController();
+  final TextEditingController _descriptionController = TextEditingController();
   final int limitLength = 160;
   late int selectedIndex;
   late int selectedIndexProvider;
@@ -28,6 +39,24 @@ class _TransferCardState extends State<TransferCard> {
       context.read<UserBloc>().add(SourcesFetching(widget.userId));
     });
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _amountController.dispose();
+    _descriptionController.dispose();
+    super.dispose();
+  }
+
+  String get amountValue => _amountController.text;
+
+  bool validateForm() {
+    if (widget.formKey != null) {
+      return widget.formKey!.currentState?.validate() ?? false;
+    }
+    return _amountController.text.isNotEmpty &&
+        double.tryParse(_amountController.text) != null &&
+        double.parse(_amountController.text) > 0;
   }
 
   @override
@@ -154,10 +183,14 @@ class _TransferCardState extends State<TransferCard> {
                   ),
                 ),
                 SizedBox(height: 16),
-                TextField(
+                TextFormField(
+                  controller: _amountController,
                   keyboardType: TextInputType.number,
                   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                   style: theme.textTheme.headlineSmall,
+                  onChanged: (value) {
+                    widget.onAmountChanged?.call(value);
+                  },
                   decoration: InputDecoration(
                     labelText: "Amount",
                     labelStyle: TextStyle(
@@ -184,18 +217,38 @@ class _TransferCardState extends State<TransferCard> {
                         width: 2,
                       ),
                     ),
+                    errorBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(color: Colors.red, width: 1),
+                    ),
+                    focusedErrorBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(color: Colors.red, width: 2),
+                    ),
                     contentPadding: const EdgeInsets.symmetric(
                       horizontal: 16,
                       vertical: 16,
                     ),
                   ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return "Please enter an amount";
+                    }
+                    if (double.tryParse(value) == null) {
+                      return "Please enter a valid amount";
+                    }
+                    if (double.parse(value) <= 0) {
+                      return "Amount must be greater than zero";
+                    }
+                    return null;
+                  },
                 ),
 
                 SizedBox(height: 12),
                 TextField(
                   maxLines: 4,
                   minLines: 3,
-                  controller: amountController,
+                  controller: _descriptionController,
                   maxLength: limitLength,
                   decoration: InputDecoration(
                     labelText: "Description",
@@ -207,7 +260,8 @@ class _TransferCardState extends State<TransferCard> {
                       Icons.description_outlined,
                       color: theme.primaryColor,
                     ),
-                    counterText: "${amountController.text.length}/$limitLength",
+                    counterText:
+                        "${_descriptionController.text.length}/$limitLength",
                     filled: true,
                     fillColor: theme.colorScheme.surface,
                     enabledBorder: OutlineInputBorder(
