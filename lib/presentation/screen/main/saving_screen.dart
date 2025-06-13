@@ -472,14 +472,15 @@ class _SavingsScreenState extends State<SavingsScreen> {
                                     ? tickets[index].ticketHistory![0].maturedAt
                                     : null;
                             final now = DateTime.now();
-                            final _planId = tickets[index].plan?.id;
+                            final planId = tickets[index].plan?.planId;
                             // print("Ticket: $tickets");
                             // print("Matching planId: $_planId");
 
                             // print(plans);
                             final plan = plans.firstWhere(
-                              (p) => p.id == _planId,
-                              orElse: () => PlanModel(id: -1, days: 0, rate: 0),
+                              (p) => p.planId == planId,
+                              orElse:
+                                  () => PlanModel(planId: -1, days: 0, rate: 0),
                             );
                             final rate = plan.rate;
 

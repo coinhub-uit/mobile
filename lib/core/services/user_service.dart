@@ -68,7 +68,7 @@ class UserService {
     final userId = user.id;
     UserModel newUser = UserModel(
       id: userId,
-      fullname: userModel.fullname,
+      fullName: userModel.fullName,
       birthDate: userModel.birthDate,
       avatar: userModel.avatar,
       citizenId: userModel.citizenId,
@@ -88,7 +88,7 @@ class UserService {
     if (response.statusCode == 201) {
       return response;
     } else {
-      throw Exception("Failed to create user: ${response.statusCode}");
+      throw Exception("Failed to create user: ${response.body}");
     }
   }
 
@@ -271,7 +271,7 @@ class UserService {
     } else if (response.contentLength == 0) {
       return [];
     } else {
-      throw Exception("Failed to fetch sources: ${response.statusCode}");
+      throw Exception("Failed to fetch sources: ${response.body}");
     }
   }
 

@@ -3,7 +3,7 @@ import "dart:convert";
 
 class UserModel {
   final String id; // supabase based
-  String fullname;
+  String fullName;
   String birthDate;
   String? avatar;
   String citizenId;
@@ -12,7 +12,7 @@ class UserModel {
   DateTime? deletedAt;
   UserModel({
     required this.id,
-    required this.fullname,
+    required this.fullName,
     required this.birthDate,
     this.avatar,
     required this.citizenId,
@@ -23,7 +23,7 @@ class UserModel {
 
   UserModel copyWith({
     String? id,
-    String? fullname,
+    String? fullName,
     String? birthDate,
     String? avatar,
     String? citizenId,
@@ -34,7 +34,7 @@ class UserModel {
   }) {
     return UserModel(
       id: id ?? this.id,
-      fullname: fullname ?? this.fullname,
+      fullName: fullName ?? this.fullName,
       birthDate: birthDate ?? this.birthDate,
       avatar: avatar ?? this.avatar,
       citizenId: citizenId ?? this.citizenId,
@@ -47,7 +47,7 @@ class UserModel {
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       "id": id,
-      "fullname": fullname,
+      "fullName": fullName,
       "birthDate": birthDate,
       "avatar": avatar,
       "citizenId": citizenId,
@@ -60,7 +60,7 @@ class UserModel {
   Map<String, dynamic> toMapForRequest() {
     return <String, dynamic>{
       "id": id,
-      "fullname": fullname,
+      "fullName": fullName,
       "birthDate": birthDate,
       "avatar": avatar,
       "citizenId": citizenId,
@@ -74,14 +74,14 @@ class UserModel {
     // Validate required fields
     final id = map["id"]?.toString();
     // Handle both "fullName" (backend) and "fullname" (legacy) field names
-    var fullname = map["fullName"]?.toString() ?? map["fullname"]?.toString();
+    var fullName = map["fullName"]?.toString() ?? map["fullname"]?.toString();
     final birthDate = map["birthDate"]?.toString();
     final citizenId = map["citizenId"]?.toString();
 
     if (id == null || id.isEmpty) {
       throw Exception("User ID is required but was null or empty");
     }
-    if (fullname == null || fullname.isEmpty) {
+    if (fullName == null || fullName.isEmpty) {
       throw Exception("Full name is required but was null or empty");
     }
     if (birthDate == null || birthDate.isEmpty) {
@@ -93,7 +93,7 @@ class UserModel {
 
     return UserModel(
       id: id,
-      fullname: fullname,
+      fullName: fullName,
       birthDate: birthDate,
       avatar: map["avatar"] != null ? map["avatar"] as String : null,
       citizenId: citizenId,
@@ -112,7 +112,7 @@ class UserModel {
 
   @override
   String toString() {
-    return "UserModel(id: $id, fullname: $fullname, birthDate: $birthDate, avatar: $avatar, citizenId: $citizenId, address: $address,createdAt: $createdAt, deletedAt: $deletedAt)";
+    return "UserModel(id: $id, fullName: $fullName, birthDate: $birthDate, avatar: $avatar, citizenId: $citizenId, address: $address,createdAt: $createdAt, deletedAt: $deletedAt)";
   }
 
   @override
@@ -120,7 +120,7 @@ class UserModel {
     if (identical(this, other)) return true;
 
     return other.id == id &&
-        other.fullname == fullname &&
+        other.fullName == fullName &&
         other.birthDate == birthDate &&
         other.avatar == avatar &&
         other.citizenId == citizenId &&
@@ -132,7 +132,7 @@ class UserModel {
   @override
   int get hashCode {
     return id.hashCode ^
-        fullname.hashCode ^
+        fullName.hashCode ^
         birthDate.hashCode ^
         avatar.hashCode ^
         citizenId.hashCode ^

@@ -31,7 +31,7 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
   void initState() {
     super.initState();
     newUserModel = widget.userModel;
-    controllerFullName = TextEditingController(text: widget.userModel.fullname);
+    controllerFullName = TextEditingController(text: widget.userModel.fullName);
     controllerCitizenId = TextEditingController(
       text: widget.userModel.citizenId,
     );
@@ -172,7 +172,7 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
                             }
                           },
                           onSaved: (value) {
-                            newUserModel.fullname = value?.trim() ?? "";
+                            newUserModel.fullName = value?.trim() ?? "";
                           },
                         ),
 

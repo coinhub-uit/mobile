@@ -221,7 +221,7 @@ class HomeScreenContent extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 4),
-            Text(model.fullname, style: theme.textTheme.titleLarge),
+            Text(model.fullName, style: theme.textTheme.titleLarge),
           ],
         ),
         CircleAvatar(

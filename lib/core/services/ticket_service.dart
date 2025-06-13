@@ -24,11 +24,19 @@ class TicketService {
     };
     final body = ticketModel.toJson();
 
+    print("Creating ticket with data:");
+    print("URL: $url");
+    print("TicketModel: $ticketModel");
+    print("JSON Body: $body");
+
     final response = await ApiClient.client.post(
       url,
       headers: headers,
       body: body,
     );
+
+    print("Create ticket response status: ${response.statusCode}");
+    print("Create ticket response body: ${response.body}");
 
     if (response.statusCode == 201) {
       return response;
@@ -89,22 +97,21 @@ class TicketService {
       throw Exception("Session not found");
     }
 
-    final url = Uri.parse("${ApiClient.ticketEndpoint}/$ticketId/sources");
-    final headers = {
-      "Content-Type": "application/json",
-      "Authorization": "Bearer $accessToken",
-    };
-
     try {
-      final response = await ApiClient.client.post(url, headers: headers);
-
-      if (response.statusCode == 201) {
+      final response = await ApiClient.client.get(
+        Uri.parse("${ApiClient.ticketEndpoint}/$ticketId/source"),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $accessToken",
+        },
+      );
+      if (response.statusCode == 200) {
         return response;
       } else {
-        throw Exception("Failed to fetch source ID: ${response.statusCode}");
+        throw Exception("Failed to fetch source ID: ${response.body}");
       }
     } catch (e) {
-      print("❌ Error fetching source ID: $e");
+      print("Error fetching source ID: $e");
       return Future.error("Failed to fetch source ID: $e");
     }
   }

@@ -3,7 +3,7 @@ import "package:coinhub/core/services/ticket_service.dart";
 import "package:coinhub/models/plan_model.dart";
 import "package:coinhub/models/ticket_model.dart";
 import "package:flutter/material.dart";
-import 'package:flutter_bloc/flutter_bloc.dart';
+import "package:flutter_bloc/flutter_bloc.dart";
 
 import "package:go_router/go_router.dart";
 import "package:intl/intl.dart";
@@ -175,7 +175,7 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
                                 ),
                                 const SizedBox(width: 12),
                                 Text(
-                                  widget.ticketModel.sourceId.toString(),
+                                  widget.ticketModel.id.toString(),
                                   style: theme.textTheme.headlineSmall,
                                 ),
                               ],

@@ -135,7 +135,7 @@ class _SignUpDetailsFormState extends State<SignUpDetailsForm> {
   void initState() {
     super.initState();
     userModel = UserModel(
-      fullname: "",
+      fullName: "",
       id: "",
       avatar: "",
       birthDate: DateFormat("yyyy-MM-dd").format(DateTime.now()),
@@ -160,7 +160,7 @@ class _SignUpDetailsFormState extends State<SignUpDetailsForm> {
           // fullname Field
           TextFormField(
             onSaved: (value) {
-              userModel.fullname = value?.trim() ?? "";
+              userModel.fullName = value?.trim() ?? "";
             },
             textInputAction: TextInputAction.next,
             keyboardType: TextInputType.name,

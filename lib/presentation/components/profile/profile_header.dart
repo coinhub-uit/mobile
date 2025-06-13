@@ -88,7 +88,7 @@ class ProfileHeader extends StatelessWidget {
         // User Name Display
         Padding(
           padding: const EdgeInsets.only(bottom: 8),
-          child: Text(model.fullname, style: theme.textTheme.headlineSmall),
+          child: Text(model.fullName, style: theme.textTheme.headlineSmall),
         ),
 
         // User Email Display

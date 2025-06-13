@@ -1,6 +1,6 @@
-import 'dart:convert';
-import 'plan_model.dart';
-import 'ticket_history_model.dart';
+import "dart:convert";
+import "plan_model.dart";
+import "ticket_history_model.dart";
 
 class TicketModel {
   final int? id;
@@ -29,51 +29,55 @@ class TicketModel {
 
   factory TicketModel.fromMap(Map<String, dynamic> map) {
     return TicketModel(
-      id: map['id'],
+      id: map["id"],
       openedAt:
-          map['openedAt'] != null ? DateTime.parse(map['openedAt']) : null,
+          map["openedAt"] != null ? DateTime.parse(map["openedAt"]) : null,
       closedAt:
-          map['closedAt'] != null ? DateTime.parse(map['closedAt']) : null,
-      status: map['status'],
-      method: map['method'],
+          map["closedAt"] != null ? DateTime.parse(map["closedAt"]) : null,
+      status: map["status"],
+      method: map["method"],
       planHistoryId:
-          map['planHistoryId'] is int
-              ? map['planHistoryId']
-              : int.tryParse(map['planHistoryId']?.toString() ?? '0') ?? 0,
+          map["planHistoryId"] is int
+              ? map["planHistoryId"]
+              : int.tryParse(map["planHistoryId"]?.toString() ?? "0") ?? 0,
       amount:
-          map['amount'] is int
-              ? map['amount']
-              : int.tryParse(map['amount']?.toString() ?? '0') ?? 0,
-      sourceId: map['sourceId']?.toString() ?? '',
+          map["amount"] is int
+              ? map["amount"]
+              : int.tryParse(map["amount"]?.toString() ?? "0") ?? 0,
+      sourceId: map["sourceId"]?.toString() ?? "",
       ticketHistory:
-          map['ticketHistories'] != null
+          map["ticketHistories"] != null
               ? List<TicketHistoryModel>.from(
-                (map['ticketHistories'] as List).map(
+                (map["ticketHistories"] as List).map(
                   (x) => TicketHistoryModel.fromMap(x),
                 ),
               )
               : null,
-      plan: map['plan'] != null ? PlanModel.fromMap(map['plan']) : null,
+      plan: map["plan"] != null ? PlanModel.fromMap(map["plan"]) : null,
     );
   }
 
   Map<String, dynamic> toMap() {
     return {
-      'id': id,
-      'openedAt': openedAt?.toIso8601String(),
-      'closedAt': closedAt?.toIso8601String(),
-      'status': status,
-      'method': method,
-      'planHistoryId': planHistoryId,
-      'sourceId': sourceId,
-      'amount': amount,
+      "id": id,
+      "openedAt": openedAt?.toIso8601String(),
+      "closedAt": closedAt?.toIso8601String(),
+      "status": status,
+      "method": method,
+      "planHistoryId": planHistoryId,
+      "sourceId": sourceId,
+      "amount": amount,
       if (ticketHistory != null)
-        'ticketHistories': ticketHistory!.map((x) => x.toMap()).toList(),
-      if (plan != null) 'plan': plan!.toMap(),
+        "ticketHistories": ticketHistory!.map((x) => x.toMap()).toList(),
+      if (plan != null) "plan": plan!.toMap(),
     };
   }
 
   String toJson() => json.encode(toMap());
   factory TicketModel.fromJson(String source) =>
       TicketModel.fromMap(json.decode(source));
+
+  @override
+  String toString() =>
+      "TicketModel(id: $id, openedAt: $openedAt, closedAt: $closedAt, status: $status, method: $method, planHistoryId: $planHistoryId, sourceId: $sourceId, amount: $amount, ticketHistory: $ticketHistory, plan: $plan)";
 }
