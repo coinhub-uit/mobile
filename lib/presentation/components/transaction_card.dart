@@ -10,6 +10,7 @@ class TransactionCard extends StatefulWidget {
   final String title;
   final String userId;
   final Function(String)? onAmountChanged;
+  final Function(String)? onSourceChanged;
   final GlobalKey<FormState>? formKey;
 
   const TransactionCard({
@@ -17,6 +18,7 @@ class TransactionCard extends StatefulWidget {
     required this.title,
     required this.userId,
     this.onAmountChanged,
+    this.onSourceChanged,
     this.formKey,
   });
 
@@ -86,6 +88,12 @@ class _TransactionCardState extends State<TransactionCard> {
               ),
             );
           }
+          // Notify parent about the initially selected source
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (sources.isNotEmpty && selectedIndex < sources.length) {
+              widget.onSourceChanged?.call(sources[selectedIndex].id);
+            }
+          });
         } else {
           return Center(
             child: Text(
@@ -126,6 +134,8 @@ class _TransactionCardState extends State<TransactionCard> {
                           setState(() {
                             selectedIndex = index;
                           });
+                          // Notify parent about the selected source
+                          widget.onSourceChanged?.call(sources[index].id);
                         },
                         child: MiniSourceCard(
                           icon: Icons.account_balance_wallet,

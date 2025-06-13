@@ -2,6 +2,7 @@ import "dart:async";
 import "package:coinhub/core/bloc/auth/auth_logic.dart";
 import "package:coinhub/core/bloc/auth/auth_event.dart";
 import "package:coinhub/core/bloc/auth/auth_state.dart" as auth_bloc;
+import "package:coinhub/core/bloc/deposit/deposit_logic.dart";
 import "package:coinhub/core/bloc/plan/plan_logic.dart";
 import "package:coinhub/core/bloc/source/source_logic.dart";
 import "package:coinhub/core/bloc/ticket/ticket_logic.dart";
@@ -131,6 +132,7 @@ class _MyAppState extends State<MyApp> {
         BlocProvider(create: (context) => PlanBloc()),
         BlocProvider(create: (context) => SourceBloc()),
         BlocProvider(create: (context) => TicketBloc()),
+        BlocProvider(create: (context) => DepositBloc()),
       ],
       child: SessionAwareApp(themeProvider: themeProvider),
     );

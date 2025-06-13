@@ -66,6 +66,7 @@ dependencies:
   latlong2: ^0.9.1
   geocoding: ^4.0.0
   flutter_launcher_icons: ^0.14.3
+  webview_flutter: ^4.9.0
 
 dev_dependencies:
   flutter_test:
