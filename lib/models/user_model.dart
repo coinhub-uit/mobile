@@ -71,12 +71,32 @@ class UserModel {
   String toJsonForRequest() => json.encode(toMapForRequest());
 
   factory UserModel.fromMap(Map<String, dynamic> map) {
+    // Validate required fields
+    final id = map["id"]?.toString();
+    // Handle both "fullName" (backend) and "fullname" (legacy) field names
+    var fullname = map["fullName"]?.toString() ?? map["fullname"]?.toString();
+    final birthDate = map["birthDate"]?.toString();
+    final citizenId = map["citizenId"]?.toString();
+
+    if (id == null || id.isEmpty) {
+      throw Exception("User ID is required but was null or empty");
+    }
+    if (fullname == null || fullname.isEmpty) {
+      throw Exception("Full name is required but was null or empty");
+    }
+    if (birthDate == null || birthDate.isEmpty) {
+      throw Exception("Birth date is required but was null or empty");
+    }
+    if (citizenId == null || citizenId.isEmpty) {
+      throw Exception("Citizen ID is required but was null or empty");
+    }
+
     return UserModel(
-      id: map["id"] as String,
-      fullname: map["fullname"] as String,
-      birthDate: map["birthDate"] as String,
+      id: id,
+      fullname: fullname,
+      birthDate: birthDate,
       avatar: map["avatar"] != null ? map["avatar"] as String : null,
-      citizenId: map["citizenId"] as String,
+      citizenId: citizenId,
       address: map["address"] != null ? map["address"] as String : null,
       createdAt:
           map["createdAt"] != null ? DateTime.parse(map["createdAt"]) : null,

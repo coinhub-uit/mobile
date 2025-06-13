@@ -16,22 +16,24 @@ class TicketService {
     if (accessToken == null) {
       throw Exception("Session not found");
     }
-    print("send to json: ${ticketModel.toJson()}");
+
+    final url = Uri.parse("${ApiClient.ticketEndpoint}");
+    final headers = {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer $accessToken",
+    };
+    final body = ticketModel.toJson();
+
     final response = await ApiClient.client.post(
-      Uri.parse("${ApiClient.ticketEndpoint}"),
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer $accessToken",
-      },
-      body: ticketModel.toJson(),
+      url,
+      headers: headers,
+      body: body,
     );
-    print("Response status: ${response.statusCode}");
-    print("Response body: ${response.body}");
 
     if (response.statusCode == 201) {
       return response;
     } else {
-      throw Exception("Failed to create source: ${response.statusCode}");
+      throw Exception("Failed to create ticket: ${response.statusCode}");
     }
   }
 
@@ -42,13 +44,15 @@ class TicketService {
       throw Exception("Session not found");
     }
 
-    return ApiClient.client.get(
-      Uri.parse("${ApiClient.ticketEndpoint}/$ticketId"),
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer $accessToken",
-      },
-    );
+    final url = Uri.parse("${ApiClient.ticketEndpoint}/$ticketId");
+    final headers = {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer $accessToken",
+    };
+
+    final response = await ApiClient.client.get(url, headers: headers);
+
+    return response;
   }
 
   static Future<http.Response> withdrawTicket(int ticketId) async {
@@ -58,23 +62,22 @@ class TicketService {
       throw Exception("Session not found");
     }
 
+    final url = Uri.parse("${ApiClient.ticketEndpoint}/$ticketId/withdraw");
+    final headers = {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer $accessToken",
+    };
+
     try {
-      final response = await ApiClient.client.get(
-        Uri.parse("${ApiClient.ticketEndpoint}/$ticketId/withdraw"),
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer $accessToken",
-        },
-      );
-      print("Response status: ${response.statusCode}");
-      print("Response body: ${response.body}");
+      final response = await ApiClient.client.get(url, headers: headers);
+
       if (response.statusCode == 200) {
         return response;
       } else {
         throw Exception("Failed to withdraw ticket: ${response.statusCode}");
       }
     } catch (e) {
-      print("Error withdrawing ticket: $e");
+      print("❌ Error withdrawing ticket: $e");
       return Future.error("Failed to withdraw ticket: $e");
     }
   }
@@ -86,21 +89,22 @@ class TicketService {
       throw Exception("Session not found");
     }
 
+    final url = Uri.parse("${ApiClient.ticketEndpoint}/$ticketId/sources");
+    final headers = {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer $accessToken",
+    };
+
     try {
-      final response = await ApiClient.client.post(
-        Uri.parse("${ApiClient.ticketEndpoint}/$ticketId/sources"),
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer $accessToken",
-        },
-      );
+      final response = await ApiClient.client.post(url, headers: headers);
+
       if (response.statusCode == 201) {
         return response;
       } else {
         throw Exception("Failed to fetch source ID: ${response.statusCode}");
       }
     } catch (e) {
-      print("Error fetching source ID: $e");
+      print("❌ Error fetching source ID: $e");
       return Future.error("Failed to fetch source ID: $e");
     }
   }

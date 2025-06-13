@@ -75,11 +75,9 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     on<SourcesFetching>((event, emit) async {
       emit(SourcesLoading());
       try {
-        print("Fetching sources for user: ${event.userId}");
         final response = await UserService.fetchSources(event.userId);
         if (response.isNotEmpty) {
           emit(SourcesFetchedSuccess(response));
-          print("Fetched sources: $response");
         } else {
           emit(SourcesFetchedSuccess(response));
         }

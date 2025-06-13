@@ -25,7 +25,7 @@ class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
   UserModel? userModel;
   String? userEmail;
-  bool get isUserLoaded => userModel?.id != "temporaryId";
+  bool get isUserLoaded => userModel != null && userModel!.id != "temporaryId";
 
   List<Widget> get _screens => [
     if (userModel != null) ...[
@@ -55,21 +55,12 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<UserModel?> getUserModel(String id) async {
-    return await UserService.getUser(id)
-        .then((value) {
-          return value;
-        })
-        .catchError((error) {
-          debugPrint("Error: $error");
-          return Future.value(
-            UserModel(
-              id: "This is a placeholder.",
-              citizenId: "This is a placeholder.",
-              fullname: "This is a placeholder.",
-              birthDate: DateFormat("yyyy-MM-dd").format(DateTime.now()),
-            ),
-          );
-        });
+    try {
+      return await UserService.getUser(id);
+    } catch (error) {
+      debugPrint("Error fetching user: $error");
+      return null;
+    }
   }
 
   @override
@@ -514,8 +505,16 @@ class HomeScreenContent extends StatelessWidget {
               label: "Deposit",
               color: const Color(0xFF10B981),
               width: (screenSize.width - 56) / 2,
-              onTap: () {
-                context.push(Routes.transaction.deposit, extra: model);
+              onTap: () async {
+                final reload = await context.push(
+                  Routes.transaction.deposit,
+                  extra: model,
+                );
+                if (reload == true) {
+                  BlocProvider.of<UserBloc>(
+                    context,
+                  ).add(SourcesFetching(model.id));
+                }
               },
             ),
             const SizedBox(width: 8),
@@ -548,8 +547,16 @@ class HomeScreenContent extends StatelessWidget {
               label: "New Saving Plan",
               color: const Color(0xFF8B5CF6),
               width: (screenSize.width - 56) / 2,
-              onTap: () {
-                context.push(Routes.transaction.savingPlan, extra: model);
+              onTap: () async {
+                final reload = await context.push(
+                  Routes.transaction.savingPlan,
+                  extra: model,
+                );
+                if (reload == true) {
+                  BlocProvider.of<UserBloc>(
+                    context,
+                  ).add(SourcesFetching(model.id));
+                }
               },
             ),
             const SizedBox(width: 8),
@@ -559,8 +566,16 @@ class HomeScreenContent extends StatelessWidget {
               label: "Transfer",
               color: AppTheme.accentCopper,
               width: (screenSize.width - 56) / 2,
-              onTap: () {
-                context.push(Routes.transaction.transfer, extra: model);
+              onTap: () async {
+                final reload = await context.push(
+                  Routes.transaction.transfer,
+                  extra: model,
+                );
+                if (reload == true) {
+                  BlocProvider.of<UserBloc>(
+                    context,
+                  ).add(SourcesFetching(model.id));
+                }
               },
             ),
           ],

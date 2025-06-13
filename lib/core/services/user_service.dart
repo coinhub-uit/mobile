@@ -94,8 +94,8 @@ class UserService {
 
   static Future<UserModel?> getUser(String id) async {
     final user = supabaseClient.auth.currentUser;
-    // Use Supabase's current session instead of manual storage
-    final session = supabaseClient.auth.currentSession;
+    // Use Supabase's current session and refresh if needed
+    final session = await _getValidSession();
     final accessToken = session?.accessToken;
     if (accessToken == null) {
       throw Exception("Session not found");
@@ -250,43 +250,80 @@ class UserService {
   // source
 
   static Future<List<SourceModel>> fetchSources(String userId) async {
-    // Use Supabase's current session instead of manual storage
-    final session = supabaseClient.auth.currentSession;
+    // Use Supabase's current session and refresh if needed
+    final session = await _getValidSession();
     final accessToken = session?.accessToken;
     if (accessToken == null) {
       throw Exception("Session not found");
     }
-    print("Access token: $accessToken");
 
-    final response = await ApiClient.client.get(
-      Uri.parse("${ApiClient.userEndpoint}/$userId/sources"),
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer $accessToken",
-      },
-    );
+    final url = Uri.parse("${ApiClient.userEndpoint}/$userId/sources");
+    final headers = {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer $accessToken",
+    };
+
+    final response = await ApiClient.client.get(url, headers: headers);
 
     if (response.statusCode == 200) {
       final List<dynamic> decoded = jsonDecode(response.body);
-      print("Decoded sources: $decoded");
-      print("Decoded sources length: ${decoded.length}");
       return decoded.map((plan) => SourceModel.fromJson(plan)).toList();
     } else if (response.contentLength == 0) {
-      print("No sources found for user $userId");
       return [];
     } else {
       throw Exception("Failed to fetch sources: ${response.statusCode}");
     }
   }
 
+  // Helper method to get valid session with refresh
+  static Future<Session?> _getValidSession() async {
+    try {
+      final currentSession = supabaseClient.auth.currentSession;
+
+      if (currentSession == null) {
+        throw Exception("No session found");
+      }
+
+      // Check if token is expired or about to expire (within 5 minutes)
+      final now = DateTime.now();
+      final expiresAt = DateTime.fromMillisecondsSinceEpoch(
+        currentSession.expiresAt! * 1000,
+      );
+      final timeUntilExpiry = expiresAt.difference(now);
+
+      // If token expires in less than 5 minutes, refresh it
+      if (timeUntilExpiry.inMinutes < 5) {
+        final refreshResponse = await supabaseClient.auth.refreshSession();
+        if (refreshResponse.session != null) {
+          return refreshResponse.session;
+        } else {
+          throw Exception("Failed to refresh session");
+        }
+      }
+
+      return currentSession;
+    } catch (e) {
+      // Try to refresh session as fallback
+      try {
+        final refreshResponse = await supabaseClient.auth.refreshSession();
+        if (refreshResponse.session != null) {
+          return refreshResponse.session;
+        } else {
+          throw Exception("Session invalid and refresh failed");
+        }
+      } catch (refreshError) {
+        throw Exception("Session invalid and refresh failed");
+      }
+    }
+  }
+
   static Future<List<TicketModel>> fetchTickets(String userId) async {
-    // Use Supabase's current session instead of manual storage
-    final session = supabaseClient.auth.currentSession;
+    // Use Supabase's current session and refresh if needed
+    final session = await _getValidSession();
     final accessToken = session?.accessToken;
     if (accessToken == null) {
       throw Exception("Session not found");
     }
-    print("Access token: $accessToken");
 
     final response = await ApiClient.client.get(
       Uri.parse("${ApiClient.userEndpoint}/$userId/tickets"),
@@ -295,17 +332,13 @@ class UserService {
         "Authorization": "Bearer $accessToken",
       },
     );
-    print("response: ${response.body}");
 
     if (response.statusCode == 200) {
       final List<dynamic> decoded = jsonDecode(response.body);
-      print("Decoded tickets: $decoded");
       final ticketsList =
           decoded.map((ticket) => TicketModel.fromMap(ticket)).toList();
       for (final ticket in ticketsList) {
-        print("Ticket ID: ${ticket.id}");
         final fetchedSourceId = await TicketService.getSourceId(ticket.id!);
-        print("Fetched source ID: ${fetchedSourceId.body}");
         ticket.sourceId = fetchedSourceId.body;
       }
       return ticketsList;
