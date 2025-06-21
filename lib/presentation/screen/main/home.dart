@@ -5,6 +5,7 @@ import "package:coinhub/models/source_model.dart";
 import "package:coinhub/models/user_model.dart";
 import "package:coinhub/presentation/screen/main/profile_screen.dart";
 import "package:coinhub/presentation/screen/main/saving_screen.dart";
+import "package:coinhub/presentation/screen/main/chatbot_screen.dart";
 import "package:flutter/material.dart";
 import "package:coinhub/core/services/auth_service.dart";
 import "package:flutter_bloc/flutter_bloc.dart";
@@ -31,6 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
     if (userModel != null) ...[
       HomeScreenContent(model: userModel!),
       SavingsScreen(model: userModel!),
+      ChatbotScreen(model: userModel!),
       ProfileScreen(
         model: userModel!,
         userEmail: userEmail!,
@@ -132,16 +134,37 @@ class _HomeScreenState extends State<HomeScreen> {
           selectedLabelStyle: Theme.of(context).textTheme.labelMedium,
           unselectedLabelStyle: Theme.of(context).textTheme.labelSmall,
           type: BottomNavigationBarType.fixed,
-          items: const [
-            BottomNavigationBarItem(
+          items: [
+            const BottomNavigationBarItem(
               icon: Icon(FontAwesomeIcons.house),
               label: "Home",
             ),
-            BottomNavigationBarItem(
+            const BottomNavigationBarItem(
               icon: Icon(FontAwesomeIcons.wallet),
               label: "Savings",
             ),
             BottomNavigationBarItem(
+              icon: SizedBox(
+                width: 24,
+                height: 24,
+                // child: ColorFiltered(
+                //   colorFilter: ColorFilter.mode(
+                //     _selectedIndex == 2
+                //         ? Theme.of(context).primaryColor
+                //         : Theme.of(
+                //           context,
+                //         ).colorScheme.onSurface.withAlpha(153),
+                //     BlendMode.srcIn,
+                //   ),
+                child: Image.asset(
+                  'ass"ts/images/CoinHub.png',
+ "                fit: BoxFit.contain,
+                ),
+                // ),
+              ),
+              label: "Assistant",
+            ),
+            const BottomNavigationBarItem(
               icon: Icon(FontAwesomeIcons.userLarge),
               label: "Profile",
             ),
