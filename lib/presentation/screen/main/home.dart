@@ -158,7 +158,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 //   ),
                 child: Image.asset(
                   'ass"ts/images/CoinHub.png',
- "                fit: BoxFit.contain,
+                  fit: BoxFit.contain,
                 ),
                 // ),
               ),

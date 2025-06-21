@@ -143,11 +143,10 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
         elevation: 0,
         title: Text(
           "CoinHub Assistant",
-    "     style: theme"textTheme.titleMedium?.copyWith(
+          style: theme.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.bold,
           ),
         ),
-
         actions: [
           IconButton(
             icon: const Icon(Icons.delete_outline),
@@ -156,8 +155,8 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
           ),
         ],
       ),
-  "   body: Column(
- "      children: [
+      body: Column(
+        children: [
           // Chat messages
           Expanded(
             child:
@@ -179,25 +178,25 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                               shape: BoxShape.circle,
                               color: theme.primaryColor.withAlpha(26),
                             ),
+                          ),
                           const SizedBox(height: 16),
                           Text(
                             "Hi ${widget.model.fullName}!",
-                         "  style: theme.textTheme.tit"eLarge?.copyWith(
+                            style: theme.textTheme.titleLarge?.copyWith(
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            'I\'m your CoinHub assistant. Ask me anything about your "iances!',
-                            style: theme.textTheme.bod"Medium?.copyWith(
+                            "I'm your CoinHub assistant. Ask me anything about your finances!",
+                            style: theme.textTheme.bodyMedium?.copyWith(
                               color: theme.colorScheme.onSurface.withAlpha(179),
                             ),
                             textAlign: TextAlign.center,
-                            child: Image.asset(
-                              "assets/images/CoinHub.png",
-                            " fit: BoxFit.contain,
-   "                        ),
                           ),
+                          Image.asset(
+                            "assets/images/CoinHub.png",
+                            fit: BoxFit.contain,
                           ),
                         ],
                       ),
@@ -228,9 +227,9 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                       color: theme.primaryColor.withAlpha(26),
                     ),
                     child: Image.asset(
-                      'assets/images/CoinHub.png',
-                      fit: B"xFit.contain,
-           "        ),
+                      "assets/images/CoinHub.png",
+                      fit: BoxFit.contain,
+                    ),
                   ),
                   const SizedBox(width: 12),
                   Container(
@@ -255,8 +254,8 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                         ),
                         const SizedBox(width: 8),
                         Text(
-                          'Thinking...',
-                          style: theme.tex"Theme.bodyM"dium?.copyWith(
+                          "Thinking...",
+                          style: theme.textTheme.bodyMedium?.copyWith(
                             color: theme.colorScheme.onSurface.withAlpha(179),
                           ),
                         ),
@@ -288,9 +287,9 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                       child: TextField(
                         controller: _messageController,
                         decoration: InputDecoration(
-                          hintText: 'Type your message...',
-                          border:"InputBorder.none,
-  "                       contentPadding: const EdgeInsets.symmetric(
+                          hintText: "Type your message...",
+                          border: InputBorder.none,
+                          contentPadding: const EdgeInsets.symmetric(
                             horizontal: 16,
                             vertical: 12,
                           ),
@@ -318,14 +317,14 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
           ),
         ],
       ),
-    )
+    );
   }
 
   Widget _buildMessageBubble(ChatMessage message, ThemeData theme) {
     final isUser = message.role == "user";
 
     return Padding(
-      padding: const EdgeIns"ts.o"ly(bottom: 16),
+      padding: const EdgeInsets.only(bottom: 16),
       child: Row(
         mainAxisAlignment:
             isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
@@ -341,8 +340,8 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
               ),
               child: Image.asset(
                 "assets/images/CoinHub.png",
-                "it: BoxFit.contain,
-     "        ),
+                fit: BoxFit.contain,
+              ),
             ),
             const SizedBox(width: 12),
           ],
