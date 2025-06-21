@@ -1,5 +1,6 @@
 class Routes {
   static const String home = "/";
+  static const String notifications = "/notifications";
 
   static const auth = _Auth();
   static const account = _Account();

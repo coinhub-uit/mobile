@@ -224,14 +224,42 @@ class HomeScreenContent extends StatelessWidget {
             Text(model.fullName, style: theme.textTheme.titleLarge),
           ],
         ),
-        CircleAvatar(
-          radius: 24,
-          backgroundColor: theme.colorScheme.surface,
-          backgroundImage:
-              (model.avatar != null && model.avatar!.isNotEmpty)
-                  ? NetworkImage(model.avatar!)
-                  : const AssetImage("assets/images/CoinHub.png")
-                      as ImageProvider,
+        Row(
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                color: theme.colorScheme.surface,
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withAlpha(13),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: IconButton(
+                icon: Icon(
+                  Icons.notifications_outlined,
+                  color: theme.colorScheme.onSurface.withAlpha(179),
+                  size: 24,
+                ),
+                onPressed: () {
+                  context.push(Routes.notifications, extra: model.id);
+                },
+              ),
+            ),
+            const SizedBox(width: 12),
+            CircleAvatar(
+              radius: 24,
+              backgroundColor: theme.colorScheme.surface,
+              backgroundImage:
+                  (model.avatar != null && model.avatar!.isNotEmpty)
+                      ? NetworkImage(model.avatar!)
+                      : const AssetImage("assets/images/CoinHub.png")
+                          as ImageProvider,
+            ),
+          ],
         ),
       ],
     );

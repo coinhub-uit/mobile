@@ -1,7 +1,10 @@
 import "dart:convert";
 import "dart:developer";
+import "dart:io";
 import "dart:typed_data";
 
+import "package:coinhub/core/constants/api_client.dart";
+import "package:device_info_plus/device_info_plus.dart";
 import "package:firebase_messaging/firebase_messaging.dart";
 import "package:flutter/rendering.dart";
 import "package:flutter_local_notifications/flutter_local_notifications.dart";
@@ -142,5 +145,47 @@ class NotificationService {
     String? token = await _firebaseMessaging.getToken();
     debugPrint("Device Token: $token");
     return token;
+  }
+
+  Future<void> registerDeviceToken({
+    required String userId,
+    required String accessToken,
+  }) async {
+    try {
+      final fcmToken = await FirebaseMessaging.instance.getToken();
+      if (fcmToken == null) {
+        debugPrint("❌ Failed to get FCM token.");
+        return;
+      }
+
+      debugPrint("🔥 Got FCM token: $fcmToken");
+
+      final body = {
+        "fcmToken": fcmToken,
+        "deviceId":
+            Platform.isIOS
+                ? (await DeviceInfoPlugin().iosInfo).identifierForVendor
+                : (await DeviceInfoPlugin().androidInfo).id,
+      };
+      debugPrint(body.toString());
+
+      final response = await ApiClient.client.post(
+        Uri.parse("${ApiClient.userEndpoint}/$userId/devices"),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $accessToken",
+        },
+        body: jsonEncode(body),
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        debugPrint("✅ Device token registered successfully.");
+      } else {
+        debugPrint("❌ Failed to register token: ${response.statusCode}");
+        debugPrint("💬 Response: ${response.body}");
+      }
+    } catch (e) {
+      debugPrint("🔥 Error registering device token: $e");
+    }
   }
 }

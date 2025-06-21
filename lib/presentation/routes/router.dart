@@ -11,6 +11,7 @@ import "package:coinhub/presentation/screen/auth/sign_up_screen.dart";
 import "package:coinhub/presentation/screen/auth/verify_screen.dart";
 import "package:coinhub/presentation/screen/common/location_picker_screen.dart";
 import "package:coinhub/presentation/screen/main/home.dart";
+import "package:coinhub/presentation/screen/notification/notification_screen.dart";
 import "package:coinhub/presentation/screen/setting/pin_screen.dart";
 import "package:coinhub/presentation/screen/setting/account_detail_screen.dart";
 import "package:coinhub/presentation/screen/setting/advance_settings_screen.dart";
@@ -37,6 +38,14 @@ class RouteRouter {
         path: Routes.home,
         pageBuilder: (context, state) {
           return const MaterialPage(child: HomeScreen());
+        },
+      ),
+      GoRoute(
+        name: "notifications",
+        path: Routes.notifications,
+        builder: (context, state) {
+          final userId = state.extra as String;
+          return NotificationScreen(userId: userId);
         },
       ),
       GoRoute(

@@ -4,6 +4,7 @@ import "dart:io";
 import "package:coinhub/core/constants/api_client.dart";
 import "package:coinhub/core/services/source_service.dart";
 import "package:coinhub/core/services/ticket_service.dart";
+import "package:coinhub/models/notification_model.dart";
 import "package:coinhub/models/source_model.dart";
 import "package:coinhub/models/ticket_model.dart";
 import "package:coinhub/models/user_model.dart";
@@ -346,6 +347,36 @@ class UserService {
       return [];
     } else {
       throw Exception("Failed to fetch tickets: ${response.statusCode}");
+    }
+  }
+
+  static Future<List<NotificationModel>> fetchNotifications(
+    String userId,
+  ) async {
+    // Use Supabase's current session and refresh if needed
+    final session = await _getValidSession();
+    final accessToken = session?.accessToken;
+    if (accessToken == null) {
+      throw Exception("Session not found");
+    }
+
+    final response = await ApiClient.client.get(
+      Uri.parse("${ApiClient.userEndpoint}/$userId/notifications"),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $accessToken",
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final List<dynamic> decoded = jsonDecode(response.body);
+      return decoded
+          .map((notification) => NotificationModel.fromJson(notification))
+          .toList();
+    } else if (response.contentLength == 0) {
+      return [];
+    } else {
+      throw Exception("Failed to fetch notifications: ${response.statusCode}");
     }
   }
 }

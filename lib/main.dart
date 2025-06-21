@@ -1,4 +1,5 @@
 import "dart:async";
+import "dart:developer";
 import "package:coinhub/core/bloc/auth/auth_logic.dart";
 import "package:coinhub/core/bloc/auth/auth_event.dart";
 import "package:coinhub/core/bloc/auth/auth_state.dart" as auth_bloc;
@@ -31,6 +32,7 @@ void main() async {
 
   WidgetsFlutterBinding.ensureInitialized();
   await Supabase.initialize(url: Env.supabaseUrl, anonKey: Env.supabaseAnonKey);
+  log("JWT Token: ${supabase.auth.currentSession?.accessToken}");
   testHttp(); // Test HTTP request to the API server
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   NotificationService.instance.initialize();
@@ -166,6 +168,10 @@ class _SessionAwareAppState extends State<SessionAwareApp> {
         if (state is auth_bloc.SessionRestored) {
           // User has an active session, navigate to home
           debugPrint("Session restored for user: ${state.userId}");
+          NotificationService.instance.registerDeviceToken(
+            userId: state.userId,
+            accessToken: state.jwt,
+          );
           goRouter.go(Routes.home);
         } else if (state is auth_bloc.SessionNotFound) {
           // No session found, navigate to login
@@ -174,10 +180,24 @@ class _SessionAwareAppState extends State<SessionAwareApp> {
         } else if (state is auth_bloc.LoginSuccess) {
           // User just logged in successfully, navigate to home
           debugPrint("Login successful, redirecting to home");
+          final session = supabase.auth.currentSession;
+          if (session?.user.id != null && session?.accessToken != null) {
+            NotificationService.instance.registerDeviceToken(
+              userId: session!.user.id,
+              accessToken: session.accessToken,
+            );
+          }
           goRouter.go(Routes.home);
         } else if (state is auth_bloc.SignUpWithGoogleSuccess) {
           // User signed up with Google successfully, navigate to home
           debugPrint("Google sign up successful, redirecting to home");
+          final session = supabase.auth.currentSession;
+          if (session?.user.id != null && session?.accessToken != null) {
+            NotificationService.instance.registerDeviceToken(
+              userId: session!.user.id,
+              accessToken: session.accessToken,
+            );
+          }
           goRouter.go(Routes.home);
         }
       },
