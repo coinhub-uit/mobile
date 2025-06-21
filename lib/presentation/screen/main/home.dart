@@ -444,36 +444,7 @@ class HomeScreenContent extends StatelessWidget {
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          const SizedBox(height: 16),
-                          Row(
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 10,
-                                  vertical: 6,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Colors.white.withAlpha(26),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Row(
-                                  children: [
-                                    const Icon(
-                                      Icons.arrow_upward,
-                                      color: Color(0xFF10B981),
-                                      size: 14,
-                                    ),
-                                    const SizedBox(width: 4),
-                                    Text(
-                                      "+5.5% this month",
-                                      style: theme.textTheme.labelSmall
-                                          ?.copyWith(color: Colors.white),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
+                          const SizedBox(height: 32),
                           Align(
                             alignment: Alignment.centerRight,
                             child: Row(
