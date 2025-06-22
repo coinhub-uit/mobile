@@ -1,5 +1,6 @@
 import "dart:async";
 import "dart:developer";
+import "dart:io";
 import "package:coinhub/core/bloc/auth/auth_logic.dart";
 import "package:coinhub/core/bloc/auth/auth_event.dart";
 import "package:coinhub/core/bloc/auth/auth_state.dart" as auth_bloc;
@@ -36,7 +37,9 @@ void main() async {
   testHttp(); // Test HTTP request to the API server
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   NotificationService.instance.initialize();
-  NotificationService.instance.getDeviceToken();
+  if (!Platform.isIOS) {
+    NotificationService.instance.getDeviceToken();
+  }
 
   // Initialize timeout service
   final timeoutService = TimeoutService();
@@ -168,10 +171,12 @@ class _SessionAwareAppState extends State<SessionAwareApp> {
         if (state is auth_bloc.SessionRestored) {
           // User has an active session, navigate to home
           debugPrint("Session restored for user: ${state.userId}");
-          NotificationService.instance.registerDeviceToken(
-            userId: state.userId,
-            accessToken: state.jwt,
-          );
+          if (!Platform.isIOS) {
+            NotificationService.instance.registerDeviceToken(
+              userId: state.userId,
+              accessToken: state.jwt,
+            );
+          }
           goRouter.go(Routes.home);
         } else if (state is auth_bloc.SessionNotFound) {
           // No session found, navigate to login
@@ -181,7 +186,9 @@ class _SessionAwareAppState extends State<SessionAwareApp> {
           // User just logged in successfully, navigate to home
           debugPrint("Login successful, redirecting to home");
           final session = supabase.auth.currentSession;
-          if (session?.user.id != null && session?.accessToken != null) {
+          if (!Platform.isIOS &&
+              session?.user.id != null &&
+              session?.accessToken != null) {
             NotificationService.instance.registerDeviceToken(
               userId: session!.user.id,
               accessToken: session.accessToken,
@@ -192,7 +199,9 @@ class _SessionAwareAppState extends State<SessionAwareApp> {
           // User signed up with Google successfully, navigate to home
           debugPrint("Google sign up successful, redirecting to home");
           final session = supabase.auth.currentSession;
-          if (session?.user.id != null && session?.accessToken != null) {
+          if (!Platform.isIOS &&
+              session?.user.id != null &&
+              session?.accessToken != null) {
             NotificationService.instance.registerDeviceToken(
               userId: session!.user.id,
               accessToken: session.accessToken,
