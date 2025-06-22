@@ -55,4 +55,7 @@ class TicketHistoryModel {
   String toJson() => json.encode(toMap());
   factory TicketHistoryModel.fromJson(String source) =>
       TicketHistoryModel.fromMap(json.decode(source));
+  @override
+  String toString() =>
+      "TicketHistoryModel(issuedAt: $issuedAt, maturedAt: $maturedAt, principal: $principal, interest: $interest)";
 }

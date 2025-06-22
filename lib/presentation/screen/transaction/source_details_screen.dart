@@ -32,7 +32,7 @@ class _SourceDetailsScreenState extends State<SourceDetailsScreen> {
 
     return BlocConsumer<SourceBloc, SourceState>(
       listener: (context, state) {
-        if (state is SourceError) {
+        if (state is SourceDeletedError) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(state.message), backgroundColor: Colors.red),
           );

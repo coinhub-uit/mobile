@@ -175,7 +175,7 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
                                 ),
                                 const SizedBox(width: 12),
                                 Text(
-                                  widget.ticketModel.id.toString(),
+                                  widget.ticketModel.source!.id.toString(),
                                   style: theme.textTheme.headlineSmall,
                                 ),
                               ],

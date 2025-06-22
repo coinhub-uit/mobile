@@ -51,13 +51,13 @@ class SavingPlanCardState extends State<SavingPlanCard> {
       "method": selectedMethod,
       "amount": selectedAmount,
     };
-    print("SavingPlanCard: Selected values: $values");
-    print(
-      "SavingPlanCard: Plans length: ${plans.length}, Sources length: ${sources.length}",
-    );
-    print(
-      "SavingPlanCard: Selected indices - source: $selectedIndex, plan: $selectedIndexPlan, method: $selectedIndexMethod",
-    );
+    // print("SavingPlanCard: Selected values: $values");
+    // print(
+    //   "SavingPlanCard: Plans length: ${plans.length}, Sources length: ${sources.length}",
+    // );
+    // print(
+    //   "SavingPlanCard: Selected indices - source: $selectedIndex, plan: $selectedIndexPlan, method: $selectedIndexMethod",
+    // );
     return values;
   }
 
@@ -81,7 +81,7 @@ class SavingPlanCardState extends State<SavingPlanCard> {
       print("SavingPlanCard: Fetched ${fetchedPlans.length} plans");
       if (mounted) {
         setState(() {
-          plans = fetchedPlans;
+          plans = fetchedPlans.where((plan) => plan.planId != 1).toList();
         });
       }
     } catch (e) {

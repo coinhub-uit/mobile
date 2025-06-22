@@ -1,4 +1,6 @@
 import "dart:convert";
+import "package:coinhub/models/source_model.dart";
+
 import "plan_model.dart";
 import "ticket_history_model.dart";
 
@@ -9,7 +11,8 @@ class TicketModel {
   final String? status;
   final String method;
   final int planHistoryId;
-  String sourceId;
+  SourceModel? source;
+  String sourceId; // ✅ kept and assigned from `source`
   final int amount;
   final List<TicketHistoryModel>? ticketHistory;
   final PlanModel? plan;
@@ -21,13 +24,19 @@ class TicketModel {
     this.status,
     required this.method,
     required this.planHistoryId,
-    required this.sourceId,
+    this.source,
     required this.amount,
     this.ticketHistory,
     this.plan,
-  });
+    this.sourceId = "",
+  }); // ✅ assign sourceId automatically
 
   factory TicketModel.fromMap(Map<String, dynamic> map) {
+    final parsedSource =
+        map["sourceId"] is Map<String, dynamic>
+            ? SourceModel.fromMap(map["sourceId"])
+            : SourceModel(id: map["sourceId"]?.toString() ?? "");
+
     return TicketModel(
       id: map["id"],
       openedAt:
@@ -44,7 +53,7 @@ class TicketModel {
           map["amount"] is int
               ? map["amount"]
               : int.tryParse(map["amount"]?.toString() ?? "0") ?? 0,
-      sourceId: map["sourceId"]?.toString() ?? "",
+      source: parsedSource,
       ticketHistory:
           map["ticketHistories"] != null
               ? List<TicketHistoryModel>.from(
@@ -53,7 +62,14 @@ class TicketModel {
                 ),
               )
               : null,
-      plan: map["plan"] != null ? PlanModel.fromMap(map["plan"]) : null,
+      plan:
+          map["plan"] != null
+              ? PlanModel.fromMap({
+                "planId": map["plan"]["id"],
+                "days": map["plan"]["days"],
+                "rate": map["plan"]["planHistories"].last["rate"],
+              })
+              : null,
     );
   }
 
@@ -65,7 +81,7 @@ class TicketModel {
       "status": status,
       "method": method,
       "planHistoryId": planHistoryId,
-      "sourceId": sourceId,
+      "sourceId": source!.toMap(), // ✅ full object for backend
       "amount": amount,
       if (ticketHistory != null)
         "ticketHistories": ticketHistory!.map((x) => x.toMap()).toList(),
@@ -74,10 +90,11 @@ class TicketModel {
   }
 
   String toJson() => json.encode(toMap());
+
   factory TicketModel.fromJson(String source) =>
       TicketModel.fromMap(json.decode(source));
 
   @override
   String toString() =>
-      "TicketModel(id: $id, openedAt: $openedAt, closedAt: $closedAt, status: $status, method: $method, planHistoryId: $planHistoryId, sourceId: $sourceId, amount: $amount, ticketHistory: $ticketHistory, plan: $plan)";
+      "TicketModel(id: $id, openedAt: $openedAt, closedAt: $closedAt, status: $status, method: $method, planHistoryId: $planHistoryId, sourceId: $sourceId, source: $source, amount: $amount, ticketHistory: $ticketHistory, plan: $plan)";
 }

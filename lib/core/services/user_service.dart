@@ -318,35 +318,108 @@ class UserService {
     }
   }
 
+  // static Future<List<TicketModel>> fetchTickets(String userId) async {
+  //   // Use Supabase's current session and refresh if needed
+  //   final session = await _getValidSession();
+  //   final accessToken = session?.accessToken;
+  //   if (accessToken == null) {
+  //     throw Exception("Session not found");
+  //   }
+
+  //   final response = await ApiClient.client.get(
+  //     Uri.parse("${ApiClient.userEndpoint}/$userId/tickets"),
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //       "Authorization": "Bearer $accessToken",
+  //     },
+  //   );
+
+  //   if (response.statusCode == 200) {
+  //     final List<dynamic> decoded = jsonDecode(response.body);
+  //     final ticketsList =
+  //         decoded.map((ticket) => TicketModel.fromMap(ticket)).toList();
+  //     for (final ticket in ticketsList) {
+  //       final fetchedSourceId = await TicketService.getSourceId(ticket.id!);
+  //       ticket.sourceId = fetchedSourceId.body;
+  //     }
+  //     return ticketsList;
+  //   } else if (response.contentLength == 0) {
+  //     return [];
+  //   } else {
+  //     throw Exception("Failed to fetch tickets: ${response.statusCode}");
+  //   }
+  // }
   static Future<List<TicketModel>> fetchTickets(String userId) async {
-    // Use Supabase's current session and refresh if needed
+    //print("[fetchTickets] Start fetching tickets for user: $userId");
+
+    // Get a valid session with access token
     final session = await _getValidSession();
     final accessToken = session?.accessToken;
+
     if (accessToken == null) {
-      throw Exception("Session not found");
+      throw Exception("[fetchTickets] Session not found");
     }
 
-    final response = await ApiClient.client.get(
-      Uri.parse("${ApiClient.userEndpoint}/$userId/tickets"),
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer $accessToken",
-      },
+    final url = Uri.parse(
+      "${ApiClient.userEndpoint}/$userId/tickets?activeTicketOnly=false",
     );
 
-    if (response.statusCode == 200) {
-      final List<dynamic> decoded = jsonDecode(response.body);
-      final ticketsList =
-          decoded.map((ticket) => TicketModel.fromMap(ticket)).toList();
-      for (final ticket in ticketsList) {
-        final fetchedSourceId = await TicketService.getSourceId(ticket.id!);
-        ticket.sourceId = fetchedSourceId.body;
+    try {
+      final response = await ApiClient.client.get(
+        url,
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $accessToken",
+        },
+      );
+
+      print("[fetchTickets] Response Status: ${response.body}");
+
+      if (response.statusCode == 200) {
+        final List<dynamic> decoded = jsonDecode(response.body);
+        final ticketsList =
+            decoded.map((ticket) {
+              //print("🧾 [fetchTickets] Decoding ticket: $ticket");
+              return TicketModel.fromMap(ticket);
+            }).toList();
+
+        //print("[fetchTickets] Decoded ${ticketsList.length} tickets");
+
+        await Future.wait(
+          ticketsList.map((ticket) async {
+            print("[fetchTickets] Fetching sourceId for ticket ${ticket.id}");
+            try {
+              final fetchedSourceId = await TicketService.getSourceId(
+                ticket.id!,
+              ).timeout(const Duration(seconds: 5));
+              ticket.source = SourceModel.fromMap(
+                json.decode(fetchedSourceId.body),
+              );
+
+              // print(
+              //   "[fetchTickets] Got sourceId for ticket ${ticket.id}: ${ticket.sourceId}",
+              // );
+            } catch (e) {
+              print(
+                "[fetchTickets] Failed to get sourceId for ticket ${ticket.id}: $e",
+              );
+              ticket.sourceId = "";
+            }
+          }),
+        );
+
+        return ticketsList;
+      } else if (response.contentLength == 0) {
+        print("[fetchTickets] No content in response");
+        return [];
+      } else {
+        throw Exception(
+          "[fetchTickets] Failed with status: ${response.statusCode}",
+        );
       }
-      return ticketsList;
-    } else if (response.contentLength == 0) {
-      return [];
-    } else {
-      throw Exception("Failed to fetch tickets: ${response.statusCode}");
+    } catch (e, s) {
+      print("[fetchTickets] Exception: $e\n Stack: $s");
+      rethrow;
     }
   }
 

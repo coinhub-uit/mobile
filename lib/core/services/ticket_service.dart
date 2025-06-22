@@ -35,8 +35,8 @@ class TicketService {
       body: body,
     );
 
-    print("Create ticket response status: ${response.statusCode}");
-    print("Create ticket response body: ${response.body}");
+    // print("Create ticket response status: ${response.statusCode}");
+    // print("Create ticket response body: ${response.body}");
 
     if (response.statusCode == 201) {
       return response;

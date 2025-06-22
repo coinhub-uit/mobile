@@ -56,7 +56,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
   void _filterBySource(String sourceId) {
     setState(() {
       tickets =
-          allTickets.where((ticket) => ticket.sourceId == sourceId).toList();
+          allTickets.where((ticket) => ticket.source!.id == sourceId).toList();
     });
   }
 
@@ -72,6 +72,8 @@ class _SavingsScreenState extends State<SavingsScreen> {
     return BlocConsumer<UserBloc, UserState>(
       listener: (context, state) {
         if (state is TicketFetchedSuccess) {
+          //print("Tickets fetched successfully: ${state.tickets.length}");
+          //print("Ticketsssss: ${state.tickets}");
           WidgetsBinding.instance.addPostFrameCallback((_) {
             setState(() {
               allTickets = List.from(state.tickets);
@@ -96,27 +98,6 @@ class _SavingsScreenState extends State<SavingsScreen> {
         }
       },
       builder: (context, state) {
-        // print("Current ticket: $tickets");
-        // print("Current sources: $sources");
-
-        int totalInterest = 0;
-        int totalPrincipal = 0;
-
-        for (var ticket in tickets) {
-          if (ticket.status != "active" &&
-              ticket.ticketHistory != null &&
-              ticket.ticketHistory!.isNotEmpty) {
-            totalInterest += ticket.ticketHistory![0].interest?.toInt() ?? 0;
-            totalPrincipal += ticket.ticketHistory![0].principal?.toInt() ?? 0;
-          }
-        }
-
-        final overAllRate =
-            totalPrincipal == 0
-                ? 0
-                : ((totalInterest / totalPrincipal) * 100).round();
-        final overAllPrincipal = totalPrincipal;
-
         if (state is TicketError) {
           return Center(child: Text("Error: ${state.error}"));
         }
@@ -148,11 +129,36 @@ class _SavingsScreenState extends State<SavingsScreen> {
                       itemCount: sources.length,
 
                       itemBuilder: (context, index) {
+                        int totalInterest = 0;
+                        int totalPrincipal = 0;
+                        for (var ticket in tickets) {
+                          print(
+                            "Ticket ID: ${ticket.id}, Status: ${ticket.status}, History: ${ticket.ticketHistory}",
+                          );
+                          if (ticket.status != "active" &&
+                              ticket.ticketHistory != null &&
+                              ticket.ticketHistory!.isNotEmpty &&
+                              ticket.source!.id == sources[index].id) {
+                            for (var history in ticket.ticketHistory!) {
+                              totalInterest += history.interest?.toInt() ?? 0;
+                              totalPrincipal += history.principal?.toInt() ?? 0;
+                            }
+                          }
+                        }
+
+                        final overAllRate =
+                            totalPrincipal == 0
+                                ? 0
+                                : ((totalInterest / totalPrincipal) * 100)
+                                    .round();
+                        final overAllPrincipal = totalPrincipal;
+
                         final activePlans =
                             tickets
                                 .where(
                                   (ticket) =>
-                                      ticket.sourceId == sources[index].id,
+                                      ticket.status == "active" &&
+                                      ticket.source!.id == sources[index].id,
                                 )
                                 .toList();
                         return GestureDetector(
@@ -441,11 +447,11 @@ class _SavingsScreenState extends State<SavingsScreen> {
                           ),
                         ),
                         IconButton(
-                          onPressed:
-                              () =>
-                                  context.read<UserBloc>()
-                                    ..add(TicketsFetching(widget.model.id))
-                                    ..add(SourcesFetching(widget.model.id)),
+                          onPressed: () {
+                            final userBloc = context.read<UserBloc>();
+                            userBloc.add(TicketsFetching(widget.model.id));
+                            userBloc.add(SourcesFetching(widget.model.id));
+                          },
                           icon: const Icon(Icons.refresh, size: 20),
                           style: TextButton.styleFrom(
                             foregroundColor: theme.primaryColor,
