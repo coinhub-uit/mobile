@@ -100,7 +100,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ProfileSnackbar.show(context, state.error, isError: true);
           } else if (state is UpdateAvatarSuccess) {
             ProfileSnackbar.show(context, "Avatar updated successfully");
-            widget.model.avatar = state.avatarUrl;
+            // widget.model.avatar = state.avatarUrl;
           } else if (state is DeleteAccountError) {
             ProfileSnackbar.show(context, state.error, isError: true);
           } else if (state is DeleteAccountSuccess) {

@@ -53,6 +53,10 @@ class UserBloc extends Bloc<UserEvent, UserState> {
       emit(UpdateAvatarLoading());
       try {
         final avatarUrl = await UserService.pickAndUploadAvatar(event.userId);
+        if (avatarUrl.isEmpty) {
+          emit(UpdateAvatarError("Failed to upload avatar"));
+          return;
+        }
         emit(UpdateAvatarSuccess(avatarUrl));
       } catch (e) {
         emit(UpdateAvatarError(e.toString()));

@@ -12,6 +12,8 @@ import "package:flutter/foundation.dart";
 import "package:http/http.dart" as http;
 import "package:image_picker/image_picker.dart";
 import "package:supabase_flutter/supabase_flutter.dart";
+import "package:mime/mime.dart"; // to detect content-type
+import "package:http_parser/http_parser.dart"; // to support media type
 
 class UserService {
   static final supabaseClient = Supabase.instance.client;
@@ -141,54 +143,73 @@ class UserService {
     }
   }
 
-  static Future<String> uploadAvatar(String userId, File imageFile) async {
-    final user = Supabase.instance.client.auth.currentUser;
-    if (user == null) throw Exception("Not signed in");
+  // static Future<String> uploadAvatar(String userId, File imageFile) async {
+  //   final user = Supabase.instance.client.auth.currentUser;
+  //   if (user == null) throw Exception("Not signed in");
 
-    final storageRef = Supabase.instance.client.storage.from("avatars");
-    final path = "user_$userId.jpg";
+  //   final storageRef = Supabase.instance.client.storage.from("avatars");
+  //   final path = "user_$userId.jpg";
 
-    // delete the old avatar if it exists
-    try {
-      await storageRef.remove([path]);
-    } catch (error) {
-      debugPrint("Error deleting old avatar: $error");
-    }
+  //   // delete the old avatar if it exists
+  //   try {
+  //     await storageRef.remove([path]);
+  //   } catch (error) {
+  //     debugPrint("Error deleting old avatar: $error");
+  //   }
 
-    try {
-      // Upload and overwrite if it already exists
-      await storageRef.upload(
-        path,
-        imageFile,
-        fileOptions: const FileOptions(upsert: true),
-      );
-    } catch (error) {
-      rethrow;
-    }
-    // get the public url of the image
-    final publicUrl = storageRef.getPublicUrl(path);
-    return publicUrl;
-  }
+  //   try {
+  //     // Upload and overwrite if it already exists
+  //     await storageRef.upload(
+  //       path,
+  //       imageFile,
+  //       fileOptions: const FileOptions(upsert: true),
+  //     );
+  //   } catch (error) {
+  //     rethrow;
+  //   }
+  //   // get the public url of the image
+  //   final publicUrl = storageRef.getPublicUrl(path);
+  //   return publicUrl;
+  // }
 
-  static Future<void> updateAvatarUrl(String userId, String avatarUrl) async {
-    // Use Supabase's current session instead of manual storage
-    final session = supabaseClient.auth.currentSession;
-    final accessToken = session?.accessToken;
-    if (accessToken == null) {
-      throw Exception("Session not found");
-    }
-    final response = await ApiClient.client.patch(
-      Uri.parse("${ApiClient.userEndpoint}/$userId"),
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer $accessToken",
-      },
-      body: jsonEncode({"avatar": avatarUrl}),
-    );
-    if (response.statusCode != 200) {
-      throw Exception("Failed to update avatar url: ${response.statusCode}");
-    }
-  }
+  // static Future<void> updateAvatarUrl(String userId, String avatarUrl) async {
+  //   // Use Supabase's current session instead of manual storage
+  //   final session = supabaseClient.auth.currentSession;
+  //   final accessToken = session?.accessToken;
+  //   if (accessToken == null) {
+  //     throw Exception("Session not found");
+  //   }
+  //   final response = await ApiClient.client.patch(
+  //     Uri.parse("${ApiClient.userEndpoint}/$userId"),
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //       "Authorization": "Bearer $accessToken",
+  //     },
+  //     body: jsonEncode({"avatar": avatarUrl}),
+  //   );
+  //   if (response.statusCode != 200) {
+  //     throw Exception("Failed to update avatar url: ${response.statusCode}");
+  //   }
+  // }
+
+  // static Future<String> pickAndUploadAvatar(String userId) async {
+  //   try {
+  //     final ImagePicker imagePicker = ImagePicker();
+  //     final XFile? image = await imagePicker.pickImage(
+  //       source: ImageSource.gallery,
+  //       imageQuality: 50,
+  //     );
+  //     if (image != null) {
+  //       final File file = File(image.path);
+  //       final String avatarUrl = await uploadAvatar(userId, file);
+  //       await updateAvatarUrl(userId, avatarUrl);
+  //       return avatarUrl;
+  //     }
+  //   } catch (e) {
+  //     return "No avatar was found";
+  //   }
+  //   return "No avatar was found"; // Return an empty string if no image was picked
+  // }
 
   static Future<String> pickAndUploadAvatar(String userId) async {
     try {
@@ -197,16 +218,72 @@ class UserService {
         source: ImageSource.gallery,
         imageQuality: 50,
       );
-      if (image != null) {
-        final File file = File(image.path);
-        final String avatarUrl = await uploadAvatar(userId, file);
-        await updateAvatarUrl(userId, avatarUrl);
+
+      if (image == null) {
+        return "No image selected";
+      }
+
+      final File file = File(image.path);
+
+      final mimeType = lookupMimeType(file.path); // <-- get the MIME type
+      if (mimeType == null) {
+        return "Unsupported file type";
+      }
+      final mimeSplit = mimeType.split("/");
+
+      final request = http.MultipartRequest(
+        "POST",
+        Uri.parse("${ApiClient.userEndpoint}/$userId/avatar"),
+      );
+
+      final session = supabaseClient.auth.currentSession;
+      final accessToken = session?.accessToken;
+      request.headers["Authorization"] = "Bearer $accessToken";
+
+      request.files.add(
+        await http.MultipartFile.fromPath(
+          "file", // Make sure this matches your backend's @File('file')
+          file.path,
+          contentType: MediaType(mimeSplit[0], mimeSplit[1]),
+        ),
+      );
+
+      final streamedResponse = await request.send();
+      final response = await http.Response.fromStream(streamedResponse);
+
+      print("Response status: ${response.statusCode}, body: ${response.body}");
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        final avatarUrl = data["avatarUrl"];
         return avatarUrl;
+      } else {
+        throw Exception("Failed to upload avatar: ${response.body}");
       }
     } catch (e) {
-      return "No avatar was found";
+      return "Upload failed: $e";
     }
-    return "No avatar was found"; // Return an empty string if no image was picked
+  }
+
+  static Future<http.Response> getAvatarUrl(String userId) async {
+    // Use Supabase's current session instead of manual storage
+    final session = supabaseClient.auth.currentSession;
+    final accessToken = session?.accessToken;
+    if (accessToken == null) {
+      throw Exception("Session not found");
+    }
+    final response = await ApiClient.client.get(
+      Uri.parse("${ApiClient.userEndpoint}/$userId/avatar"),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $accessToken",
+      },
+    );
+    if (response.statusCode == 200) {
+      return response;
+    } else {
+      throw Exception("Failed to get avatar url: ${response.statusCode}");
+    }
   }
 
   static Future<http.Response> deleteUserAccount(String userId) async {

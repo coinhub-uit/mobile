@@ -1,3 +1,4 @@
+import "package:coinhub/core/util/env.dart";
 import "package:flutter/material.dart";
 import "package:flutter_bloc/flutter_bloc.dart";
 import "package:coinhub/core/bloc/user/user_logic.dart";
@@ -44,10 +45,9 @@ class ProfileHeader extends StatelessWidget {
                     backgroundImage:
                         (model.avatar != null && model.avatar!.isNotEmpty)
                             ? NetworkImage(
-                              "${model.avatar!}?t=${DateTime.now().millisecondsSinceEpoch}",
+                              "${Env.apiServerUrl}/users/${model.id}/avatar?${DateTime.now().millisecondsSinceEpoch}",
                             )
-                            : const AssetImage("assets/images/CoinHub.png")
-                                as ImageProvider,
+                            : const AssetImage("assets/images/CoinHub.png"),
                   ),
                 ),
                 Positioned(
