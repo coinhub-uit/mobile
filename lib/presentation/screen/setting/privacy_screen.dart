@@ -281,6 +281,7 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
       backgroundColor: theme.colorScheme.surface,
@@ -635,17 +636,26 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
                               Container(
                                 padding: const EdgeInsets.all(20),
                                 decoration: BoxDecoration(
-                                  color: Colors.orange[50],
+                                  color:
+                                      isDark
+                                          ? Colors.orange[900]?.withAlpha(51)
+                                          : Colors.orange[50],
                                   borderRadius: BorderRadius.circular(16),
                                   border: Border.all(
-                                    color: Colors.orange[200]!,
+                                    color:
+                                        isDark
+                                            ? Colors.orange[600]!
+                                            : Colors.orange[200]!,
                                   ),
                                 ),
                                 child: Column(
                                   children: [
                                     Icon(
                                       Icons.info_outline,
-                                      color: Colors.orange[700],
+                                      color:
+                                          isDark
+                                              ? Colors.orange[400]
+                                              : Colors.orange[700],
                                       size: 32,
                                     ),
                                     const SizedBox(height: 12),
@@ -654,7 +664,10 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
                                       style: theme.textTheme.titleMedium
                                           ?.copyWith(
                                             fontWeight: FontWeight.bold,
-                                            color: Colors.orange[700],
+                                            color:
+                                                isDark
+                                                    ? Colors.orange[400]
+                                                    : Colors.orange[700],
                                           ),
                                       textAlign: TextAlign.center,
                                     ),
@@ -662,7 +675,12 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
                                     Text(
                                       "Auto-lock requires at least one authentication method (PIN, fingerprint, or Face ID) to be enabled. Please enable an authentication method above to use auto-lock.",
                                       style: theme.textTheme.bodyMedium
-                                          ?.copyWith(color: Colors.orange[600]),
+                                          ?.copyWith(
+                                            color:
+                                                isDark
+                                                    ? Colors.orange[300]
+                                                    : Colors.orange[600],
+                                          ),
                                       textAlign: TextAlign.center,
                                     ),
                                   ],
@@ -679,10 +697,14 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
                       Container(
                         padding: const EdgeInsets.all(20),
                         decoration: BoxDecoration(
-                          color: Colors.blue[50],
+                          color:
+                              isDark
+                                  ? Colors.blue[900]?.withAlpha(51)
+                                  : Colors.blue[50],
                           borderRadius: BorderRadius.circular(16),
                           border: Border.all(
-                            color: Colors.blue[200]!,
+                            color:
+                                isDark ? Colors.blue[600]! : Colors.blue[200]!,
                             width: 1,
                           ),
                         ),
@@ -698,18 +720,23 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
                             const SizedBox(height: 12),
                             _buildSecurityTip(
                               "Enable at least two authentication methods for better security",
+                              isDark,
                             ),
                             _buildSecurityTip(
                               "Set a shorter auto-lock timeout for sensitive information",
+                              isDark,
                             ),
                             _buildSecurityTip(
                               "Use Smart OTP for all financial transactions",
+                              isDark,
                             ),
                             _buildSecurityTip(
                               "Regularly update your PIN for enhanced security",
+                              isDark,
                             ),
                             _buildSecurityTip(
                               "After 3 failed PIN attempts or 5 failed biometric attempts, you will be automatically logged out for security",
+                              isDark,
                             ),
                           ],
                         ),
@@ -776,7 +803,7 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
     );
   }
 
-  Widget _buildSecurityTip(String tip) {
+  Widget _buildSecurityTip(String tip, bool isDark) {
     final theme = Theme.of(context);
 
     return Padding(
@@ -784,7 +811,11 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(Icons.check_circle, color: Colors.blue[700], size: 16),
+          Icon(
+            Icons.check_circle,
+            color: isDark ? Colors.blue[400] : Colors.blue[700],
+            size: 16,
+          ),
           const SizedBox(width: 8),
           Expanded(
             child: Text(

@@ -61,18 +61,6 @@ class AccountSection extends StatelessWidget {
 
         const ProfileDivider(),
 
-        // Notifications Option
-        NavigationOptionItem(
-          icon: Icons.notifications_outlined,
-          title: "Notifications",
-          subtitle: "Manage your notification preferences",
-          onTap: () {
-            // Navigate to notifications screen
-          },
-        ),
-
-        const ProfileDivider(),
-
         // Theme Settings Option
         NavigationOptionItem(
           icon: Icons.color_lens_outlined,

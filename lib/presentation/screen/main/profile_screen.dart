@@ -6,7 +6,6 @@ import "package:coinhub/models/user_model.dart";
 import "package:coinhub/presentation/components/profile/account_section.dart";
 import "package:coinhub/presentation/components/profile/profile_header.dart";
 import "package:coinhub/presentation/components/profile/profile_snackbar.dart";
-import "package:coinhub/presentation/components/profile/support_section.dart";
 import "package:coinhub/presentation/routes/routes.dart";
 import "package:go_router/go_router.dart";
 
@@ -126,11 +125,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 userEmail: widget.userEmail,
                 onUserUpdated: widget.onUserUpdated,
               ),
-
-              const SizedBox(height: 24),
-
-              // Support Section
-              const SupportSection(),
 
               const SizedBox(height: 24),
 

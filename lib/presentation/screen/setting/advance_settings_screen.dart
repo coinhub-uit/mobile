@@ -14,6 +14,7 @@ class AdvancedSettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
       backgroundColor: theme.colorScheme.surface,
@@ -43,21 +44,30 @@ class AdvancedSettingsScreen extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: Colors.orange[50],
+                  color:
+                      isDark
+                          ? Colors.orange[900]?.withAlpha(51)
+                          : Colors.orange[50],
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: Colors.orange[200]!, width: 1),
+                  border: Border.all(
+                    color: isDark ? Colors.orange[600]! : Colors.orange[200]!,
+                    width: 1,
+                  ),
                 ),
                 child: Row(
                   children: [
                     Container(
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                        color: Colors.orange[100],
+                        color:
+                            isDark
+                                ? Colors.orange[800]?.withAlpha(77)
+                                : Colors.orange[100],
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Icon(
                         Icons.warning_amber_rounded,
-                        color: Colors.orange[800],
+                        color: isDark ? Colors.orange[400] : Colors.orange[800],
                         size: 24,
                       ),
                     ),
@@ -75,61 +85,10 @@ class AdvancedSettingsScreen extends StatelessWidget {
                           const SizedBox(height: 4),
                           Text(
                             "The settings on this page can permanently affect your account",
-                            style: theme.textTheme.bodyMedium?.copyWith(
-                              color: Colors.grey[800],
-                            ),
+                            style: theme.textTheme.bodyMedium,
                           ),
                         ],
                       ),
-                    ),
-                  ],
-                ),
-              ),
-
-              const SizedBox(height: 24),
-
-              // Data Export Section
-              Container(
-                padding: const EdgeInsets.all(24),
-                decoration: BoxDecoration(
-                  color: theme.colorScheme.surface,
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withAlpha(8),
-                      blurRadius: 10,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Data Management",
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    _buildAdvancedOption(
-                      context,
-                      icon: Icons.download_rounded,
-                      title: "Export Data",
-                      description: "Download all your account data",
-                      onTap: () {
-                        // Export data functionality
-                      },
-                    ),
-                    const SizedBox(height: 16),
-                    _buildAdvancedOption(
-                      context,
-                      icon: Icons.delete_outline,
-                      title: "Clear Data",
-                      description: "Clear all your transaction history",
-                      onTap: () {
-                        // Clear data functionality
-                      },
                     ),
                   ],
                 ),
@@ -170,9 +129,15 @@ class AdvancedSettingsScreen extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: Colors.red[50],
+                        color:
+                            isDark
+                                ? Colors.red[900]?.withAlpha(51)
+                                : Colors.red[50],
                         borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: Colors.red[200]!, width: 1),
+                        border: Border.all(
+                          color: isDark ? Colors.red[600]! : Colors.red[200]!,
+                          width: 1,
+                        ),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -186,9 +151,7 @@ class AdvancedSettingsScreen extends StatelessWidget {
                           const SizedBox(height: 8),
                           Text(
                             "Once you delete your account, there is no going back. Please be certain.",
-                            style: theme.textTheme.bodyMedium?.copyWith(
-                              color: Colors.grey[800],
-                            ),
+                            style: theme.textTheme.bodyMedium,
                           ),
                           const SizedBox(height: 16),
                           SizedBox(
@@ -198,7 +161,10 @@ class AdvancedSettingsScreen extends StatelessWidget {
                               icon: const Icon(Icons.delete_forever),
                               label: const Text("Delete My Account"),
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.red[50],
+                                backgroundColor:
+                                    isDark
+                                        ? Colors.red[900]?.withAlpha(77)
+                                        : Colors.red[50],
                                 foregroundColor: Colors.red[700],
                                 padding: const EdgeInsets.symmetric(
                                   vertical: 16,
@@ -206,7 +172,10 @@ class AdvancedSettingsScreen extends StatelessWidget {
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12),
                                   side: BorderSide(
-                                    color: Colors.red[300]!,
+                                    color:
+                                        isDark
+                                            ? Colors.red[600]!
+                                            : Colors.red[300]!,
                                     width: 1,
                                   ),
                                 ),
@@ -222,61 +191,6 @@ class AdvancedSettingsScreen extends StatelessWidget {
               ),
             ],
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildAdvancedOption(
-    BuildContext context, {
-    required IconData icon,
-    required String title,
-    required String description,
-    required VoidCallback onTap,
-  }) {
-    final theme = Theme.of(context);
-
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: theme.primaryColor.withAlpha(26),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Icon(icon, color: theme.primaryColor, size: 20),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  Text(
-                    description,
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: theme.colorScheme.onSurface.withAlpha(153),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Icon(
-              Icons.chevron_right,
-              color: theme.colorScheme.onSurface.withAlpha(102),
-              size: 24,
-            ),
-          ],
         ),
       ),
     );
