@@ -524,7 +524,7 @@ class HomeScreenContent extends StatelessWidget {
             _buildActionButton(
               context,
               icon: Icons.arrow_downward_rounded,
-              label: "Deposit",
+              label: "Top-up",
               color: const Color(0xFF10B981),
               width: (screenSize.width - 56) / 2,
               onTap: () async {

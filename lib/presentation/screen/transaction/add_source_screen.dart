@@ -1,4 +1,5 @@
 import "package:coinhub/core/bloc/source/source_logic.dart";
+import "package:coinhub/core/services/security_service.dart";
 import "package:flutter/material.dart";
 import "package:flutter/services.dart";
 import "package:flutter_bloc/flutter_bloc.dart";
@@ -19,6 +20,39 @@ class _AddSourceScreenState extends State<AddSourceScreen> {
   void dispose() {
     _sourceIdController.dispose();
     super.dispose();
+  }
+
+  void _processCreateSource() async {
+    // Authenticate before creating source
+    final authenticated =
+        await SecurityService.authenticateForSensitiveOperation(
+          context,
+          title: "Confirm New Source",
+          subtitle: "Please authenticate to add a new source",
+          type: AuthenticationType.sensitiveOperation,
+        );
+
+    if (!authenticated) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Authentication required to add new source"),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    if (_formKey.currentState?.validate() ?? false) {
+      final sourceId = _sourceIdController.text;
+      context.read<SourceBloc>().add(SourceCreating(sourceId));
+      _sourceIdController.clear();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Creating source..."),
+          backgroundColor: Colors.blue,
+        ),
+      );
+    }
   }
 
   @override
@@ -217,21 +251,7 @@ class _AddSourceScreenState extends State<AddSourceScreen> {
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
-                        onPressed: () {
-                          if (_formKey.currentState?.validate() ?? false) {
-                            final sourceId = _sourceIdController.text;
-                            context.read<SourceBloc>().add(
-                              SourceCreating(sourceId),
-                            );
-                            _sourceIdController.clear();
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text("Creating source..."),
-                                backgroundColor: Colors.blue,
-                              ),
-                            );
-                          }
-                        },
+                        onPressed: _processCreateSource,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: theme.primaryColor,
                           foregroundColor: Colors.white,

@@ -1,6 +1,7 @@
 import "package:flutter/material.dart";
 import "package:flutter/services.dart";
 import "package:coinhub/core/services/local_storage.dart";
+import "package:coinhub/core/services/security_service.dart";
 import "package:coinhub/core/bloc/auth/auth_logic.dart";
 import "package:coinhub/core/bloc/auth/auth_event.dart";
 import "package:coinhub/core/bloc/auth/auth_state.dart";
@@ -12,12 +13,16 @@ class PinVerificationScreen extends StatefulWidget {
   final VoidCallback? onSuccess;
   final String title;
   final String subtitle;
+  final bool showBackButton;
+  final AuthenticationType authenticationType;
 
   const PinVerificationScreen({
     super.key,
     this.onSuccess,
     this.title = "Enter PIN",
     this.subtitle = "Please enter your PIN to continue",
+    this.showBackButton = false,
+    this.authenticationType = AuthenticationType.timeout,
   });
 
   @override
@@ -104,8 +109,8 @@ class _PinVerificationScreenState extends State<PinVerificationScreen>
         });
 
         if (_attemptCount >= _maxAttempts) {
-          // Too many failed attempts - log out user
-          await _logoutUser();
+          // Too many failed attempts - handle based on authentication type
+          await _handleMaxAttemptsReached();
         } else {
           _showError(
             "Incorrect PIN. ${_maxAttempts - _attemptCount} attempts remaining.",
@@ -122,41 +127,59 @@ class _PinVerificationScreenState extends State<PinVerificationScreen>
     }
   }
 
-  Future<void> _logoutUser() async {
+  Future<void> _handleMaxAttemptsReached() async {
     try {
-      // Show logout message first
-      _showError("Too many failed attempts. Logging out for security.");
+      _showError("Too many failed attempts.");
 
       // Wait a moment for user to see the message
       await Future.delayed(const Duration(seconds: 2));
 
-      // Use AuthBloc to logout properly
-      if (mounted) {
-        context.read<AuthBloc>().add(const LogoutEvent());
+      if (widget.authenticationType == AuthenticationType.timeout) {
+        // For timeout scenarios, log out user
+        if (mounted) {
+          context.read<AuthBloc>().add(const LogoutEvent());
 
-        // Clear security-related data
-        await _storage.delete("app_pin");
-        await _storage.delete("pin_enabled");
-        await _storage.delete("fingerprint_enabled");
-        await _storage.delete("face_id_enabled");
+          // Clear security-related data
+          await _storage.delete("app_pin");
+          await _storage.delete("pin_enabled");
+          await _storage.delete("fingerprint_enabled");
+          await _storage.delete("face_id_enabled");
 
-        // Navigate to login screen
-        context.go(Routes.auth.login);
+          // Navigate to login screen
+          context.go(Routes.auth.login);
 
-        // Show snackbar about logout
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("Logged out due to too many failed PIN attempts"),
-            backgroundColor: Colors.red,
-            duration: Duration(seconds: 3),
-          ),
-        );
+          // Show snackbar about logout
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text("Logged out due to too many failed PIN attempts"),
+              backgroundColor: Colors.red,
+              duration: Duration(seconds: 3),
+            ),
+          );
+        }
+      } else {
+        // For sensitive operations, just go back to home
+        if (mounted) {
+          context.go(Routes.home);
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text("Authentication failed. Returning to home."),
+              backgroundColor: Colors.orange,
+              duration: Duration(seconds: 3),
+            ),
+          );
+        }
       }
     } catch (e) {
-      debugPrint("Error during logout: $e");
-      // Force navigation to login even if logout fails
+      debugPrint("Error handling max attempts: $e");
+      // Force navigation based on type
       if (mounted) {
-        context.go(Routes.auth.login);
+        if (widget.authenticationType == AuthenticationType.timeout) {
+          context.go(Routes.auth.login);
+        } else {
+          context.go(Routes.home);
+        }
       }
     }
   }
@@ -194,6 +217,18 @@ class _PinVerificationScreenState extends State<PinVerificationScreen>
       },
       child: Scaffold(
         backgroundColor: theme.colorScheme.surface,
+        appBar:
+            widget.showBackButton
+                ? AppBar(
+                  backgroundColor: Colors.transparent,
+                  elevation: 0,
+                  iconTheme: IconThemeData(color: theme.colorScheme.onSurface),
+                  leading: IconButton(
+                    icon: const Icon(Icons.arrow_back),
+                    onPressed: () => Navigator.of(context).pop(false),
+                  ),
+                )
+                : null,
         body: SafeArea(
           child: SingleChildScrollView(
             child: Container(

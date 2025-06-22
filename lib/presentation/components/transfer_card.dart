@@ -20,12 +20,14 @@ class TransferCard extends StatefulWidget {
   });
 
   @override
-  State<TransferCard> createState() => _TransferCardState();
+  State<TransferCard> createState() => TransferCardState();
 }
 
-class _TransferCardState extends State<TransferCard> {
+class TransferCardState extends State<TransferCard> {
   final TextEditingController _amountController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
+  final TextEditingController _accountNumberController =
+      TextEditingController();
   final int limitLength = 160;
   late int selectedIndex;
   late int selectedIndexProvider;
@@ -45,10 +47,14 @@ class _TransferCardState extends State<TransferCard> {
   void dispose() {
     _amountController.dispose();
     _descriptionController.dispose();
+    _accountNumberController.dispose();
     super.dispose();
   }
 
   String get amountValue => _amountController.text;
+  String get accountNumber => _accountNumberController.text;
+  String get selectedSourceId =>
+      sources.isNotEmpty ? sources[selectedIndex].id : "";
 
   bool validateForm() {
     if (widget.formKey != null) {
@@ -56,7 +62,8 @@ class _TransferCardState extends State<TransferCard> {
     }
     return _amountController.text.isNotEmpty &&
         double.tryParse(_amountController.text) != null &&
-        double.parse(_amountController.text) > 0;
+        double.parse(_amountController.text) > 0 &&
+        _accountNumberController.text.isNotEmpty;
   }
 
   @override
@@ -109,8 +116,10 @@ class _TransferCardState extends State<TransferCard> {
                 ),
                 SizedBox(height: 12),
 
-                TextField(
+                TextFormField(
+                  controller: _accountNumberController,
                   keyboardType: TextInputType.number,
+                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                   decoration: InputDecoration(
                     labelText: "Account Number",
                     labelStyle: TextStyle(
@@ -137,11 +146,28 @@ class _TransferCardState extends State<TransferCard> {
                         width: 2,
                       ),
                     ),
+                    errorBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(color: Colors.red, width: 1),
+                    ),
+                    focusedErrorBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(color: Colors.red, width: 2),
+                    ),
                     contentPadding: const EdgeInsets.symmetric(
                       horizontal: 16,
                       vertical: 16,
                     ),
                   ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return "Please enter an account number";
+                    }
+                    if (value.length < 4) {
+                      return "Account number must be at least 4 digits";
+                    }
+                    return null;
+                  },
                 ),
 
                 SizedBox(height: 12),

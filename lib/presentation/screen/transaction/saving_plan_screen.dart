@@ -1,4 +1,5 @@
 import "package:coinhub/core/bloc/ticket/ticket_logic.dart";
+import "package:coinhub/core/services/security_service.dart";
 import "package:coinhub/models/ticket_model.dart";
 import "package:coinhub/models/user_model.dart";
 import "package:coinhub/presentation/components/saving_plan_card.dart";
@@ -32,7 +33,26 @@ class _SavingPlanScreenState extends State<SavingPlanScreen> {
     super.dispose();
   }
 
-  void _processCreateTicket() {
+  void _processCreateTicket() async {
+    // Authenticate before creating saving plan
+    final authenticated =
+        await SecurityService.authenticateForSensitiveOperation(
+          context,
+          title: "Confirm New Saving Plan",
+          subtitle: "Please authenticate to create a new saving plan",
+          type: AuthenticationType.sensitiveOperation,
+        );
+
+    if (!authenticated) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Authentication required to create saving plan"),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
     if (_formKey.currentState?.validate() ?? false) {
       final values = _cardKey.currentState?.getSelectedValues();
       if (values == null) return;
