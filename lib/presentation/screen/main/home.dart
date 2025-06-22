@@ -515,7 +515,20 @@ class HomeScreenContent extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text("Actions", style: theme.textTheme.titleLarge),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text("Actions", style: theme.textTheme.titleLarge),
+            IconButton(
+              icon: Icon(Icons.refresh_rounded, color: theme.primaryColor),
+              onPressed: () {
+                BlocProvider.of<UserBloc>(
+                  context,
+                ).add(SourcesFetching(model.id));
+              },
+            ),
+          ],
+        ),
         const SizedBox(height: 16),
 
         // First row of buttons
