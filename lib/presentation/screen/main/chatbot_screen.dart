@@ -178,6 +178,13 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                               shape: BoxShape.circle,
                               color: theme.primaryColor.withAlpha(26),
                             ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Image.asset(
+                                "assets/images/CoinHub.png",
+                                fit: BoxFit.contain,
+                              ),
+                            ),
                           ),
                           const SizedBox(height: 16),
                           Text(
@@ -193,10 +200,6 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                               color: theme.colorScheme.onSurface.withAlpha(179),
                             ),
                             textAlign: TextAlign.center,
-                          ),
-                          Image.asset(
-                            "assets/images/CoinHub.png",
-                            fit: BoxFit.contain,
                           ),
                         ],
                       ),

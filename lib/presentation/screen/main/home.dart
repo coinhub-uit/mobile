@@ -157,7 +157,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 //     BlendMode.srcIn,
                 //   ),
                 child: Image.asset(
-                  'ass"ts/images/CoinHub.png',
+                  "assets/images/CoinHub.png",
                   fit: BoxFit.contain,
                 ),
                 // ),
