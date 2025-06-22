@@ -236,6 +236,7 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
+                      backgroundColor: Colors.green,
                       margin: const EdgeInsets.all(16),
                     ),
                   );
@@ -251,6 +252,7 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
                         borderRadius: BorderRadius.circular(10),
                       ),
                       margin: const EdgeInsets.all(16),
+                      backgroundColor: Colors.red,
                     ),
                   );
                 }

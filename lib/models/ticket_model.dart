@@ -81,7 +81,7 @@ class TicketModel {
       "status": status,
       "method": method,
       "planHistoryId": planHistoryId,
-      "sourceId": source!.toMap(), // ✅ full object for backend
+      "sourceId": sourceId,
       "amount": amount,
       if (ticketHistory != null)
         "ticketHistories": ticketHistory!.map((x) => x.toMap()).toList(),

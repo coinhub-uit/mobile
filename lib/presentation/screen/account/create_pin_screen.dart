@@ -61,6 +61,7 @@ class _CreatePinScreenState extends State<CreatePinScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: const Text("PIN created successfully"),
+            backgroundColor: Colors.green,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),

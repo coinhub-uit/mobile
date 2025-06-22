@@ -387,7 +387,7 @@ class UserService {
 
         await Future.wait(
           ticketsList.map((ticket) async {
-            print("[fetchTickets] Fetching sourceId for ticket ${ticket.id}");
+            //print("[fetchTickets] Fetching sourceId for ticket ${ticket.id}");
             try {
               final fetchedSourceId = await TicketService.getSourceId(
                 ticket.id!,

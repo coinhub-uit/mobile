@@ -1,5 +1,6 @@
 import "package:coinhub/core/bloc/ticket/ticket_logic.dart";
 import "package:coinhub/core/services/security_service.dart";
+import "package:coinhub/core/services/ticket_service.dart";
 import "package:coinhub/models/ticket_model.dart";
 import "package:coinhub/models/user_model.dart";
 import "package:coinhub/presentation/components/saving_plan_card.dart";
@@ -23,6 +24,7 @@ class _SavingPlanScreenState extends State<SavingPlanScreen> {
   final TextEditingController _sourceIdController = TextEditingController();
   final GlobalKey<SavingPlanCardState> _cardKey =
       GlobalKey<SavingPlanCardState>();
+  bool _isProcessing = false; // Add flag
 
   @override
   void dispose() {
@@ -34,7 +36,10 @@ class _SavingPlanScreenState extends State<SavingPlanScreen> {
   }
 
   void _processCreateTicket() async {
-    // Authenticate before creating saving plan
+    if (_isProcessing) return; // Prevent multiple calls
+    setState(() => _isProcessing = true); // Disable button
+
+    print("Starting _processCreateTicket");
     final authenticated =
         await SecurityService.authenticateForSensitiveOperation(
           context,
@@ -44,48 +49,86 @@ class _SavingPlanScreenState extends State<SavingPlanScreen> {
         );
 
     if (!authenticated) {
+      print("Authentication failed");
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text("Authentication required to create saving plan"),
           backgroundColor: Colors.red,
         ),
       );
+      setState(() => _isProcessing = false);
       return;
     }
 
     if (_formKey.currentState?.validate() ?? false) {
       final values = _cardKey.currentState?.getSelectedValues();
-      if (values == null) return;
+      print("Form validated, values: $values");
+      if (values == null) {
+        setState(() => _isProcessing = false);
+        return;
+      }
 
       final sourceId = values["sourceId"] as String;
       final planHistoryId = values["planHistoryId"] as int;
       final method = values["method"] as String;
       final amount = values["amount"] as int;
+      print(
+        "TicketModel data: sourceId: $sourceId, planHistoryId: $planHistoryId, method: $method, amount: $amount",
+      );
+
       if (amount <= 0) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Amount must be greater than 0")),
+          const SnackBar(
+            content: Text("Amount must be greater than 0"),
+            backgroundColor: Colors.red,
+          ),
         );
+        setState(() => _isProcessing = false);
         return;
       }
-      // Process the saving plan creation
-      context.read<TicketBloc>().add(
-        TicketCreating(
-          TicketModel(
-            method: method,
-            planHistoryId: planHistoryId,
-            sourceId: sourceId,
-            amount: amount.toInt(),
+
+      try {
+        final minAmount = await TicketService.getMinAmountOpenTicket();
+        if (amount < minAmount) {
+          print("Amount is less than minimum required: $minAmount");
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text("Amount must be at least $minAmount"),
+              backgroundColor: Colors.red,
+            ),
+          );
+          setState(() => _isProcessing = false);
+          return;
+        }
+
+        context.read<TicketBloc>().add(
+          TicketCreating(
+            TicketModel(
+              method: method,
+              planHistoryId: planHistoryId,
+              sourceId: sourceId,
+              amount: amount.toInt(),
+            ),
           ),
-        ),
-      );
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Ticket creating..."),
-          duration: Duration(seconds: 2),
-          backgroundColor: Colors.blue,
-        ),
-      );
+        );
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Ticket creating..."),
+            duration: Duration(seconds: 2),
+            backgroundColor: Colors.blue,
+          ),
+        );
+      } catch (e) {
+        print("Error validating minimum amount: $e");
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Error: Failed to validate ticket data: $e"),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     } else {
+      print("Form validation failed");
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text("Please fill in all fields correctly."),
@@ -93,6 +136,7 @@ class _SavingPlanScreenState extends State<SavingPlanScreen> {
         ),
       );
     }
+    setState(() => _isProcessing = false); // Re-enable button
   }
 
   // Mock balance for demonstration
@@ -112,13 +156,17 @@ class _SavingPlanScreenState extends State<SavingPlanScreen> {
             SnackBar(
               content: Text("Ticket created successfully!"),
               duration: Duration(seconds: 2),
+              backgroundColor: Colors.green,
             ),
           );
           context.pop(true);
         } else if (state is TicketError) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text("Error: ${state.message}")));
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text("Error: ${state.message}"),
+              backgroundColor: Colors.red,
+            ),
+          );
         }
       },
       builder: (context, state) {

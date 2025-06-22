@@ -1,3 +1,5 @@
+import "dart:convert";
+
 import "package:coinhub/core/constants/api_client.dart";
 import "package:coinhub/models/ticket_model.dart";
 import "package:http/http.dart" as http;
@@ -23,11 +25,6 @@ class TicketService {
       "Authorization": "Bearer $accessToken",
     };
     final body = ticketModel.toJson();
-
-    print("Creating ticket with data:");
-    print("URL: $url");
-    print("TicketModel: $ticketModel");
-    print("JSON Body: $body");
 
     final response = await ApiClient.client.post(
       url,
@@ -201,5 +198,53 @@ class TicketService {
         ],
       ),
     );
+  }
+
+  static Future<int> getMinAmountOpenTicket() async {
+    final session = supabaseClient.auth.currentSession;
+    final accessToken = session?.accessToken;
+    if (accessToken == null) {
+      print("Session not found in getMinAmountOpenTicket");
+      throw Exception("Session not found");
+    }
+
+    try {
+      final url = Uri.parse("${ApiClient.settingEndpoint}");
+      print(
+        "getMinAmountOpenTicket URL: $url, Token: $accessToken",
+      ); // Debug log
+      final response = await ApiClient.client.get(
+        url,
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $accessToken",
+        },
+      );
+      print(
+        "getMinAmountOpenTicket response: ${response.statusCode}, ${response.body}",
+      );
+      if (response.statusCode == 200) {
+        final data = response.body;
+        final parsed = json.decode(data);
+        final minAmount =
+            int.tryParse(parsed["minAmountOpenTicket"] ?? "0") ?? 0;
+        try {
+          return minAmount;
+        } catch (e) {
+          print("Failed to parse min amount: $data, Error: $e");
+          throw Exception("Invalid minimum amount format: $data");
+        }
+      } else {
+        print(
+          "Failed to fetch minimum amount: ${response.statusCode}, ${response.body}",
+        );
+        throw Exception(
+          "Failed to fetch minimum amount: ${response.statusCode}, ${response.body}",
+        );
+      }
+    } catch (e) {
+      print("Error fetching minimum amount: $e");
+      rethrow; // Rethrow to ensure the caller handles the error
+    }
   }
 }

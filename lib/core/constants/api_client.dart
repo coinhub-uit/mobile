@@ -12,5 +12,6 @@ class ApiClient {
   static final sourceEndpoint = Uri.parse("$baseUrl/sources");
   static final ticketEndpoint = Uri.parse("$baseUrl/tickets");
   static final transferEndpoint = Uri.parse("$baseUrl/payment/transfer");
+  static final settingEndpoint = Uri.parse("$baseUrl/setting");
   // more to come
 }

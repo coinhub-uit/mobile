@@ -71,6 +71,7 @@ class _PinSetupScreenState extends State<PinSetupScreen> {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
             ),
+            backgroundColor: Colors.green,
             margin: const EdgeInsets.all(16),
           ),
         );

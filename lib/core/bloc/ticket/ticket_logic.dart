@@ -10,15 +10,29 @@ class TicketBloc extends Bloc<TicketEvent, TicketState> {
     on<TicketCreating>((event, emit) async {
       emit(TicketLoading());
       try {
+        final minAmount = await TicketService.getMinAmountOpenTicket();
+        print("amout: ${event.ticket.amount}, minAmount: $minAmount");
+        if (event.ticket.amount < minAmount) {
+          print("Amount is less than minimum required: $minAmount");
+          emit(TicketError("Amount must be at least $minAmount"));
+          return;
+        }
         final response = await TicketService.createTicket(event.ticket);
         if (response.statusCode == 201) {
-          // Assuming the response body contains the created ticket data
           final createdTicket = TicketModel.fromJson(response.body);
           emit(TicketCreatedSuccess(createdTicket));
         } else {
-          emit(TicketError("Failed to create ticket: ${response.statusCode}"));
+          print(
+            "createTicket failed: ${response.statusCode}, ${response.body}",
+          ); // Debug log
+          emit(
+            TicketError(
+              "Failed to create ticket: ${response.statusCode}, ${response.body}",
+            ),
+          );
         }
       } catch (e) {
+        print("Error in TicketCreating: $e"); // Debug log
         emit(TicketError("Failed to create ticket: ${e.toString()}"));
       }
     });

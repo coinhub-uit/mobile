@@ -92,7 +92,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
         final response = await UserService.fetchTickets(event.userId);
         if (response.isNotEmpty) {
           emit(TicketFetchedSuccess(response));
-          print("Fetched tickets: $response");
+          //print("Fetched tickets: $response");
         } else {
           emit(TicketFetchedSuccess(response));
         }

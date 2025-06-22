@@ -294,9 +294,9 @@ class HomeScreenContent extends StatelessWidget {
     return BlocConsumer<UserBloc, UserState>(
       listener: (context, state) {
         if (state is SourcesError) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text(state.error)));
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(state.error), backgroundColor: Colors.red),
+          );
         }
       },
       builder: (context, state) {

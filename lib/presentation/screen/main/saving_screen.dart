@@ -44,12 +44,21 @@ class _SavingsScreenState extends State<SavingsScreen> {
     _fetchPlans();
   }
 
+  bool _isAscending = true;
+
   void _sortByTime() {
     setState(() {
-      tickets.sort((a, b) {
-        if (a.openedAt == null || b.openedAt == null) return 0;
-        return a.openedAt!.compareTo(b.openedAt!);
+      final sortedTickets = List<TicketModel>.from(tickets);
+      sortedTickets.sort((a, b) {
+        if (a.openedAt == null && b.openedAt == null) return 0;
+        if (a.openedAt == null) return 1;
+        if (b.openedAt == null) return -1;
+        return _isAscending
+            ? a.openedAt!.compareTo(b.openedAt!)
+            : b.openedAt!.compareTo(a.openedAt!);
       });
+      tickets = sortedTickets;
+      _isAscending = !_isAscending;
     });
   }
 
@@ -400,8 +409,8 @@ class _SavingsScreenState extends State<SavingsScreen> {
                                   children: [
                                     ListTile(
                                       leading: const Icon(Icons.access_time),
-                                      title: const Text(
-                                        "Sort by Creation Time",
+                                      title: Text(
+                                        "Sort by Creation Time (${_isAscending ? 'Asc' : 'Desc'})",
                                       ),
                                       onTap: () {
                                         Navigator.pop(context);
@@ -467,76 +476,104 @@ class _SavingsScreenState extends State<SavingsScreen> {
               // Savings Plans List
               Expanded(
                 child:
-                    (tickets.isNotEmpty && _ticketsReady)
-                        ? ListView.builder(
-                          padding: const EdgeInsets.symmetric(horizontal: 24),
-                          itemCount: tickets.length,
-                          itemBuilder: (context, index) {
-                            final start = tickets[index].openedAt!;
-                            final end =
-                                tickets[index].ticketHistory?.isNotEmpty == true
-                                    ? tickets[index].ticketHistory![0].maturedAt
-                                    : null;
-                            final now = DateTime.now();
-                            final planId = tickets[index].plan?.planId;
-                            // print("Ticket: $tickets");
-                            // print("Matching planId: $_planId");
-
-                            // print(plans);
-                            final plan = plans.firstWhere(
-                              (p) => p.planId == planId,
-                              orElse:
-                                  () => PlanModel(planId: -1, days: 0, rate: 0),
-                            );
-                            final rate = plan.rate;
-
-                            double progress =
-                                end != null
-                                    ? now.isBefore(start)
-                                        ? 0.0
-                                        : now.isAfter(end)
-                                        ? 1.0
-                                        : now.difference(start).inMilliseconds /
-                                            end.difference(start).inMilliseconds
-                                    : 1;
-                            return tickets[index].status == "active"
-                                ? _buildSavingsPlanCard(
-                                  context,
-                                  index: index + 1,
-                                  moneyInit:
-                                      tickets[index].ticketHistory![0].principal
-                                          ?.toInt() ??
-                                      0,
-                                  profit:
-                                      tickets[index].ticketHistory![0].interest
-                                          ?.toInt() ??
-                                      0,
-                                  profitPercentage: rate,
-                                  startDate: DateFormat(
-                                    "dd/MM/yyyy",
-                                  ).format(tickets[index].openedAt!),
-                                  endDate:
-                                      tickets[index].ticketHistory![0].maturedAt
-                                                  .toString()
-                                                  .split(" ")[0] ==
-                                              "9999-12-31"
-                                          ? "Ongoing"
-                                          : DateFormat("dd/MM/yyyy").format(
-                                            tickets[index]
-                                                .ticketHistory![0]
-                                                .maturedAt!,
+                    (_ticketsReady && tickets.isNotEmpty)
+                        ? Builder(
+                          builder: (context) {
+                            // Filter active tickets
+                            final activeTickets =
+                                tickets
+                                    .where(
+                                      (ticket) => ticket.status == "active",
+                                    )
+                                    .toList();
+                            return activeTickets.isNotEmpty
+                                ? ListView.builder(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 24,
+                                  ),
+                                  itemCount: activeTickets.length,
+                                  itemBuilder: (context, index) {
+                                    final ticket = activeTickets[index];
+                                    final start = ticket.openedAt!;
+                                    final end =
+                                        ticket.ticketHistory?.isNotEmpty == true
+                                            ? ticket.ticketHistory![0].maturedAt
+                                            : null;
+                                    final now = DateTime.now();
+                                    final planId = ticket.plan?.planId;
+                                    final plan = plans.firstWhere(
+                                      (p) => p.planId == planId,
+                                      orElse:
+                                          () => PlanModel(
+                                            planId: -1,
+                                            days: 0,
+                                            rate: 0,
                                           ),
-                                  progress: progress.clamp(
-                                    0.0,
-                                    1.0,
-                                  ), // Simulated progress values
-                                  ticket: tickets[index],
-                                  plan: plan,
+                                    );
+                                    final rate = plan.rate;
+
+                                    double progress =
+                                        end != null
+                                            ? now.isBefore(start)
+                                                ? 0.0
+                                                : now.isAfter(end)
+                                                ? 1.0
+                                                : now
+                                                        .difference(start)
+                                                        .inMilliseconds /
+                                                    end
+                                                        .difference(start)
+                                                        .inMilliseconds
+                                            : 1;
+                                    return _buildSavingsPlanCard(
+                                      context,
+                                      index:
+                                          index +
+                                          1, // Start index from 1 for display
+                                      moneyInit:
+                                          ticket.ticketHistory![0].principal
+                                              ?.toInt() ??
+                                          0,
+                                      profit:
+                                          ticket.ticketHistory![0].interest
+                                              ?.toInt() ??
+                                          0,
+                                      profitPercentage: rate,
+                                      startDate: DateFormat(
+                                        "dd/MM/yyyy",
+                                      ).format(ticket.openedAt!),
+                                      endDate:
+                                          ticket.ticketHistory![0].maturedAt
+                                                      .toString()
+                                                      .split(" ")[0] ==
+                                                  "9999-12-31"
+                                              ? "Ongoing"
+                                              : DateFormat("dd/MM/yyyy").format(
+                                                ticket
+                                                    .ticketHistory![0]
+                                                    .maturedAt!,
+                                              ),
+                                      progress: progress.clamp(0.0, 1.0),
+                                      ticket: ticket,
+                                      plan: plan,
+                                    );
+                                  },
                                 )
-                                : null;
+                                : Center(
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(16.0),
+                                    child: Text(
+                                      "No active tickets found. Start saving now!",
+                                      style: theme.textTheme.bodyLarge
+                                          ?.copyWith(
+                                            color: theme.colorScheme.onSurface,
+                                          ),
+                                    ),
+                                  ),
+                                );
                           },
                         )
-                        : tickets.isEmpty && _ticketsReady
+                        : _ticketsReady
                         ? Center(
                           child: Padding(
                             padding: const EdgeInsets.all(16.0),
