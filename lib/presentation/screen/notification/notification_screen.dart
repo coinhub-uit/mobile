@@ -47,6 +47,9 @@ class _NotificationScreenState extends State<NotificationScreen> {
   }
 
   void _showNotificationDialog(NotificationModel notification) {
+    // Mark notification as read when dialog is opened
+    _markAsRead(notification);
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -93,6 +96,32 @@ class _NotificationScreenState extends State<NotificationScreen> {
         );
       },
     );
+  }
+
+  Future<void> _markAsRead(NotificationModel notification) async {
+    if (!notification.isRead) {
+      try {
+        await UserService.markNotificationAsRead(notification.id);
+        // Update the local state
+        setState(() {
+          final index = notifications.indexWhere(
+            (n) => n.id == notification.id,
+          );
+          if (index != -1) {
+            notifications[index] = NotificationModel(
+              id: notification.id,
+              title: notification.title,
+              body: notification.body,
+              createdAt: notification.createdAt,
+              isRead: true,
+            );
+          }
+        });
+      } catch (e) {
+        // Handle error silently or show a snackbar
+        debugPrint("Failed to mark notification as read: $e");
+      }
+    }
   }
 
   String _formatDateTime(DateTime dateTime) {
@@ -239,61 +268,117 @@ class _NotificationScreenState extends State<NotificationScreen> {
       child: InkWell(
         onTap: () => _showNotificationDialog(notification),
         borderRadius: BorderRadius.circular(12),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: Text(
-                      notification.title,
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            border:
+                !notification.isRead
+                    ? Border.all(
+                      color: theme.primaryColor.withAlpha(77),
+                      width: 2,
+                    )
+                    : null,
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Row(
+                        children: [
+                          if (!notification.isRead)
+                            Container(
+                              width: 12,
+                              height: 12,
+                              margin: const EdgeInsets.only(right: 12, top: 2),
+                              decoration: BoxDecoration(
+                                color: Colors.blue,
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                          Expanded(
+                            child: Text(
+                              notification.title,
+                              style: theme.textTheme.titleMedium?.copyWith(
+                                fontWeight:
+                                    notification.isRead
+                                        ? FontWeight.normal
+                                        : FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    _formatDateTime(notification.createdAt),
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.onSurface.withAlpha(153),
+                    const SizedBox(width: 8),
+                    Text(
+                      _formatDateTime(notification.createdAt),
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: theme.colorScheme.onSurface.withAlpha(153),
+                      ),
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              Text(
-                _truncateBody(notification.body, 100),
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.onSurface.withAlpha(179),
+                  ],
                 ),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-              const SizedBox(height: 8),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Text(
-                    "Tap to read more",
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.primaryColor,
-                      fontWeight: FontWeight.w500,
+                const SizedBox(height: 8),
+                Text(
+                  _truncateBody(notification.body, 100),
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: theme.colorScheme.onSurface.withAlpha(179),
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    if (!notification.isRead)
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: theme.primaryColor.withAlpha(26),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(
+                          "New",
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: theme.primaryColor,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      )
+                    else
+                      const SizedBox.shrink(),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          "Tap to read more",
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: theme.primaryColor,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        const SizedBox(width: 4),
+                        Icon(
+                          Icons.arrow_forward_ios,
+                          size: 12,
+                          color: theme.primaryColor,
+                        ),
+                      ],
                     ),
-                  ),
-                  const SizedBox(width: 4),
-                  Icon(
-                    Icons.arrow_forward_ios,
-                    size: 12,
-                    color: theme.primaryColor,
-                  ),
-                ],
-              ),
-            ],
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),

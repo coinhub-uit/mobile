@@ -529,4 +529,27 @@ class UserService {
       throw Exception("Failed to fetch notifications: ${response.statusCode}");
     }
   }
+
+  static Future<void> markNotificationAsRead(String notificationId) async {
+    // Use Supabase's current session and refresh if needed
+    final session = await _getValidSession();
+    final accessToken = session?.accessToken;
+    if (accessToken == null) {
+      throw Exception("Session not found");
+    }
+
+    final response = await ApiClient.client.get(
+      Uri.parse("${ApiClient.notificationEndpoint}/$notificationId/read"),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $accessToken",
+      },
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception(
+        "Failed to mark notification as read: ${response.statusCode}",
+      );
+    }
+  }
 }

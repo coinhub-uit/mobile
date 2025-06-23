@@ -102,7 +102,7 @@ class _TransferScreenState extends State<TransferScreen> {
 
     try {
       // Convert amount to integer (assuming the API expects cents/smallest unit)
-      final int amountInCents = (amount * 100).round();
+      final int amountInCents = (amount).round();
 
       await TransferService.transferFunds(
         fromSourceId: fromSourceId,
