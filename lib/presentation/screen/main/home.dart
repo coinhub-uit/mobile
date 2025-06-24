@@ -141,7 +141,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             const BottomNavigationBarItem(
               icon: Icon(FontAwesomeIcons.wallet),
-              label: "Savings",
+              label: "Tickets",
             ),
             BottomNavigationBarItem(
               icon: SizedBox(
@@ -579,7 +579,7 @@ class HomeScreenContent extends StatelessWidget {
             _buildActionButton(
               context,
               icon: Icons.savings_outlined,
-              label: "New Saving Plan",
+              label: "New Ticket",
               color: const Color(0xFF8B5CF6),
               width: (screenSize.width - 56) / 2,
               onTap: () async {

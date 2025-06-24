@@ -42,7 +42,7 @@ class UpdateAvatarError extends UserState {
 }
 
 class UpdateAvatarSuccess extends UserState {
-  final String avatarUrl;
+  final bool avatarUrl;
 
   UpdateAvatarSuccess(this.avatarUrl);
 }

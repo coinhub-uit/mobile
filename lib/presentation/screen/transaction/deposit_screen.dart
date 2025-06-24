@@ -245,7 +245,7 @@ class _DepositScreenState extends State<DepositScreen> {
         backgroundColor: theme.colorScheme.surface,
         appBar: AppBar(
           title: Text(
-            "Deposit",
+            "Top-up",
             style: theme.textTheme.titleLarge?.copyWith(
               fontWeight: FontWeight.bold,
             ),
@@ -300,7 +300,7 @@ class _DepositScreenState extends State<DepositScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    "Deposit Funds",
+                                    "Top-up Funds",
                                     style: theme.textTheme.titleMedium
                                         ?.copyWith(fontWeight: FontWeight.bold),
                                   ),
@@ -325,7 +325,7 @@ class _DepositScreenState extends State<DepositScreen> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           TransactionCard(
-                            title: "Deposit into: ",
+                            title: "Top-up into: ",
                             userId: widget.model.id,
                             formKey: _formKey,
                             onAmountChanged: (value) {
@@ -371,7 +371,7 @@ class _DepositScreenState extends State<DepositScreen> {
                                     ),
                                   )
                                   : Text(
-                                    "Deposit",
+                                    "Top-up",
                                     style: theme.textTheme.labelLarge?.copyWith(
                                       color: Colors.white,
                                       fontWeight: FontWeight.bold,

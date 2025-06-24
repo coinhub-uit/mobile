@@ -43,8 +43,8 @@ class _SavingPlanScreenState extends State<SavingPlanScreen> {
     final authenticated =
         await SecurityService.authenticateForSensitiveOperation(
           context,
-          title: "Confirm New Saving Plan",
-          subtitle: "Please authenticate to create a new saving plan",
+          title: "Confirm New Ticket Creation",
+          subtitle: "Please authenticate to create a ticket",
           type: AuthenticationType.sensitiveOperation,
         );
 
@@ -52,7 +52,7 @@ class _SavingPlanScreenState extends State<SavingPlanScreen> {
       print("Authentication failed");
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text("Authentication required to create saving plan"),
+          content: Text("Authentication required to create ticket"),
           backgroundColor: Colors.red,
         ),
       );
@@ -177,7 +177,7 @@ class _SavingPlanScreenState extends State<SavingPlanScreen> {
           backgroundColor: theme.colorScheme.surface,
           appBar: AppBar(
             title: Text(
-              "New Saving Plan",
+              "New Ticket",
               style: theme.textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -226,7 +226,7 @@ class _SavingPlanScreenState extends State<SavingPlanScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  "Create Saving Plan",
+                                  "Create New Ticket",
                                   style: theme.textTheme.titleMedium?.copyWith(
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -277,7 +277,7 @@ class _SavingPlanScreenState extends State<SavingPlanScreen> {
                           elevation: 0,
                         ),
                         child: Text(
-                          "Create Saving Plan",
+                          "Create Ticket",
                           style: theme.textTheme.labelLarge?.copyWith(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
