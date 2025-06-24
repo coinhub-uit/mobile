@@ -556,7 +556,7 @@ class HomeScreenContent extends StatelessWidget {
             _buildActionButton(
               context,
               icon: Icons.add_card_rounded,
-              label: "Add New Source",
+              label: "New Source",
               color: theme.colorScheme.onSurface.withAlpha(153),
               width: (screenSize.width - 56) / 2,
               onTap: () async {

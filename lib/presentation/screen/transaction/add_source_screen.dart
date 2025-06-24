@@ -87,7 +87,7 @@ class _AddSourceScreenState extends State<AddSourceScreen> {
           backgroundColor: theme.colorScheme.surface,
           appBar: AppBar(
             title: Text(
-              "Add New Source",
+              "New Source",
               style: theme.textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
